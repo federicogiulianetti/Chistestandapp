@@ -29,6 +29,12 @@ function extractComedianData(formData: FormData) {
     country: nullable(formData.get('country')),
     city: nullable(formData.get('city')),
     photo_url: nullable(formData.get('photo_url')),
+    facebook_url: nullable(formData.get('facebook_url')),
+    dni: nullable(formData.get('dni')),
+    frequent_flyer: nullable(formData.get('frequent_flyer')),
+    seat_preference: nullable(formData.get('seat_preference')),
+    home_address: nullable(formData.get('home_address')),
+    dressing_room_preferences: nullable(formData.get('dressing_room_preferences')),
     notes: nullable(formData.get('notes')),
     is_active: formData.get('is_active') === 'on',
   }
@@ -48,6 +54,9 @@ export async function createComedian(formData: FormData) {
 
   if (!data.stage_name) {
     redirect('/comedians/new?error=' + encodeURIComponent('El nombre artístico es obligatorio'))
+  }
+  if (!data.dni) {
+    redirect('/comedians/new?error=' + encodeURIComponent('El DNI es obligatorio'))
   }
 
   const supabase = await createClient()
@@ -80,6 +89,9 @@ export async function updateComedian(id: string, formData: FormData) {
 
   if (!data.stage_name) {
     redirect(`/comedians/${id}?error=` + encodeURIComponent('El nombre artístico es obligatorio'))
+  }
+  if (!data.dni) {
+    redirect(`/comedians/${id}?error=` + encodeURIComponent('El DNI es obligatorio'))
   }
 
   const supabase = await createClient()

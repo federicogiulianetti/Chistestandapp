@@ -174,6 +174,16 @@ export default async function NewComedianPage({
                 />
               </div>
               <div>
+                  <label htmlFor="facebook_url" className="block text-sm mb-1">Facebook (URL)</label>
+                  <input
+                    id="facebook_url"
+                    name="facebook_url"
+                    type="url"
+                    placeholder="https://facebook.com/..."
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  />
+                </div>
+              <div>
                 <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
                 <input
                   id="youtube_url"
@@ -207,6 +217,69 @@ export default async function NewComedianPage({
             </div>
           </section>
 
+         {/* Sección: Datos personales */}
+         <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Datos personales y operativos</h2>
+
+            <div>
+              <label htmlFor="dni" className="block text-sm mb-1">
+                DNI <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="dni"
+                name="dni"
+                type="text"
+                required
+                placeholder="12345678"
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="home_address" className="block text-sm mb-1">Dirección de casa</label>
+              <input
+                id="home_address"
+                name="home_address"
+                type="text"
+                placeholder="Calle, número, piso, depto, ciudad"
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="frequent_flyer" className="block text-sm mb-1">Pasajero frecuente</label>
+                <input
+                  id="frequent_flyer"
+                  name="frequent_flyer"
+                  type="text"
+                  placeholder="Aerolínea y número"
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+              <div>
+                <label htmlFor="seat_preference" className="block text-sm mb-1">Preferencia de asiento</label>
+                <input
+                  id="seat_preference"
+                  name="seat_preference"
+                  type="text"
+                  placeholder="Ventana, pasillo, adelante..."
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="dressing_room_preferences" className="block text-sm mb-1">Preferencias de camarín</label>
+              <textarea
+                id="dressing_room_preferences"
+                name="dressing_room_preferences"
+                rows={3}
+                placeholder="Bebidas, snacks, ambiente, etc."
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+              />
+            </div>
+          </section>
           {/* Sección: Interno */}
           <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
             <h2 className="text-lg font-semibold mb-2">Notas internas</h2>

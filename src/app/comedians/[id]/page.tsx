@@ -197,6 +197,16 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
+                  <label htmlFor="facebook_url" className="block text-sm mb-1">Facebook (URL)</label>
+                  <input
+                    id="facebook_url"
+                    name="facebook_url"
+                    type="url"
+                    defaultValue={comedian.facebook_url ?? ''}
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+                  />
+                </div>
+                <div>
                   <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
                   <input
                     id="youtube_url"
@@ -228,6 +238,69 @@ export default async function ComedianDetailPage({
                   className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
                 />
               </div>
+            {/* Sección: Datos personales */}
+            <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+              <h2 className="text-lg font-semibold mb-2">Datos personales y operativos</h2>
+
+              <div>
+                <label htmlFor="dni" className="block text-sm mb-1">
+                  DNI <span className="text-red-400">*</span>
+                </label>
+                <input
+                  id="dni"
+                  name="dni"
+                  type="text"
+                  required
+                  defaultValue={comedian.dni ?? ''}
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="home_address" className="block text-sm mb-1">Dirección de casa</label>
+                <input
+                  id="home_address"
+                  name="home_address"
+                  type="text"
+                  defaultValue={comedian.home_address ?? ''}
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="frequent_flyer" className="block text-sm mb-1">Pasajero frecuente</label>
+                  <input
+                    id="frequent_flyer"
+                    name="frequent_flyer"
+                    type="text"
+                    defaultValue={comedian.frequent_flyer ?? ''}
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="seat_preference" className="block text-sm mb-1">Preferencia de asiento</label>
+                  <input
+                    id="seat_preference"
+                    name="seat_preference"
+                    type="text"
+                    defaultValue={comedian.seat_preference ?? ''}
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="dressing_room_preferences" className="block text-sm mb-1">Preferencias de camarín</label>
+                <textarea
+                  id="dressing_room_preferences"
+                  name="dressing_room_preferences"
+                  rows={3}
+                  defaultValue={comedian.dressing_room_preferences ?? ''}
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+                />
+              </div>
+            </section>
             </section>
 
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
