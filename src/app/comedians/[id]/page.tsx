@@ -50,6 +50,8 @@ export default async function ComedianDetailPage({
 
         <form action={updateAction} className="space-y-6">
           <fieldset disabled={!canEdit} className="space-y-6 disabled:opacity-90">
+
+            {/* Sección: Identidad */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
               <h2 className="text-lg font-semibold mb-2">Identidad</h2>
 
@@ -112,6 +114,7 @@ export default async function ComedianDetailPage({
               </div>
             </section>
 
+            {/* Sección: Contacto */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
               <h2 className="text-lg font-semibold mb-2">Contacto</h2>
 
@@ -162,6 +165,7 @@ export default async function ComedianDetailPage({
               </div>
             </section>
 
+            {/* Sección: Redes sociales */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
               <h2 className="text-lg font-semibold mb-2">Redes sociales</h2>
 
@@ -238,7 +242,9 @@ export default async function ComedianDetailPage({
                   className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
                 />
               </div>
-            {/* Sección: Datos personales */}
+            </section>
+
+            {/* Sección: Datos personales y operativos */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
               <h2 className="text-lg font-semibold mb-2">Datos personales y operativos</h2>
 
@@ -301,8 +307,8 @@ export default async function ComedianDetailPage({
                 />
               </div>
             </section>
-            </section>
 
+            {/* Sección: Notas internas */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
               <h2 className="text-lg font-semibold mb-2">Notas internas</h2>
               <p className="text-xs text-gray-400">Solo visible para el equipo.</p>
@@ -317,6 +323,20 @@ export default async function ComedianDetailPage({
                 />
               </div>
 
+              {/* Performs solo */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="performs_solo"
+                  name="performs_solo"
+                  defaultChecked={comedian.performs_solo ?? true}
+                />
+                <label htmlFor="performs_solo" className="text-sm">
+                  Trabaja en solitario (performs solo)
+                </label>
+              </div>
+
+              {/* Activo */}
               <div className="flex items-center gap-2">
                 <input
                   id="is_active"
@@ -330,6 +350,7 @@ export default async function ComedianDetailPage({
                 </label>
               </div>
             </section>
+
           </fieldset>
 
           {canEdit && (

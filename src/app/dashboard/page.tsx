@@ -12,8 +12,8 @@ type ModuleCard = {
 
 const modules: ModuleCard[] = [
   {
-    title: 'Comediantes',
-    description: 'Gestioná el listado de comediantes activos.',
+    title: 'Comediantes y Elencos',
+    description: 'Gestioná comediantes solistas y elencos.',
     href: '/comedians',
     icon: '🎤',
     available: true,

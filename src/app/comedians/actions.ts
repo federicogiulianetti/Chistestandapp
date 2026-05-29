@@ -36,6 +36,7 @@ function extractComedianData(formData: FormData) {
     home_address: nullable(formData.get('home_address')),
     dressing_room_preferences: nullable(formData.get('dressing_room_preferences')),
     notes: nullable(formData.get('notes')),
+    performs_solo: formData.get('performs_solo') === 'on',
     is_active: formData.get('is_active') === 'on',
   }
 }

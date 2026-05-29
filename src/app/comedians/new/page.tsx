@@ -296,6 +296,18 @@ export default async function NewComedianPage({
 
             <div className="flex items-center gap-2">
               <input
+                id="performs_solo"
+                name="performs_solo"
+                type="checkbox"
+                defaultChecked
+                className="w-4 h-4"
+              />
+              <label htmlFor="performs_solo" className="text-sm">
+                Hace shows solo (unipersonales)
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
                 id="is_active"
                 name="is_active"
                 type="checkbox"
