@@ -23,7 +23,7 @@ const modules: ModuleCard[] = [
     description: 'Salas, acuerdos y condiciones por teatro.',
     href: '/theaters',
     icon: '🎭',
-    available: false,
+    available: true,
   },
   {
     title: 'Shows',
