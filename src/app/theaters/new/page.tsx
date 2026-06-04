@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getUserAndProfile } from '@/lib/supabase/auth'
-import NewTheaterForm from '@/components/NewTheaterForm'
+import { createTheater } from '@/app/theaters/actions'
+import TheaterForm from '@/components/TheaterForm'
 
 export default async function NewTheaterPage({
   searchParams,
@@ -26,7 +27,7 @@ export default async function NewTheaterPage({
           ← Volver a teatros
         </Link>
         <h1 className="text-3xl font-bold mt-2 mb-8">Nuevo teatro</h1>
-        <NewTheaterForm error={error} />
+        <TheaterForm action={createTheater} mode="new" error={error} />
       </div>
     </main>
   )
