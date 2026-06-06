@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { updateComedian, deleteComedian } from '@/app/comedians/actions'
 import PhotoUpload from '@/components/PhotoUpload'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 
 export default async function ComedianDetailPage({
   params,
@@ -355,13 +356,13 @@ export default async function ComedianDetailPage({
 
           {canEdit && (
             <div className="flex gap-3 justify-between">
-              <button
-                type="submit"
+              <ConfirmSubmit
                 formAction={deleteAction}
+                message="¿Seguro que querés eliminar este comediante? Esta acción no se puede deshacer."
                 className="px-4 py-2 border border-red-700 text-red-400 rounded-md hover:bg-red-900/30 transition"
               >
                 Eliminar
-              </button>
+              </ConfirmSubmit>
 
               <div className="flex gap-3">
                 <Link

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { updateEnsemble, deleteEnsemble, addMember, removeMember } from '../actions'
 import PhotoUpload from '@/components/PhotoUpload'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 
 export default async function EnsembleDetailPage({
   params,
@@ -323,12 +324,12 @@ export default async function EnsembleDetailPage({
         {canManage && (
           <div className="mt-8 pt-6 border-t border-zinc-800">
             <form action={deleteAction}>
-              <button
-                type="submit"
+              <ConfirmSubmit
+                message="¿Seguro que querés borrar este elenco? Esta acción no se puede deshacer."
                 className="px-4 py-2 bg-red-900/30 border border-red-700 text-red-300 rounded-md hover:bg-red-900/50 transition text-sm"
               >
                 Borrar elenco
-              </button>
+              </ConfirmSubmit>
             </form>
           </div>
         )}

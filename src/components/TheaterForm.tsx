@@ -282,6 +282,9 @@ export default function TheaterForm({ action, theater, error, mode, deleteAction
         <form action={deleteAction} className="mb-4 flex justify-end">
           <button
             type="submit"
+            onClick={(e) => {
+              if (!window.confirm('¿Seguro que querés eliminar este teatro? Esta acción no se puede deshacer.')) e.preventDefault()
+            }}
             className="px-4 py-2 border border-red-700 text-red-400 rounded-md hover:bg-red-900/30 transition text-sm"
           >
             Eliminar teatro
