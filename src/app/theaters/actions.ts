@@ -23,6 +23,7 @@ export async function createTheater(formData: FormData) {
     city: formData.get('city') as string,
     country: (formData.get('country') as string) || 'Argentina',
     address: formData.get('address') as string,
+    province: formData.get('province') as string,
     maps_url: formData.get('maps_url') as string,
 
     // Estacionamiento
@@ -134,6 +135,7 @@ export async function updateTheater(id: string, formData: FormData) {
     city: formData.get('city') as string,
     country: (formData.get('country') as string) || 'Argentina',
     address: formData.get('address') as string,
+    province: formData.get('province') as string,
     maps_url: formData.get('maps_url') as string,
 
     // Estacionamiento

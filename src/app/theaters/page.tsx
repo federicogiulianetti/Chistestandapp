@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
+import TheatersTable from '@/components/TheatersTable'
 
 export default async function TheatersPage({
   searchParams,
@@ -14,7 +15,7 @@ export default async function TheatersPage({
   const supabase = await createClient()
   const { data: theaters } = await supabase
     .from('theaters')
-    .select('id, name, city, country, capacity_platea, capacity_pullman, has_pullman, is_active, deal_type, deal_fixed_amount, deal_percentage')
+    .select('id, name, city, province, country, capacity_platea, is_active, deal_type, deal_fixed_amount, deal_percentage')
     .order('name', { ascending: true })
 
   const canManage = profile.role === 'admin'
@@ -27,9 +28,6 @@ export default async function TheatersPage({
             ← Dashboard
           </Link>
           <h1 className="text-3xl font-bold mt-2">Teatros</h1>
-          <p className="text-gray-400 mt-1">
-            {theaters?.length ?? 0} {theaters?.length === 1 ? 'teatro' : 'teatros'}
-          </p>
         </div>
 
         {error && (
@@ -62,66 +60,7 @@ export default async function TheatersPage({
             )}
           </div>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-zinc-800/50 border-b border-zinc-800">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold">Teatro</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold">Ciudad</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold">Capacidad</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold">Arreglo</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold">Estado</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {theaters.map((t) => {
-                  const capacidad = t.has_pullman
-                    ? `${t.capacity_platea ?? '?'} platea + ${t.capacity_pullman ?? '?'} pullman`
-                    : `${t.capacity_platea ?? '?'} platea`
-
-                  const arreglo = t.deal_type === 'fixed'
-                    ? `Fijo $${t.deal_fixed_amount?.toLocaleString('es-AR') ?? '?'}`
-                    : t.deal_type === 'percentage'
-                    ? `${t.deal_percentage ?? '?'}%`
-                    : '—'
-
-                  return (
-                    <tr key={t.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
-                      <td className="px-4 py-3">
-                        <div className="font-medium">{t.name}</div>
-                        {t.country !== 'Argentina' && (
-                          <div className="text-xs text-gray-400">{t.country}</div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-gray-300">{t.city || '—'}</td>
-                      <td className="px-4 py-3 text-gray-300 text-sm">{capacidad}</td>
-                      <td className="px-4 py-3 text-gray-300 text-sm">{arreglo}</td>
-                      <td className="px-4 py-3">
-                        {t.is_active ? (
-                          <span className="inline-block bg-green-900/40 text-green-300 px-2 py-1 rounded text-xs">
-                            Activo
-                          </span>
-                        ) : (
-                          <span className="inline-block bg-zinc-800 text-gray-400 px-2 py-1 rounded text-xs">
-                            Inactivo
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Link
-                          href={`/theaters/${t.id}`}
-                          className="text-white hover:underline text-sm"
-                        >
-                          {canManage ? 'Editar' : 'Ver'}
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+          <TheatersTable theaters={theaters} canManage={canManage} />
         )}
       </div>
     </main>
