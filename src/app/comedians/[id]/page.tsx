@@ -10,7 +10,7 @@ export default async function ComedianDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; ver?: string }>
 }) {
   const { profile } = await getUserAndProfile()
   const { id } = await params
@@ -28,7 +28,7 @@ export default async function ComedianDetailPage({
     notFound()
   }
 
-  const canEdit = profile.role === 'admin'
+  const canEdit = profile.role === 'admin' && sp.ver !== '1'
   const updateAction = updateComedian.bind(null, id)
   const deleteAction = deleteComedian.bind(null, id)
 
@@ -53,11 +53,11 @@ export default async function ComedianDetailPage({
 
             {/* Sección: Identidad */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Identidad</h2>
+              <h2 className="text-lg font-semibold mb-2">🎭 Identidad</h2>
 
               <div>
                 <label htmlFor="stage_name" className="block text-sm mb-1">
-                  Nombre artístico <span className="text-red-400">*</span>
+                  🎭 Nombre artístico <span className="text-red-400">*</span>
                 </label>
                 <input
                   id="stage_name"
@@ -70,7 +70,7 @@ export default async function ComedianDetailPage({
               </div>
 
               <div>
-                <label htmlFor="full_name" className="block text-sm mb-1">Nombre real</label>
+                <label htmlFor="full_name" className="block text-sm mb-1">🧑 Nombre real</label>
                 <input
                   id="full_name"
                   name="full_name"
@@ -82,7 +82,7 @@ export default async function ComedianDetailPage({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="date_of_birth" className="block text-sm mb-1">Fecha de nacimiento</label>
+                  <label htmlFor="date_of_birth" className="block text-sm mb-1">🎂 Fecha de nacimiento</label>
                   <input
                     id="date_of_birth"
                     name="date_of_birth"
@@ -92,7 +92,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm mb-1">Foto</label>
+                  <label className="block text-sm mb-1">📸 Foto</label>
                   <PhotoUpload
                     name="photo_url"
                     bucket="comedian-photos"
@@ -103,7 +103,7 @@ export default async function ComedianDetailPage({
               </div>
 
               <div>
-                <label htmlFor="bio" className="block text-sm mb-1">Bio</label>
+                <label htmlFor="bio" className="block text-sm mb-1">📝 Bio</label>
                 <textarea
                   id="bio"
                   name="bio"
@@ -116,11 +116,11 @@ export default async function ComedianDetailPage({
 
             {/* Sección: Contacto */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Contacto</h2>
+              <h2 className="text-lg font-semibold mb-2">📞 Contacto</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm mb-1">Email</label>
+                  <label htmlFor="email" className="block text-sm mb-1">📧 Email</label>
                   <input
                     id="email"
                     name="email"
@@ -130,7 +130,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="phone" className="block text-sm mb-1">Teléfono</label>
+                  <label htmlFor="phone" className="block text-sm mb-1">📞 Teléfono</label>
                   <input
                     id="phone"
                     name="phone"
@@ -143,7 +143,7 @@ export default async function ComedianDetailPage({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="country" className="block text-sm mb-1">País</label>
+                  <label htmlFor="country" className="block text-sm mb-1">🌎 País</label>
                   <input
                     id="country"
                     name="country"
@@ -153,7 +153,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="city" className="block text-sm mb-1">Ciudad</label>
+                  <label htmlFor="city" className="block text-sm mb-1">🏙️ Ciudad</label>
                   <input
                     id="city"
                     name="city"
@@ -167,11 +167,11 @@ export default async function ComedianDetailPage({
 
             {/* Sección: Redes sociales */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Redes sociales</h2>
+              <h2 className="text-lg font-semibold mb-2">📱 Redes sociales</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="instagram_handle" className="block text-sm mb-1">Instagram (sin @)</label>
+                  <label htmlFor="instagram_handle" className="block text-sm mb-1">📷 Instagram (sin @)</label>
                   <input
                     id="instagram_handle"
                     name="instagram_handle"
@@ -181,7 +181,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="twitter_handle" className="block text-sm mb-1">Twitter (sin @)</label>
+                  <label htmlFor="twitter_handle" className="block text-sm mb-1">🐦 Twitter (sin @)</label>
                   <input
                     id="twitter_handle"
                     name="twitter_handle"
@@ -191,7 +191,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="tiktok_handle" className="block text-sm mb-1">TikTok (sin @)</label>
+                  <label htmlFor="tiktok_handle" className="block text-sm mb-1">🎵 TikTok (sin @)</label>
                   <input
                     id="tiktok_handle"
                     name="tiktok_handle"
@@ -201,7 +201,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="facebook_url" className="block text-sm mb-1">Facebook (URL)</label>
+                  <label htmlFor="facebook_url" className="block text-sm mb-1">📘 Facebook (URL)</label>
                   <input
                     id="facebook_url"
                     name="facebook_url"
@@ -211,7 +211,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
+                  <label htmlFor="youtube_url" className="block text-sm mb-1">▶️ YouTube (URL)</label>
                   <input
                     id="youtube_url"
                     name="youtube_url"
@@ -221,7 +221,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="spotify_url" className="block text-sm mb-1">Spotify (URL)</label>
+                  <label htmlFor="spotify_url" className="block text-sm mb-1">🎧 Spotify (URL)</label>
                   <input
                     id="spotify_url"
                     name="spotify_url"
@@ -233,7 +233,7 @@ export default async function ComedianDetailPage({
               </div>
 
               <div>
-                <label htmlFor="website_url" className="block text-sm mb-1">Sitio web</label>
+                <label htmlFor="website_url" className="block text-sm mb-1">🌐 Sitio web</label>
                 <input
                   id="website_url"
                   name="website_url"
@@ -246,11 +246,11 @@ export default async function ComedianDetailPage({
 
             {/* Sección: Datos personales y operativos */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Datos personales y operativos</h2>
+              <h2 className="text-lg font-semibold mb-2">🧳 Datos personales y operativos</h2>
 
               <div>
                 <label htmlFor="dni" className="block text-sm mb-1">
-                  DNI <span className="text-red-400">*</span>
+                  🪪 DNI <span className="text-red-400">*</span>
                 </label>
                 <input
                   id="dni"
@@ -263,7 +263,7 @@ export default async function ComedianDetailPage({
               </div>
 
               <div>
-                <label htmlFor="home_address" className="block text-sm mb-1">Dirección de casa</label>
+                <label htmlFor="home_address" className="block text-sm mb-1">🏠 Dirección de casa</label>
                 <input
                   id="home_address"
                   name="home_address"
@@ -275,7 +275,7 @@ export default async function ComedianDetailPage({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="frequent_flyer" className="block text-sm mb-1">Pasajero frecuente</label>
+                  <label htmlFor="frequent_flyer" className="block text-sm mb-1">✈️ Pasajero frecuente</label>
                   <input
                     id="frequent_flyer"
                     name="frequent_flyer"
@@ -285,7 +285,7 @@ export default async function ComedianDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="seat_preference" className="block text-sm mb-1">Preferencia de asiento</label>
+                  <label htmlFor="seat_preference" className="block text-sm mb-1">💺 Preferencia de asiento</label>
                   <input
                     id="seat_preference"
                     name="seat_preference"
@@ -297,7 +297,7 @@ export default async function ComedianDetailPage({
               </div>
 
               <div>
-                <label htmlFor="dressing_room_preferences" className="block text-sm mb-1">Preferencias de camarín</label>
+                <label htmlFor="dressing_room_preferences" className="block text-sm mb-1">🚪 Preferencias de camarín</label>
                 <textarea
                   id="dressing_room_preferences"
                   name="dressing_room_preferences"
@@ -310,7 +310,7 @@ export default async function ComedianDetailPage({
 
             {/* Sección: Notas internas */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Notas internas</h2>
+              <h2 className="text-lg font-semibold mb-2">📝 Notas internas</h2>
               <p className="text-xs text-gray-400">Solo visible para el equipo.</p>
 
               <div>
@@ -332,7 +332,7 @@ export default async function ComedianDetailPage({
                   defaultChecked={comedian.performs_solo ?? true}
                 />
                 <label htmlFor="performs_solo" className="text-sm">
-                  Trabaja en solitario (performs solo)
+                  🎙️ Trabaja en solitario (performs solo)
                 </label>
               </div>
 
@@ -346,7 +346,7 @@ export default async function ComedianDetailPage({
                   className="w-4 h-4"
                 />
                 <label htmlFor="is_active" className="text-sm">
-                  Está activo (recibe shows)
+                  ✅ Está activo (recibe shows)
                 </label>
               </div>
             </section>

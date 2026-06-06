@@ -10,7 +10,7 @@ export default async function EnsembleDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ error?: string; success?: string }>
+  searchParams: Promise<{ error?: string; success?: string; ver?: string }>
 }) {
   const { profile } = await getUserAndProfile()
   const { id } = await params
@@ -50,7 +50,7 @@ export default async function EnsembleDetailPage({
     (c) => !memberIds.includes(c.id)
   )
 
-  const canManage = profile.role === 'admin'
+  const canManage = profile.role === 'admin' && sp.ver !== '1'
   const updateAction = updateEnsemble.bind(null, id)
   const deleteAction = deleteEnsemble.bind(null, id)
   const addMemberAction = addMember.bind(null, id)
@@ -81,7 +81,7 @@ export default async function EnsembleDetailPage({
 
         {/* Sección: Miembros */}
         <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Miembros</h2>
+          <h2 className="text-lg font-semibold mb-4">👥 Miembros</h2>
 
           {!members || members.length === 0 ? (
             <p className="text-gray-400 text-sm mb-4">Todavía no hay miembros en este elenco.</p>
@@ -136,7 +136,7 @@ export default async function EnsembleDetailPage({
                 required
                 className="flex-1 px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
               >
-                <option value="">Elegí un comediante...</option>
+                <option value="">🎤 Elegí un comediante...</option>
                 {filteredAvailable.map((c) => (
                   <option key={c.id} value={c.id}>{c.stage_name}</option>
                 ))}
@@ -168,10 +168,10 @@ export default async function EnsembleDetailPage({
           <fieldset disabled={!canManage} className="space-y-6">
             {/* Identidad */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Identidad</h2>
+              <h2 className="text-lg font-semibold mb-2">🎭 Identidad</h2>
 
               <div>
-                <label className="block text-sm mb-2">Foto / logo del elenco</label>
+                <label className="block text-sm mb-2">📸 Foto / logo del elenco</label>
                 <PhotoUpload
                   bucket="ensemble-photos"
                   name="photo_url"
@@ -182,7 +182,7 @@ export default async function EnsembleDetailPage({
 
               <div>
                 <label htmlFor="name" className="block text-sm mb-1">
-                  Nombre del elenco <span className="text-red-400">*</span>
+                  🎭 Nombre del elenco <span className="text-red-400">*</span>
                 </label>
                 <input
                   id="name"
@@ -195,7 +195,7 @@ export default async function EnsembleDetailPage({
               </div>
 
               <div>
-                <label htmlFor="bio" className="block text-sm mb-1">Bio / descripción</label>
+                <label htmlFor="bio" className="block text-sm mb-1">📝 Bio / descripción</label>
                 <textarea
                   id="bio"
                   name="bio"
@@ -207,7 +207,7 @@ export default async function EnsembleDetailPage({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="city" className="block text-sm mb-1">Ciudad</label>
+                  <label htmlFor="city" className="block text-sm mb-1">🏙️ Ciudad</label>
                   <input
                     id="city"
                     name="city"
@@ -217,7 +217,7 @@ export default async function EnsembleDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="country" className="block text-sm mb-1">País</label>
+                  <label htmlFor="country" className="block text-sm mb-1">🌎 País</label>
                   <input
                     id="country"
                     name="country"
@@ -231,11 +231,11 @@ export default async function EnsembleDetailPage({
 
             {/* Redes */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Redes sociales</h2>
+              <h2 className="text-lg font-semibold mb-2">📱 Redes sociales</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="instagram_handle" className="block text-sm mb-1">Instagram</label>
+                  <label htmlFor="instagram_handle" className="block text-sm mb-1">📷 Instagram</label>
                   <input
                     id="instagram_handle"
                     name="instagram_handle"
@@ -245,7 +245,7 @@ export default async function EnsembleDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="tiktok_handle" className="block text-sm mb-1">TikTok</label>
+                  <label htmlFor="tiktok_handle" className="block text-sm mb-1">🎵 TikTok</label>
                   <input
                     id="tiktok_handle"
                     name="tiktok_handle"
@@ -255,7 +255,7 @@ export default async function EnsembleDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
+                  <label htmlFor="youtube_url" className="block text-sm mb-1">▶️ YouTube (URL)</label>
                   <input
                     id="youtube_url"
                     name="youtube_url"
@@ -265,7 +265,7 @@ export default async function EnsembleDetailPage({
                   />
                 </div>
                 <div>
-                  <label htmlFor="website_url" className="block text-sm mb-1">Sitio web</label>
+                  <label htmlFor="website_url" className="block text-sm mb-1">🌐 Sitio web</label>
                   <input
                     id="website_url"
                     name="website_url"
@@ -279,7 +279,7 @@ export default async function EnsembleDetailPage({
 
             {/* Notas */}
             <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-              <h2 className="text-lg font-semibold mb-2">Notas internas</h2>
+              <h2 className="text-lg font-semibold mb-2">📝 Notas internas</h2>
 
               <textarea
                 id="notes"
@@ -296,7 +296,7 @@ export default async function EnsembleDetailPage({
                   defaultChecked={ensemble.is_active}
                   className="w-4 h-4 accent-white"
                 />
-                <span className="text-sm">Está activo (recibe shows)</span>
+                <span className="text-sm">✅ Está activo (recibe shows)</span>
               </label>
             </section>
           </fieldset>

@@ -36,16 +36,16 @@ export default async function NewEnsemblePage({
         <form action={createEnsemble} className="space-y-6">
           {/* Sección: Identidad */}
           <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">Identidad</h2>
+            <h2 className="text-lg font-semibold mb-2">🎭 Identidad</h2>
 
             <div>
-              <label className="block text-sm mb-2">Foto / logo del elenco</label>
+              <label className="block text-sm mb-2">📸 Foto / logo del elenco</label>
               <PhotoUpload bucket="ensemble-photos" name="photo_url" />
             </div>
 
             <div>
               <label htmlFor="name" className="block text-sm mb-1">
-                Nombre del elenco <span className="text-red-400">*</span>
+                🎭 Nombre del elenco <span className="text-red-400">*</span>
               </label>
               <input
                 id="name"
@@ -58,7 +58,7 @@ export default async function NewEnsemblePage({
             </div>
 
             <div>
-              <label htmlFor="bio" className="block text-sm mb-1">Bio / descripción</label>
+              <label htmlFor="bio" className="block text-sm mb-1">📝 Bio / descripción</label>
               <textarea
                 id="bio"
                 name="bio"
@@ -70,7 +70,7 @@ export default async function NewEnsemblePage({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="city" className="block text-sm mb-1">Ciudad</label>
+                <label htmlFor="city" className="block text-sm mb-1">🏙️ Ciudad</label>
                 <input
                   id="city"
                   name="city"
@@ -80,7 +80,7 @@ export default async function NewEnsemblePage({
                 />
               </div>
               <div>
-                <label htmlFor="country" className="block text-sm mb-1">País</label>
+                <label htmlFor="country" className="block text-sm mb-1">🌎 País</label>
                 <input
                   id="country"
                   name="country"
@@ -94,11 +94,11 @@ export default async function NewEnsemblePage({
 
           {/* Sección: Redes sociales */}
           <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">Redes sociales</h2>
+            <h2 className="text-lg font-semibold mb-2">📱 Redes sociales</h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="instagram_handle" className="block text-sm mb-1">Instagram</label>
+                <label htmlFor="instagram_handle" className="block text-sm mb-1">📷 Instagram</label>
                 <input
                   id="instagram_handle"
                   name="instagram_handle"
@@ -108,7 +108,7 @@ export default async function NewEnsemblePage({
                 />
               </div>
               <div>
-                <label htmlFor="tiktok_handle" className="block text-sm mb-1">TikTok</label>
+                <label htmlFor="tiktok_handle" className="block text-sm mb-1">🎵 TikTok</label>
                 <input
                   id="tiktok_handle"
                   name="tiktok_handle"
@@ -118,7 +118,7 @@ export default async function NewEnsemblePage({
                 />
               </div>
               <div>
-                <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
+                <label htmlFor="youtube_url" className="block text-sm mb-1">▶️ YouTube (URL)</label>
                 <input
                   id="youtube_url"
                   name="youtube_url"
@@ -128,7 +128,7 @@ export default async function NewEnsemblePage({
                 />
               </div>
               <div>
-                <label htmlFor="website_url" className="block text-sm mb-1">Sitio web</label>
+                <label htmlFor="website_url" className="block text-sm mb-1">🌐 Sitio web</label>
                 <input
                   id="website_url"
                   name="website_url"
@@ -142,7 +142,7 @@ export default async function NewEnsemblePage({
 
           {/* Sección: Notas */}
           <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">Notas internas</h2>
+            <h2 className="text-lg font-semibold mb-2">📝 Notas internas</h2>
             <p className="text-sm text-gray-400">Solo visible para el equipo, no se comparte con el elenco.</p>
 
             <textarea
@@ -159,7 +159,7 @@ export default async function NewEnsemblePage({
                 defaultChecked
                 className="w-4 h-4 accent-white"
               />
-              <span className="text-sm">Está activo (recibe shows)</span>
+              <span className="text-sm">✅ Está activo (recibe shows)</span>
             </label>
           </section>
 
