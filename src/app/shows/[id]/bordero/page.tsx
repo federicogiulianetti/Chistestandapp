@@ -55,7 +55,10 @@ export default async function BorderoPage({
       <div className="max-w-2xl mx-auto space-y-5">
         <div>
           <Link href={`/shows/${id}/ver`} className="text-gray-400 hover:text-white text-sm">← Volver al show</Link>
-          <h1 className="text-3xl font-bold mt-2">Borderó — {ctx.performer}</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-3xl font-bold mt-2">Borderó — {ctx.performer}</h1>
+            <Link href={`/shows/${id}/bordero/print`} className="px-3 py-1.5 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm flex-shrink-0">🖨️ PDF</Link>
+          </div>
           <p className="text-gray-400 mt-1">{ctx.theaterName ?? '—'} · {formatShowDate(ctx.showDate)} · {ctx.currency}</p>
         </div>
 
