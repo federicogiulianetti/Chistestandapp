@@ -66,16 +66,16 @@ export default async function CuentaPage({
   if (type === 'comedian') {
     const { data: argData } = await supabase
       .from('argentores_entries')
-      .select('id, show_id, comedian_id, amount, currency, collected, collected_at, show:show_id(show_date, city, theater:theater_id(name))')
+      .select('id, show_id, comedian_id, amount, currency, collected, collected_at, por_fuera, show:show_id(show_date, city, theater:theater_id(name))')
       .eq('comedian_id', id)
     type RawArg = {
       id: string; show_id: string; comedian_id: string; amount: number; currency: string
-      collected: boolean; collected_at: string | null
+      collected: boolean; collected_at: string | null; por_fuera: boolean
       show: { show_date: string | null; city: string | null; theater: { name: string | null } | null } | null
     }
     argEntries = ((argData ?? []) as unknown as RawArg[]).map(a => ({
       id: a.id, show_id: a.show_id, comedian_id: a.comedian_id, amount: Number(a.amount),
-      currency: a.currency, collected: a.collected, collected_at: a.collected_at,
+      currency: a.currency, collected: a.collected, collected_at: a.collected_at, por_fuera: a.por_fuera,
       show_date: a.show?.show_date ?? null, theater_name: a.show?.theater?.name ?? null, city: a.show?.city ?? null,
     })).sort((x, y) => (y.show_date ?? '').localeCompare(x.show_date ?? ''))
   }

@@ -18,6 +18,7 @@ export interface BorderoContext {
   comedianId: string | null
   ensembleId: string | null
   ensembleMemberIds: string[]
+  argentoresPorFuera: boolean
   theaterName: string | null
   currency: string
   summary: SalesSummary
@@ -66,6 +67,9 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
     ensembleMemberIds = (members ?? []).map(m => m.comedian_id as string).filter(Boolean)
   }
 
+  // ¿el argentores se paga "por fuera" (directo al artista, 8%)? Se detecta por la etiqueta de la deducción.
+  const argentoresPorFuera = (sh.deductions ?? []).some(d => d.goes_to_artist && /fuera/i.test(d.label || ''))
+
   const performer = sh.performer_type === 'elenco' ? (sh.ensemble?.name ?? '—') : (sh.comedian?.stage_name ?? '—')
   const todayKey = arDateKey(new Date().toISOString())
   const summary = summarizeSales((salesData ?? []) as SaleRow[], {
@@ -99,6 +103,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
     comedianId: sh.comedian_id,
     ensembleId: sh.ensemble_id,
     ensembleMemberIds,
+    argentoresPorFuera,
     theaterName: sh.theater?.name ?? null,
     currency: sh.currency,
     summary,

@@ -72,7 +72,7 @@ export async function cerrarBordero(showId: string) {
   if (ctx.performerType === 'comedian' && ctx.comedianId && r.artistaDeductions > 0) {
     await supabase.from('argentores_entries').upsert({
       show_id: showId, comedian_id: ctx.comedianId,
-      amount: r.artistaDeductions, currency: ctx.currency,
+      amount: r.artistaDeductions, currency: ctx.currency, por_fuera: ctx.argentoresPorFuera,
     }, { onConflict: 'show_id,comedian_id' })
   }
 

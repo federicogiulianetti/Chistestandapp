@@ -10,6 +10,7 @@ export interface ArgentoresEntry {
   currency: string
   collected: boolean
   collected_at: string | null
+  por_fuera: boolean   // true = el teatro lo pagó directo (8%); NO reclamar en la oficina de Argentores
   show_date: string | null
   theater_name: string | null
   city: string | null

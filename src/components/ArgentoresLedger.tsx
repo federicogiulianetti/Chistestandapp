@@ -50,6 +50,7 @@ export default function ArgentoresLedger({
               <tr>
                 <th className="text-left px-4 py-2 text-sm font-semibold whitespace-nowrap">Fecha</th>
                 <th className="text-left px-4 py-2 text-sm font-semibold">Sala</th>
+                <th className="text-left px-4 py-2 text-sm font-semibold">Cómo se cobra</th>
                 <th className="text-right px-4 py-2 text-sm font-semibold">Argentores</th>
                 <th className="text-center px-4 py-2 text-sm font-semibold">Estado</th>
               </tr>
@@ -59,6 +60,15 @@ export default function ArgentoresLedger({
                 <tr key={e.id} className="border-b border-zinc-800 last:border-0">
                   <td className="px-4 py-2 text-sm whitespace-nowrap">{formatShowDate(e.show_date)}</td>
                   <td className="px-4 py-2 text-sm text-gray-300">{e.theater_name ?? e.city ?? '—'}</td>
+                  <td className="px-4 py-2 text-sm whitespace-nowrap">
+                    {e.por_fuera ? (
+                      <span className="inline-flex items-center gap-1 text-orange-300" title="El teatro lo pagó directo (8%). NO reclamar en la oficina de Argentores.">
+                        🔸 Por fuera <span className="text-gray-500">(directo, no reclamar)</span>
+                      </span>
+                    ) : (
+                      <span className="text-gray-400" title="Se cobra en la oficina de Argentores.">Oficina de Argentores</span>
+                    )}
+                  </td>
                   <td className="px-4 py-2 text-sm text-right font-medium">{fmt(Number(e.amount), e.currency)}</td>
                   <td className="px-4 py-2 text-center whitespace-nowrap">
                     {canToggle ? (
@@ -87,6 +97,13 @@ export default function ArgentoresLedger({
             </tbody>
           </table>
         </div>
+      )}
+
+      {entries.some(e => e.por_fuera) && (
+        <p className="text-xs text-gray-500 leading-relaxed">
+          🔸 <span className="text-orange-300">Por fuera</span>: el teatro no pasó el argentores a la oficina y se lo pagó <strong>directo al comediante</strong> (8% en vez de 10%; el 2% era el costo del trámite).
+          Esa plata ya está cobrada por afuera, así que <strong>no hay que reclamarla en la oficina de Argentores</strong>.
+        </p>
       )}
     </div>
   )

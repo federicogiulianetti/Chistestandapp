@@ -6,7 +6,7 @@ import ArgentoresLedger from '@/components/ArgentoresLedger'
 
 type RawArg = {
   id: string; show_id: string; comedian_id: string; amount: number; currency: string
-  collected: boolean; collected_at: string | null
+  collected: boolean; collected_at: string | null; por_fuera: boolean
   show: { show_date: string | null; city: string | null; theater: { name: string | null } | null } | null
 }
 
@@ -33,14 +33,14 @@ export default async function ArgentoresPage() {
 
   const { data: argData } = await supabase
     .from('argentores_entries')
-    .select('id, show_id, comedian_id, amount, currency, collected, collected_at, show:show_id(show_date, city, theater:theater_id(name))')
+    .select('id, show_id, comedian_id, amount, currency, collected, collected_at, por_fuera, show:show_id(show_date, city, theater:theater_id(name))')
     .in('comedian_id', comedianIds.length ? comedianIds : ['00000000-0000-0000-0000-000000000000'])
 
   const byComedian = new Map<string, ArgentoresEntry[]>()
   for (const a of ((argData ?? []) as unknown as RawArg[])) {
     const e: ArgentoresEntry = {
       id: a.id, show_id: a.show_id, comedian_id: a.comedian_id, amount: Number(a.amount),
-      currency: a.currency, collected: a.collected, collected_at: a.collected_at,
+      currency: a.currency, collected: a.collected, collected_at: a.collected_at, por_fuera: a.por_fuera,
       show_date: a.show?.show_date ?? null, theater_name: a.show?.theater?.name ?? null, city: a.show?.city ?? null,
     }
     const arr = byComedian.get(a.comedian_id) ?? []
