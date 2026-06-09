@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react'
 import Link from 'next/link'
 import MapPreview from './MapPreview'
 import PhotoUpload from './PhotoUpload'
+import { loadGoogleMaps } from '@/lib/googleMaps'
 
 interface Restaurant {
   id: number
@@ -154,12 +155,11 @@ export default function TheaterForm({ action, theater, error, mode, deleteAction
   const mapsUrlRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (mode !== 'new') return
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-    if (!apiKey || !nameInputRef.current) return
+    if (mode !== 'new' || !nameInputRef.current) return
+    let cancelled = false
 
     const initAutocomplete = () => {
-      if (!window.google || !nameInputRef.current) return
+      if (cancelled || !window.google || !nameInputRef.current) return
       const autocomplete = new window.google.maps.places.Autocomplete(nameInputRef.current, {
         types: ['establishment'],
         fields: ['name', 'formatted_address', 'address_components', 'url'],
@@ -176,6 +176,8 @@ export default function TheaterForm({ action, theater, error, mode, deleteAction
           if (c.types.includes('administrative_area_level_1')) province = c.long_name
           if (c.types.includes('country')) country = c.long_name
         })
+        // El input queda solo con el nombre del lugar, no con la dirección completa
+        if (nameInputRef.current && place.name) nameInputRef.current.value = place.name
         if (addressRef.current) addressRef.current.value = place.formatted_address ?? ''
         setMapQuery(place.formatted_address ?? '')
         if (cityRef.current) cityRef.current.value = city
@@ -185,15 +187,8 @@ export default function TheaterForm({ action, theater, error, mode, deleteAction
       })
     }
 
-    if (!window.google) {
-      const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`
-      script.async = true
-      script.onload = initAutocomplete
-      document.head.appendChild(script)
-    } else {
-      initAutocomplete()
-    }
+    loadGoogleMaps().then(initAutocomplete).catch(() => {})
+    return () => { cancelled = true }
   }, [mode])
 
   const addRestaurant = () => setRestaurants(prev => [...prev, { id: Date.now(), value: '' }])

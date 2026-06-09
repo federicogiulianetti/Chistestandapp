@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { loadGoogleMaps } from '@/lib/googleMaps'
 
 interface AddressAutocompleteProps {
   onSelect: (data: {
@@ -23,23 +24,13 @@ export default function AddressAutocomplete({
 
   useEffect(() => {
     if (!inputRef.current || disabled) return
+    let cancelled = false
 
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-    if (!apiKey) return
-
-    // Cargar el script de Google Maps si no está cargado
-    if (!window.google) {
-      const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`
-      script.async = true
-      script.onload = () => initAutocomplete()
-      document.head.appendChild(script)
-    } else {
-      initAutocomplete()
-    }
+    loadGoogleMaps().then(() => { if (!cancelled) initAutocomplete() }).catch(() => {})
+    return () => { cancelled = true }
 
     function initAutocomplete() {
-      if (!inputRef.current || !window.google) return
+      if (cancelled || !inputRef.current || !window.google) return
 
       const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
         types: ['establishment', 'geocode'],
