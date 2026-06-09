@@ -30,7 +30,21 @@ const modules: ModuleCard[] = [
     description: 'Fechas, programación y estado de cada show.',
     href: '/shows',
     icon: '📅',
-    available: false,
+    available: true,
+  },
+  {
+    title: 'Calendario',
+    description: 'Todas las fechas en una vista de calendario mensual.',
+    href: '/calendar',
+    icon: '📆',
+    available: true,
+  },
+  {
+    title: 'Hoteles',
+    description: 'Hoteles por ciudad, canjes y preferencias de comediantes.',
+    href: '/hotels',
+    icon: '🏨',
+    available: true,
   },
   {
     title: 'Ventas',
