@@ -74,6 +74,13 @@ const modules: ModuleCard[] = [
     icon: '🔒',
     available: true,
   },
+  {
+    title: 'Equipo y accesos',
+    description: 'Invitá comediantes y equipo, y gestioná sus accesos.',
+    href: '/equipo',
+    icon: '👤',
+    available: true,
+  },
 ]
 
 export default async function DashboardPage() {
