@@ -31,7 +31,11 @@ Pipeline en `C:\Users\feder\AppData\Local\Temp\xlsxtool\import-all.js` (Node + S
 ## ⬜ Pendientes de la precarga (para la pasada de limpieza)
 1. **Confirmar nombres de espectáculos** con Fede (sobre todo Selci/Xamila: ¿tienen título o actúan a secas?).
 2. **🌎 Internacionales** (moneda extranjera) — excluidos en todos (`skip: moneda`). Falta: confirmar moneda por país (Chile, Uruguay, Perú, Colombia, México, España…) y cargarlos con su `currency`.
-3. **🪑 Formatos especiales** — "Taburete"/"Longchamps" (Nico), "Evento Privado" (Campa/otros). Layout distinto; quedaron en `skip: formato`.
+3. ~~**🪑 Formatos especiales**~~ ✅ **HECHO (jun 2026).** Loader aparte `load-formato.js` (extracción flexible: bruto + reparto de abajo artista/Producción). Shows con `notes='import:formato:<año>'`. Cargados:
+   - **Campa: 13 eventos** (Evento Privado / Longchamps / bares como Pope Bar, Emily Daniels) — cachet fijo, Campa cobra su 80% (va a su cuenta). Total ganado ~$2,35M (con Nico).
+   - **Nico: 24** = 2 donde cobra (Escobar 50% / Canning 60%) + **22 Taburete**. **Taburete** = ciclo en Taburete Bar donde Nico actúa para **probar material** pero **elige no cobrar** (su parte se la da al invitado que figura en el borderó; la productora cobra normal). Se cargan como fechas de Nico con `spectacle='Probando material'`, **ganancia $0** (sin movimiento de cuenta), pero **cuentan público y lugar** en su Wrapped. La parte de la productora queda en `productora_share`.
+   - **Quedan para revisión manual (~7):** Barraza (Paseo La Plaza, Pacheco, Junín, Tigre) y Nico (NUN Rose, Wilde) — el parser agarró mal la línea del artista por layout corrido. **NY / CMX** (Nico) son internacionales que se colaban en formato → van al pendiente #2.
+   - Idempotente (saltea por comediante+teatro+fecha existente). Fix relacionado: el skip `/podcast/i` del importador ahora aplica **solo a Campa/Agus** (Lucas tiene su propio podcast).
 4. ~~**👯 Shows de elenco**~~ ✅ **HECHO (jun 2026).** Elenco **"Campa y Agus"** (id `63ab7aad-e4c1-4b2d-a5c6-fdb5af95acb4`, miembros Campa + Agus). Es el nombre del **grupo**; el nombre del show vive en `shows.spectacle` ("Hay Rabas" / "Los demás son un montón"). Renombrable en `/ensembles`.
    - **4 fechas de dúo**, todas `performer_type='elenco'`, `comedian_id=null`, `ensemble_id` del elenco, `artist_percentage=80`:
      - **Hay Rabas**: 2024-01-17 San Bernardo y 2024-01-18 Villa Gesell (solo en planilla de Campa).
