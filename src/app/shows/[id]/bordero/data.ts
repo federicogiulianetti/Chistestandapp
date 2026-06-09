@@ -16,6 +16,8 @@ export interface BorderoContext {
   performer: string
   performerType: string | null
   comedianId: string | null
+  ensembleId: string | null
+  ensembleMemberIds: string[]
   theaterName: string | null
   currency: string
   summary: SalesSummary
@@ -29,7 +31,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
 
   const { data: show } = await supabase
     .from('shows')
-    .select('id, show_date, currency, deal_type, deal_fixed_amount, deal_percentage, artist_percentage, capacity, courtesy_count, reserved_seats, ticket_price, performer_type, comedian_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist)')
+    .select('id, show_date, currency, deal_type, deal_fixed_amount, deal_percentage, artist_percentage, capacity, courtesy_count, reserved_seats, ticket_price, performer_type, comedian_id, ensemble_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist)')
     .eq('id', showId)
     .is('deleted_at', null)
     .single()
@@ -47,11 +49,21 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
     show_date: string | null; currency: string
     deal_type: string | null; deal_fixed_amount: number | null; deal_percentage: number | null; artist_percentage: number | null
     capacity: number | null; courtesy_count: number; reserved_seats: number; ticket_price: number | null
-    performer_type: string | null; comedian_id: string | null
+    performer_type: string | null; comedian_id: string | null; ensemble_id: string | null
     comedian: { stage_name: string | null } | null
     ensemble: { name: string | null } | null
     theater: { name: string | null } | null
     deductions: DeductionInput[]
+  }
+
+  // Para elencos: los miembros entre los que se reparte la parte del artista
+  let ensembleMemberIds: string[] = []
+  if (sh.performer_type === 'elenco' && sh.ensemble_id) {
+    const { data: members } = await supabase
+      .from('ensemble_members')
+      .select('comedian_id')
+      .eq('ensemble_id', sh.ensemble_id)
+    ensembleMemberIds = (members ?? []).map(m => m.comedian_id as string).filter(Boolean)
   }
 
   const performer = sh.performer_type === 'elenco' ? (sh.ensemble?.name ?? '—') : (sh.comedian?.stage_name ?? '—')
@@ -85,6 +97,8 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
     performer,
     performerType: sh.performer_type,
     comedianId: sh.comedian_id,
+    ensembleId: sh.ensemble_id,
+    ensembleMemberIds,
     theaterName: sh.theater?.name ?? null,
     currency: sh.currency,
     summary,

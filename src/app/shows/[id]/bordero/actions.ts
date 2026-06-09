@@ -26,7 +26,7 @@ export async function cerrarBordero(showId: string) {
       parte_productora_sala: r.parteProductoraSala,
       gastos_total: r.gastosTotal,
       total_neto: r.totalNeto,
-      artista_final: r.artistaFinal,
+      artista_final: r.artistaShare,   // SOLO el % del artista; el argentores va a su cuenta aparte
       productora_share: r.productoraShare,
       breakdown: r,
       closed_by: user?.id ?? null,
@@ -46,13 +46,34 @@ export async function cerrarBordero(showId: string) {
   const concept = `Borderó ${formatShowDate(ctx.showDate)}${ctx.theaterName ? ` · ${ctx.theaterName}` : ''}`
   const movements: Record<string, unknown>[] = []
 
-  // Comediante solista → su parte
-  if (ctx.performerType === 'comedian' && ctx.comedianId && r.artistaFinal !== 0) {
+  // Comediante solista → su parte (SOLO el %, sin el argentores)
+  if (ctx.performerType === 'comedian' && ctx.comedianId && r.artistaShare !== 0) {
     movements.push({
       party_type: 'comedian', party_id: ctx.comedianId, direction: 'credit',
-      amount: r.artistaFinal, currency: ctx.currency, concept,
+      amount: r.artistaShare, currency: ctx.currency, concept,
       source: 'bordero', show_id: showId, bordero_id: bordero.id, created_by: user?.id ?? null,
     })
+  }
+
+  // Elenco → la parte del artista (sin argentores) se reparte en partes iguales entre sus miembros
+  if (ctx.performerType === 'elenco' && ctx.ensembleMemberIds.length > 0 && r.artistaShare !== 0) {
+    const share = r.artistaShare / ctx.ensembleMemberIds.length
+    for (const memberId of ctx.ensembleMemberIds) {
+      movements.push({
+        party_type: 'comedian', party_id: memberId, direction: 'credit',
+        amount: share, currency: ctx.currency, concept,
+        source: 'bordero', show_id: showId, bordero_id: bordero.id, created_by: user?.id ?? null,
+      })
+    }
+  }
+
+  // Argentores → cuenta aparte (no a la cuenta corriente principal). Solo solistas; el dúo
+  // se carga a mano porque el trámite lo hace un solo miembro. Conserva el estado "cobrado".
+  if (ctx.performerType === 'comedian' && ctx.comedianId && r.artistaDeductions > 0) {
+    await supabase.from('argentores_entries').upsert({
+      show_id: showId, comedian_id: ctx.comedianId,
+      amount: r.artistaDeductions, currency: ctx.currency,
+    }, { onConflict: 'show_id,comedian_id' })
   }
 
   // Equipo etiquetado en líneas de gasto → su pago

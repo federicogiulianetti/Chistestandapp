@@ -75,6 +75,13 @@ const adminModules: ModuleCard[] = [
     available: true,
   },
   {
+    title: 'Argentores',
+    description: 'Lo que cada comediante cobra de Argentores y qué ya cobró.',
+    href: '/argentores',
+    icon: '🎟️',
+    available: true,
+  },
+  {
     title: 'Equipo y accesos',
     description: 'Invitá comediantes y equipo, y gestioná sus accesos.',
     href: '/equipo',
@@ -190,6 +197,13 @@ const otherModules: ModuleCard[] = [
     description: 'Lo que llevás ganado, cobrado y lo que falta cobrar.',
     href: '/mi-cuenta',
     icon: '🧮',
+    available: true,
+  },
+  {
+    title: 'Argentores',
+    description: 'Marcá lo que cobraron de Argentores tus comedianes asignados.',
+    href: '/argentores',
+    icon: '🎟️',
     available: true,
   },
   {

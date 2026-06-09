@@ -4,7 +4,9 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { arDateKey } from '@/lib/shows'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
+import { type ArgentoresEntry } from '@/lib/argentores'
 import { addMovement, deleteMovement } from '@/app/cuentas/actions'
+import ArgentoresLedger from '@/components/ArgentoresLedger'
 
 export default async function CuentaPage({
   params,
@@ -58,6 +60,25 @@ export default async function CuentaPage({
     running.set(m.currency, next)
     return { m, running: next }
   }).reverse()
+
+  // Cuenta de Argentores (solo comediantes): plata que cobran de Argentores aparte
+  let argEntries: ArgentoresEntry[] = []
+  if (type === 'comedian') {
+    const { data: argData } = await supabase
+      .from('argentores_entries')
+      .select('id, show_id, comedian_id, amount, currency, collected, collected_at, show:show_id(show_date, city, theater:theater_id(name))')
+      .eq('comedian_id', id)
+    type RawArg = {
+      id: string; show_id: string; comedian_id: string; amount: number; currency: string
+      collected: boolean; collected_at: string | null
+      show: { show_date: string | null; city: string | null; theater: { name: string | null } | null } | null
+    }
+    argEntries = ((argData ?? []) as unknown as RawArg[]).map(a => ({
+      id: a.id, show_id: a.show_id, comedian_id: a.comedian_id, amount: Number(a.amount),
+      currency: a.currency, collected: a.collected, collected_at: a.collected_at,
+      show_date: a.show?.show_date ?? null, theater_name: a.show?.theater?.name ?? null, city: a.show?.city ?? null,
+    })).sort((x, y) => (y.show_date ?? '').localeCompare(x.show_date ?? ''))
+  }
 
   const todayKey = arDateKey(new Date().toISOString())
   const addAction = addMovement.bind(null, type, id)
@@ -163,6 +184,17 @@ export default async function CuentaPage({
             </tbody>
           </table>
         </section>
+
+        {/* Cuenta aparte de Argentores (solo comediantes) */}
+        {type === 'comedian' && (
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-lg font-semibold">🎟️ Argentores (cuenta aparte)</h2>
+              <p className="text-gray-400 text-sm">Plata que recauda Argentores y el comediante cobra por trámite. Marcá lo que ya cobró.</p>
+            </div>
+            <ArgentoresLedger entries={argEntries} canToggle revalidate={`/cuentas/${type}/${id}`} />
+          </section>
+        )}
       </div>
     </main>
   )

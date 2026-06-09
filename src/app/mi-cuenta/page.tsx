@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
+import { type ArgentoresEntry } from '@/lib/argentores'
+import ArgentoresLedger from '@/components/ArgentoresLedger'
 
 export default async function MiCuentaPage() {
   const { user, profile } = await getUserAndProfile()
@@ -31,6 +33,25 @@ export default async function MiCuentaPage() {
     running.set(m.currency, next)
     return { m, running: next }
   }).reverse()
+
+  // Cuenta de Argentores (read-only para el comediante)
+  let argEntries: ArgentoresEntry[] = []
+  if (com) {
+    const { data: argData } = await supabase
+      .from('argentores_entries')
+      .select('id, show_id, comedian_id, amount, currency, collected, collected_at, show:show_id(show_date, city, theater:theater_id(name))')
+      .eq('comedian_id', com.id)
+    type RawArg = {
+      id: string; show_id: string; comedian_id: string; amount: number; currency: string
+      collected: boolean; collected_at: string | null
+      show: { show_date: string | null; city: string | null; theater: { name: string | null } | null } | null
+    }
+    argEntries = ((argData ?? []) as unknown as RawArg[]).map(a => ({
+      id: a.id, show_id: a.show_id, comedian_id: a.comedian_id, amount: Number(a.amount),
+      currency: a.currency, collected: a.collected, collected_at: a.collected_at,
+      show_date: a.show?.show_date ?? null, theater_name: a.show?.theater?.name ?? null, city: a.show?.city ?? null,
+    })).sort((x, y) => (y.show_date ?? '').localeCompare(x.show_date ?? ''))
+  }
 
   return (
     <main className="min-h-screen bg-black text-white p-8">
@@ -90,6 +111,17 @@ export default async function MiCuentaPage() {
             </tbody>
           </table>
         </section>
+
+        {/* Cuenta de Argentores (lo cobra el comediante por trámite; lo marca el productor) */}
+        {com && (
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-lg font-semibold">🎟️ Argentores</h2>
+              <p className="text-gray-400 text-sm">Plata que cobrás de Argentores por trámite, aparte del borderó. El estado de cobro lo marca tu productor.</p>
+            </div>
+            <ArgentoresLedger entries={argEntries} canToggle={false} revalidate="/mi-cuenta" />
+          </section>
+        )}
       </div>
     </main>
   )
