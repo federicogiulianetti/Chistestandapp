@@ -10,7 +10,7 @@ type ModuleCard = {
   available: boolean
 }
 
-const modules: ModuleCard[] = [
+const adminModules: ModuleCard[] = [
   {
     title: 'Comediantes y Elencos',
     description: 'Gestioná comediantes solistas y elencos.',
@@ -83,10 +83,43 @@ const modules: ModuleCard[] = [
   },
 ]
 
+const comedianModules: ModuleCard[] = [
+  {
+    title: 'Mi cuenta corriente',
+    description: 'Lo que llevás ganado, cobrado y lo que falta cobrar.',
+    href: '/mi-cuenta',
+    icon: '🧮',
+    available: true,
+  },
+  {
+    title: 'Mis fechas',
+    description: 'Tus shows con teatro, fecha y estado.',
+    href: '/mis-fechas',
+    icon: '📅',
+    available: true,
+  },
+]
+
+const otherModules: ModuleCard[] = [
+  {
+    title: 'Mi cuenta corriente',
+    description: 'Lo que llevás ganado, cobrado y lo que falta cobrar.',
+    href: '/mi-cuenta',
+    icon: '🧮',
+    available: true,
+  },
+]
+
 export default async function DashboardPage() {
   const { profile } = await getUserAndProfile()
   const displayName = profile.full_name || 'usuario'
   const roleLabel = roleLabels[profile.role]
+
+  const modules = profile.role === 'admin'
+    ? adminModules
+    : profile.role === 'comediante'
+    ? comedianModules
+    : otherModules
 
   return (
     <main className="min-h-screen bg-black text-white p-8">
