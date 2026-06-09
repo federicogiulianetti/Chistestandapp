@@ -13,6 +13,7 @@ export interface ShowData {
   status?: string
   capacity?: number | null
   ticket_price?: number | null
+  spectacle?: string | null
   reserved_seats?: number | null
   courtesy_count?: number | null
   on_sale_date?: string | null
@@ -266,6 +267,12 @@ export default function ShowForm({
               name="show_date"
               value={showDate ? new Date(showDate).toISOString() : ''}
             />
+          </div>
+
+          <div>
+            <label htmlFor="spectacle" className={lbl}>🎟️ Espectáculo</label>
+            <input id="spectacle" name="spectacle" type="text" defaultValue={s.spectacle ?? ''}
+              placeholder="Ej: Crónico, Artesanal, Purga…" className={inp(false)} />
           </div>
 
           <div>

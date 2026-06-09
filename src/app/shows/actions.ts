@@ -43,6 +43,7 @@ async function buildShowData(formData: FormData) {
     reserved_seats: num(formData, 'reserved_seats') ?? 0,
     courtesy_count: num(formData, 'courtesy_count') ?? 0,
     on_sale_date: (formData.get('on_sale_date') as string) || null,
+    spectacle: (formData.get('spectacle') as string)?.trim() || null,
     is_pautada: formData.get('is_pautada') === 'on',
     deal_type: (formData.get('deal_type') as string) || null,
     deal_fixed_amount: num(formData, 'deal_fixed_amount'),
