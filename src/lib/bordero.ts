@@ -82,8 +82,10 @@ export function computeBordero(input: BorderoInput): BorderoResult {
   const totalNeto = parteProductoraSala - gastosTotal
 
   // 5. Reparto con el artista (el mayor es para el artista)
+  // Regla: si la fecha da pérdida (neto negativo), la productora la absorbe entera →
+  // el artista cobra 0% y la pérdida va 100% a la productora.
   const artistPct = input.artistPercentage ?? 0
-  const artistaShare = totalNeto * (artistPct / 100)
+  const artistaShare = totalNeto < 0 ? 0 : totalNeto * (artistPct / 100)
   const productoraShare = totalNeto - artistaShare
   const artistaFinal = artistaShare + artistaDeductions
 
