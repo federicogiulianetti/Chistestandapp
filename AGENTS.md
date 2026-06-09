@@ -116,6 +116,20 @@ Esta es la columna vertebral. La entidad **central y keystone es** `shows` **(Fe
 - Un **comediante** tiene muchos **shows**, una **cuenta corriente**, **métricas de redes**, **productores asignados** (assignments).
 - Un **gasto** puede repartirse entre **varios shows**.
 
+### Arquitectura de los módulos de plata (Ventas / Gastos / Borderós)
+
+Todo en la operación cuelga de la **fecha** (`shows`, módulo keystone). Los tres módulos de plata se separan así:
+
+- **Ventas** (tabla propia, FK a `shows`): registra las entradas vendidas por fecha, idealmente **día a día** para reconstruir la curva de venta. Distingue **vendidas** (pagas) de **cortesías** (regaladas) — las cortesías ocupan butaca pero **no cuentan para la liquidación**. De acá salen la ocupación, la curva de venta y el indicador "viene bien/mal".
+- **Gastos** (tabla propia, FK a `shows`): registra las líneas de gasto por fecha (categoría + monto). Debe soportar el caso de un **gasto que se reparte entre varias fechas** (punto 7 del roadmap). Son datos de entrada que se cargan a medida que ocurren.
+- **Borderós** (capa de **cálculo**, no de datos crudos): lee de `shows` (el arreglo: `deal_type`/`deal_fixed`/`deal_percentage`, ya editable por fecha), de **Ventas** y de **Gastos**, y produce la liquidación de la fecha:
+  - liquidación = (entradas vendidas × precio) → aplica el arreglo (fijo o %) → resta los gastos asociados → **neto**.
+  - El borderó es **descargable (PDF)** y consultable por comediantes y admin (cada uno lo suyo). No guarda datos crudos; a lo sumo guarda el **snapshot/PDF final**.
+
+**Orden de construcción:** Ventas → Gastos → Borderós (el borderó va último porque depende de los otros dos).
+
+**Precarga del histórico:** los datos viejos están en planillas en formato **"ancho"** (una columna por show, con filas de ventas/gastos/arreglo). La base es **"larga"** (una fila por show + filas relacionadas), así que la precarga deberá **transponer** ese formato.
+
 ---
 
 ## 6. Módulos / Funcionalidades (los 13 puntos)
