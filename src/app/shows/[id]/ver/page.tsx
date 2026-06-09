@@ -57,11 +57,26 @@ export default async function ShowViewPage({
             <h1 className="text-3xl font-bold">
               {show.performer_type === 'elenco' ? '🎭' : '🎤'} {performer}
             </h1>
-            {canManage && (
-              <Link href={`/shows/${show.id}`} className="px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition text-sm flex-shrink-0">
-                Editar
+            <div className="flex gap-2 flex-shrink-0">
+              <Link href={`/shows/${show.id}/ventas`} className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">
+                💰 Ventas
               </Link>
-            )}
+              {canManage && (
+                <Link href={`/shows/${show.id}/gastos`} className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">
+                  🧾 Gastos
+                </Link>
+              )}
+              {canManage && (
+                <Link href={`/shows/${show.id}/bordero`} className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">
+                  📄 Borderó
+                </Link>
+              )}
+              {canManage && (
+                <Link href={`/shows/${show.id}`} className="px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition text-sm">
+                  Editar
+                </Link>
+              )}
+            </div>
           </div>
           <span className={`inline-block mt-2 px-2 py-1 rounded text-xs ${st.badge}`}>{st.label}</span>
         </div>

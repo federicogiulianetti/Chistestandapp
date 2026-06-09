@@ -13,11 +13,24 @@ export interface ShowData {
   status?: string
   capacity?: number | null
   ticket_price?: number | null
+  reserved_seats?: number | null
+  courtesy_count?: number | null
+  on_sale_date?: string | null
   is_pautada?: boolean
   deal_type?: string | null
   deal_fixed_amount?: number | null
   deal_percentage?: number | null
+  artist_percentage?: number | null
+  deductions?: { label: string; percentage: number | null; fixed_amount: number | null; goes_to_artist: boolean }[]
   notes?: string | null
+}
+
+interface DedRow {
+  id: number
+  label: string
+  percentage: string
+  fixed_amount: string
+  goes_to_artist: boolean
 }
 
 export interface PerformerOption {
@@ -85,6 +98,19 @@ export default function ShowForm({
   const [dealType, setDealType] = useState(s.deal_type ?? '')
   const [dealFixed, setDealFixed] = useState(s.deal_fixed_amount != null ? String(s.deal_fixed_amount) : '')
   const [dealPct, setDealPct] = useState(s.deal_percentage != null ? String(s.deal_percentage) : '')
+
+  const [deductions, setDeductions] = useState<DedRow[]>(
+    (s.deductions ?? []).map((d, i) => ({
+      id: i + 1,
+      label: d.label,
+      percentage: d.percentage != null ? String(d.percentage) : '',
+      fixed_amount: d.fixed_amount != null ? String(d.fixed_amount) : '',
+      goes_to_artist: d.goes_to_artist,
+    }))
+  )
+  const addDed = () => setDeductions(prev => [...prev, { id: Date.now(), label: '', percentage: '', fixed_amount: '', goes_to_artist: false }])
+  const removeDed = (id: number) => setDeductions(prev => prev.filter(d => d.id !== id))
+  const updateDed = (id: number, patch: Partial<DedRow>) => setDeductions(prev => prev.map(d => (d.id === id ? { ...d, ...patch } : d)))
 
   // Al elegir un teatro, heredamos capacidad y arreglo como default (editables)
   const onTheaterChange = (id: string) => {
@@ -298,9 +324,30 @@ export default function ShowForm({
                 value={capacity} onChange={e => setCapacity(e.target.value)} className={inp(false)} />
             </div>
             <div>
-              <label htmlFor="ticket_price" className={lbl}>💵 Precio de entrada ($)</label>
+              <label htmlFor="ticket_price" className={lbl}>💵 Precio actual ($)</label>
               <input id="ticket_price" name="ticket_price" type="number" step="0.01" min="0"
                 defaultValue={s.ticket_price ?? ''} className={inp(false)} />
+              <p className="text-xs text-gray-500 mt-1">Se autocompleta al cargar ventas; cada carga guarda el precio de ese día.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="reserved_seats" className={lbl}>🚫 Reservadas</label>
+              <input id="reserved_seats" name="reserved_seats" type="number" min="0"
+                defaultValue={s.reserved_seats ?? 0} className={inp(false)} />
+              <p className="text-xs text-gray-500 mt-1">Butacas que no salen a la venta.</p>
+            </div>
+            <div>
+              <label htmlFor="courtesy_count" className={lbl}>🎟️ Cortesías (free)</label>
+              <input id="courtesy_count" name="courtesy_count" type="number" min="0"
+                defaultValue={s.courtesy_count ?? 0} className={inp(false)} />
+              <p className="text-xs text-gray-500 mt-1">Regaladas: ocupan butaca, no pagan.</p>
+            </div>
+            <div>
+              <label htmlFor="on_sale_date" className={lbl}>📅 Salió a la venta</label>
+              <input id="on_sale_date" name="on_sale_date" type="date"
+                defaultValue={s.on_sale_date ?? ''} className={inp(false)} />
             </div>
           </div>
 
@@ -322,12 +369,52 @@ export default function ShowForm({
                 disabled={dealType !== 'fixed'} className={inp(dealType !== 'fixed')} />
             </div>
             <div>
-              <label htmlFor="deal_percentage" className={lbl}>📈 Porcentaje (%)</label>
+              <label htmlFor="deal_percentage" className={lbl}>📈 Porcentaje productora (%)</label>
               <input id="deal_percentage" name="deal_percentage" type="number" step="0.01" min="0" max="100"
                 value={dealPct} onChange={e => setDealPct(e.target.value)}
                 disabled={dealType !== 'percentage'} className={inp(dealType !== 'percentage')} />
             </div>
           </div>
+
+          <div>
+            <label htmlFor="artist_percentage" className={lbl}>🎤 % del artista (reparto final)</label>
+            <input id="artist_percentage" name="artist_percentage" type="number" step="0.01" min="0" max="100"
+              defaultValue={s.artist_percentage ?? ''} className={inp(false)} />
+            <p className="text-xs text-gray-500 mt-1">El mayor es para el artista; la productora se lleva el resto. Varía gira vs CABA/AMBA.</p>
+          </div>
+        </section>
+
+        {/* ── IMPUESTOS SOBRE LA RECAUDACIÓN ── */}
+        <section className={sec}>
+          <h2 className="text-lg font-semibold">🧾 Impuestos sobre la recaudación</h2>
+          <p className="text-xs text-gray-400">Se descuentan ANTES del reparto con la sala (Argentores, SADAIC, AADET, IIBB, comisión ticketera…).</p>
+
+          <div className="space-y-3">
+            {deductions.map((d, index) => (
+              <div key={d.id} className="border border-zinc-800 rounded-lg p-3 space-y-2">
+                <div className="flex gap-2 items-center">
+                  <input name={`ded_label_${index}`} type="text" placeholder="Impuesto (ej: Argentores)"
+                    value={d.label} onChange={e => updateDed(d.id, { label: e.target.value })} className={inp(false)} />
+                  <button type="button" onClick={() => removeDed(d.id)} className="text-red-400 hover:text-red-300 text-sm px-1 flex-shrink-0">✕</button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input name={`ded_pct_${index}`} type="number" step="0.01" min="0" placeholder="% sobre recaudación"
+                    value={d.percentage} onChange={e => updateDed(d.id, { percentage: e.target.value })} className={inp(false)} />
+                  <input name={`ded_fixed_${index}`} type="number" step="0.01" min="0" placeholder="o monto fijo $"
+                    value={d.fixed_amount} onChange={e => updateDed(d.id, { fixed_amount: e.target.value })} className={inp(false)} />
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" name={`ded_artist_${index}`} className={chk}
+                    checked={d.goes_to_artist} onChange={e => updateDed(d.id, { goes_to_artist: e.target.checked })} />
+                  🎤 Lo cobra el artista (ej: Argentores, si el artista es el autor)
+                </label>
+              </div>
+            ))}
+          </div>
+
+          <button type="button" onClick={addDed} className="text-sm text-gray-400 hover:text-white transition">
+            + Agregar impuesto
+          </button>
         </section>
 
         {/* ── NOTAS ── */}

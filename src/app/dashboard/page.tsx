@@ -51,7 +51,28 @@ const modules: ModuleCard[] = [
     description: 'Curva diaria de ventas y métricas por show.',
     href: '/sales',
     icon: '💰',
-    available: false,
+    available: true,
+  },
+  {
+    title: 'Ads / Publicidad',
+    description: 'Gasto de pauta (Meta / Google) por fecha.',
+    href: '/ads',
+    icon: '📣',
+    available: true,
+  },
+  {
+    title: 'Cuentas corrientes',
+    description: 'Ganado, cobrado y saldo de cada persona del equipo.',
+    href: '/cuentas',
+    icon: '🧮',
+    available: true,
+  },
+  {
+    title: 'Mis ganancias',
+    description: 'Lo que gana la productora por comediante. Privado.',
+    href: '/ganancias',
+    icon: '🔒',
+    available: true,
   },
 ]
 

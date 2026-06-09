@@ -29,7 +29,7 @@ export default async function ShowDetailPage({
   const supabase = await createClient()
   const { data: show } = await supabase
     .from('shows')
-    .select('*')
+    .select('*, deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist)')
     .eq('id', id)
     .is('deleted_at', null)
     .single()

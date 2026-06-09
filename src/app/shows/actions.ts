@@ -40,13 +40,46 @@ async function buildShowData(formData: FormData) {
     status: (formData.get('status') as string) || 'tentativa',
     capacity: num(formData, 'capacity'),
     ticket_price: num(formData, 'ticket_price'),
+    reserved_seats: num(formData, 'reserved_seats') ?? 0,
+    courtesy_count: num(formData, 'courtesy_count') ?? 0,
+    on_sale_date: (formData.get('on_sale_date') as string) || null,
     is_pautada: formData.get('is_pautada') === 'on',
     deal_type: (formData.get('deal_type') as string) || null,
     deal_fixed_amount: num(formData, 'deal_fixed_amount'),
     deal_percentage: num(formData, 'deal_percentage'),
+    artist_percentage: num(formData, 'artist_percentage'),
     city,
     province,
     notes: (formData.get('notes') as string) || null,
+  }
+}
+
+// Junta los impuestos sobre la recaudación del form (ded_label_i, ded_pct_i, ded_fixed_i, ded_artist_i)
+function collectDeductions(formData: FormData, showId: string) {
+  const out: { show_id: string; label: string; percentage: number | null; fixed_amount: number | null; goes_to_artist: boolean }[] = []
+  for (const [key, value] of formData.entries()) {
+    const m = key.match(/^ded_label_(\d+)$/)
+    if (!m) continue
+    const label = value?.toString().trim()
+    if (!label) continue
+    const i = m[1]
+    out.push({
+      show_id: showId,
+      label,
+      percentage: num(formData, `ded_pct_${i}`),
+      fixed_amount: num(formData, `ded_fixed_${i}`),
+      goes_to_artist: formData.get(`ded_artist_${i}`) === 'on',
+    })
+  }
+  return out
+}
+
+async function replaceDeductions(showId: string, formData: FormData) {
+  const supabase = await createClient()
+  await supabase.from('show_deductions').delete().eq('show_id', showId)
+  const rows = collectDeductions(formData, showId)
+  if (rows.length > 0) {
+    await supabase.from('show_deductions').insert(rows)
   }
 }
 
@@ -91,6 +124,8 @@ export async function createShow(formData: FormData) {
     redirect(`/shows/new?error=${encodeURIComponent(msg)}`)
   }
 
+  await replaceDeductions(show.id, formData)
+
   revalidatePath('/shows')
   redirect(`/shows/${show.id}`)
 }
@@ -116,6 +151,8 @@ export async function updateShow(id: string, formData: FormData) {
     const msg = error.code === '23505' ? CLASH_MSG : error.message
     redirect(`/shows/${id}?error=${encodeURIComponent(msg)}`)
   }
+
+  await replaceDeductions(id, formData)
 
   revalidatePath('/shows')
   revalidatePath(`/shows/${id}`)
