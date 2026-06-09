@@ -81,14 +81,84 @@ const adminModules: ModuleCard[] = [
     icon: '👤',
     available: true,
   },
+  {
+    title: 'Tareas del equipo',
+    description: 'Asigná y seguí las tareas de cada integrante.',
+    href: '/tareas',
+    icon: '✅',
+    available: true,
+  },
+  {
+    title: 'Organigrama',
+    description: 'Quién es quién y qué productores tiene cada comediante.',
+    href: '/organigrama',
+    icon: '🧩',
+    available: true,
+  },
+  {
+    title: 'Campañas / Ads',
+    description: 'Campañas de publicidad por fecha y comediante.',
+    href: '/campanias',
+    icon: '📈',
+    available: true,
+  },
+  {
+    title: 'Planificar año',
+    description: 'Calendario tentativo del año que viene sin pisar ciudades.',
+    href: '/planificacion',
+    icon: '🗓️',
+    available: true,
+  },
+  {
+    title: 'Asistente',
+    description: 'Resumen de tareas, fechas y dónde poner el foco.',
+    href: '/asistente',
+    icon: '🤖',
+    available: true,
+  },
+  {
+    title: 'Métricas de redes',
+    description: 'Crecimiento en redes de cada comediante (requiere conexión).',
+    href: '/redes',
+    icon: '📱',
+    available: true,
+  },
+  {
+    title: 'Google Calendar',
+    description: 'Crear eventos por fecha en el calendar de cada uno (requiere conexión).',
+    href: '/calendar-sync',
+    icon: '🔗',
+    available: true,
+  },
 ]
 
 const comedianModules: ModuleCard[] = [
+  {
+    title: 'Asistente',
+    description: 'Tu resumen: tareas, próximas fechas y saldo.',
+    href: '/asistente',
+    icon: '🤖',
+    available: true,
+  },
   {
     title: 'Mi cuenta corriente',
     description: 'Lo que llevás ganado, cobrado y lo que falta cobrar.',
     href: '/mi-cuenta',
     icon: '🧮',
+    available: true,
+  },
+  {
+    title: 'Mis borderós',
+    description: 'Las liquidaciones cerradas de tus fechas.',
+    href: '/mis-borderos',
+    icon: '📄',
+    available: true,
+  },
+  {
+    title: 'Mi Wrapped',
+    description: 'Tu historial: salas, ciudades, público y más.',
+    href: '/mi-wrapped',
+    icon: '✨',
     available: true,
   },
   {
@@ -98,14 +168,35 @@ const comedianModules: ModuleCard[] = [
     icon: '📅',
     available: true,
   },
+  {
+    title: 'Mis tareas',
+    description: 'Lo que tenés pendiente.',
+    href: '/tareas',
+    icon: '✅',
+    available: true,
+  },
 ]
 
 const otherModules: ModuleCard[] = [
+  {
+    title: 'Asistente',
+    description: 'Tu resumen: tareas, fechas y saldo.',
+    href: '/asistente',
+    icon: '🤖',
+    available: true,
+  },
   {
     title: 'Mi cuenta corriente',
     description: 'Lo que llevás ganado, cobrado y lo que falta cobrar.',
     href: '/mi-cuenta',
     icon: '🧮',
+    available: true,
+  },
+  {
+    title: 'Mis tareas',
+    description: 'Lo que tenés pendiente.',
+    href: '/tareas',
+    icon: '✅',
     available: true,
   },
 ]
