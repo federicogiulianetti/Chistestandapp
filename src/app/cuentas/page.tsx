@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile, roleLabels, type UserRole } from '@/lib/supabase/auth'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
+import { buildRateLookup, usdBalances, fmtUsd, type UsdRate } from '@/lib/usd'
 
 function balanceText(movs: Movement[]): string {
   const bals = balancesByCurrency(movs)
@@ -9,7 +10,7 @@ function balanceText(movs: Movement[]): string {
   return bals.map(b => fmt(b.balance, b.currency)).join(' · ')
 }
 
-function Table({ title, rows, basePath }: { title: string; rows: { id: string; name: string; sub?: string; movs: Movement[] }[]; basePath: string }) {
+function Table({ title, rows, basePath, rateFor }: { title: string; rows: { id: string; name: string; sub?: string; movs: Movement[] }[]; basePath: string; rateFor: (d: string | null) => number | null }) {
   return (
     <section className="mb-10">
       <h2 className="text-xl font-semibold mb-4">{title}</h2>
@@ -22,6 +23,7 @@ function Table({ title, rows, basePath }: { title: string; rows: { id: string; n
               <tr>
                 <th className="text-left px-4 py-3 text-sm font-semibold">Persona</th>
                 <th className="text-right px-4 py-3 text-sm font-semibold">Falta cobrar</th>
+                <th className="text-right px-4 py-3 text-sm font-semibold">USD real</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -33,6 +35,7 @@ function Table({ title, rows, basePath }: { title: string; rows: { id: string; n
                     {r.sub && <div className="text-xs text-gray-400">{r.sub}</div>}
                   </td>
                   <td className="px-4 py-3 text-right text-sm font-medium">{balanceText(r.movs)}</td>
+                  <td className="px-4 py-3 text-right text-sm text-gray-400">{fmtUsd(usdBalances(r.movs, rateFor).saldo)}</td>
                   <td className="px-4 py-3 text-right">
                     <Link href={`${basePath}/${r.id}`} className="text-blue-400 hover:underline text-sm">Ver cuenta</Link>
                   </td>
@@ -58,11 +61,13 @@ export default async function CuentasPage() {
   }
 
   const supabase = await createClient()
-  const [{ data: comedians }, { data: profiles }, { data: movements }] = await Promise.all([
+  const [{ data: comedians }, { data: profiles }, { data: movements }, { data: rateData }] = await Promise.all([
     supabase.from('comedians').select('id, stage_name').order('stage_name'),
     supabase.from('profiles').select('id, full_name, email, role').order('full_name'),
     supabase.from('account_movements').select('id, party_type, party_id, direction, amount, currency, movement_date, concept, source, show_id'),
+    supabase.from('usd_rates').select('rate_date, blue_sell, oficial_sell'),
   ])
+  const rateFor = buildRateLookup((rateData ?? []) as UsdRate[])
 
   const movs = (movements ?? []) as Movement[]
   const byParty = new Map<string, Movement[]>()
@@ -89,8 +94,8 @@ export default async function CuentasPage() {
           <p className="text-gray-400 mt-1">Lo que cada persona ganó (borderós) menos lo cobrado = lo que falta pagarle.</p>
         </div>
 
-        <Table title="🎤 Comediantes" rows={comedianRows} basePath="/cuentas/comedian" />
-        <Table title="👥 Equipo" rows={profileRows} basePath="/cuentas/profile" />
+        <Table title="🎤 Comediantes" rows={comedianRows} basePath="/cuentas/comedian" rateFor={rateFor} />
+        <Table title="👥 Equipo" rows={profileRows} basePath="/cuentas/profile" rateFor={rateFor} />
       </div>
     </main>
   )

@@ -10,12 +10,31 @@ export interface UsdRate {
 
 const CUTOVER = '2025-04-14'   // desde esta fecha: oficial; antes: blue
 
-// 'YYYY-MM-DD' del show en hora de Argentina (para alinear con las cotizaciones)
-export function dateKeyOf(showDate: string | null): string | null {
-  if (!showDate) return null
-  const d = new Date(showDate)
+// 'YYYY-MM-DD' (hora de Argentina) para alinear con las cotizaciones.
+// Acepta tanto un `date` ya en 'YYYY-MM-DD' (movement_date) como un timestamptz ISO (show_date).
+export function dateKeyOf(value: string | null): string | null {
+  if (!value) return null
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
+  const d = new Date(value)
   if (isNaN(d.getTime())) return null
   return d.toLocaleDateString('en-CA', { timeZone: 'America/Argentina/Buenos_Aires' })
+}
+
+// Balances en USD real a partir de movimientos de cuenta (solo ARS), convirtiendo cada
+// movimiento al dólar de su fecha. ganado = créditos, cobrado = débitos.
+export function usdBalances(
+  movs: { direction: string; amount: number; currency: string; movement_date: string | null }[],
+  rateFor: (dateKey: string | null) => number | null,
+): { ganado: number; cobrado: number; saldo: number; sinRate: number } {
+  let ganado = 0, cobrado = 0, sinRate = 0
+  for (const m of movs) {
+    if (m.currency !== 'ARS') continue
+    const rate = rateFor(dateKeyOf(m.movement_date))
+    if (!rate) { sinRate++; continue }
+    const usd = (Number(m.amount) || 0) / rate
+    if (m.direction === 'credit') ganado += usd; else cobrado += usd
+  }
+  return { ganado, cobrado, saldo: ganado - cobrado, sinRate }
 }
 
 // Devuelve una función rateFor(dateKey) -> valor del dólar a usar ese día (o el último previo).

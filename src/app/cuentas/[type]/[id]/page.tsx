@@ -5,6 +5,7 @@ import { getUserAndProfile } from '@/lib/supabase/auth'
 import { arDateKey } from '@/lib/shows'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
 import { type ArgentoresEntry } from '@/lib/argentores'
+import { buildRateLookup, usdBalances, fmtUsd, type UsdRate } from '@/lib/usd'
 import { addMovement, deleteMovement } from '@/app/cuentas/actions'
 import ArgentoresLedger from '@/components/ArgentoresLedger'
 
@@ -51,6 +52,11 @@ export default async function CuentaPage({
 
   const movs = (movData ?? []) as Movement[]
   const bals = balancesByCurrency(movs)
+
+  // USD real: convierte cada movimiento ARS al dólar de su fecha (blue/oficial según corte)
+  const { data: rateData } = await supabase.from('usd_rates').select('rate_date, blue_sell, oficial_sell')
+  const usd = usdBalances(movs, buildRateLookup((rateData ?? []) as UsdRate[]))
+  const hasArs = bals.some(b => b.currency === 'ARS')
 
   // Saldo corriente por moneda (cronológico) y después invertimos para mostrar lo último primero
   const running = new Map<string, number>()
@@ -114,6 +120,27 @@ export default async function CuentaPage({
               </div>
             </div>
           ))
+        )}
+
+        {/* USD real (ajustado por inflación con el dólar de cada fecha) */}
+        {hasArs && (
+          <div>
+            <p className="text-xs text-gray-500 mb-2">💵 En dólares reales (cada movimiento al dólar de su fecha — blue hasta abr-2025, oficial después)</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <p className="text-xs text-gray-400">Ganado (USD)</p>
+                <p className="text-xl font-bold mt-1">{fmtUsd(usd.ganado)}</p>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <p className="text-xs text-gray-400">Cobrado (USD)</p>
+                <p className="text-xl font-bold mt-1">{fmtUsd(usd.cobrado)}</p>
+              </div>
+              <div className={`border rounded-lg p-4 ${usd.saldo > 0 ? 'bg-green-900/20 border-green-800' : 'bg-zinc-900 border-zinc-800'}`}>
+                <p className="text-xs text-gray-400">Falta cobrar (USD)</p>
+                <p className="text-xl font-bold mt-1">{fmtUsd(usd.saldo)}</p>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Cargar pago / ajuste */}
