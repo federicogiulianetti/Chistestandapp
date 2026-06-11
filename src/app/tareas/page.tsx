@@ -70,32 +70,35 @@ export default async function TareasPage({
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md">{sp.error}</div>}
 
-        {isAdmin && (
-          <form action={createTask} className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 space-y-3">
-            <h2 className="text-lg font-semibold">➕ Nueva tarea</h2>
-            <input name="title" type="text" required placeholder="Título de la tarea" className={inp} />
-            <textarea name="description" rows={2} placeholder="Detalle (opcional)" className={inp} />
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <form action={createTask} className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 space-y-3">
+          <h2 className="text-lg font-semibold">{isAdmin ? '➕ Nueva tarea' : '➕ Anotá un pendiente'}</h2>
+          {!isAdmin && <p className="text-xs text-gray-500">Lo que cargues acá es tuyo, y tu asistente te lo recuerda al día siguiente.</p>}
+          <input name="title" type="text" required placeholder="¿Qué hay que hacer?" className={inp} />
+          <textarea name="description" rows={2} placeholder="Detalle (opcional)" className={inp} />
+          <div className={`grid grid-cols-1 gap-3 ${isAdmin ? 'sm:grid-cols-4' : 'sm:grid-cols-2'}`}>
+            {isAdmin && (
               <select name="assignee_id" className={inp}>
                 <option value="">— Asignar a —</option>
                 {assignees.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
               </select>
-              <select name="priority" defaultValue="normal" className={inp}>
-                <option value="baja">Prioridad baja</option>
-                <option value="normal">Prioridad normal</option>
-                <option value="alta">Prioridad alta</option>
-              </select>
-              <input name="due_date" type="date" className={inp} />
+            )}
+            <select name="priority" defaultValue="normal" className={inp}>
+              <option value="baja">Prioridad baja</option>
+              <option value="normal">Prioridad normal</option>
+              <option value="alta">Prioridad alta</option>
+            </select>
+            <input name="due_date" type="date" className={inp} />
+            {isAdmin && (
               <select name="show_id" className={inp}>
                 <option value="">— Fecha (opcional) —</option>
                 {shows.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
               </select>
-            </div>
-            <div className="flex justify-end">
-              <button type="submit" className="px-5 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">Crear tarea</button>
-            </div>
-          </form>
-        )}
+            )}
+          </div>
+          <div className="flex justify-end">
+            <button type="submit" className="px-5 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">{isAdmin ? 'Crear tarea' : 'Anotar'}</button>
+          </div>
+        </form>
 
         {tasks.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">
@@ -130,11 +133,9 @@ export default async function TareasPage({
                         </button>
                       </form>
                     ))}
-                    {isAdmin && (
-                      <form action={deleteTask.bind(null, t.id)} className="ml-auto">
-                        <button type="submit" className="text-red-400 hover:text-red-300 text-xs">Eliminar</button>
-                      </form>
-                    )}
+                    <form action={deleteTask.bind(null, t.id)} className="ml-auto">
+                      <button type="submit" className="text-red-400 hover:text-red-300 text-xs">Eliminar</button>
+                    </form>
                   </div>
                 </div>
               )

@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { arDateKey, formatShowDate } from '@/lib/shows'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
+import AsistenteIA, { AsistenteSkeleton } from '@/components/AsistenteIA'
 
 function Stat({ label, value, href }: { label: string; value: React.ReactNode; href?: string }) {
   const inner = (
@@ -58,11 +60,12 @@ export default async function AsistentePage() {
   let pendientesLiquidar = 0
   if (isAdmin) {
     const [{ data: hechas }, { data: cerrados }] = await Promise.all([
-      supabase.from('shows').select('id').eq('status', 'hecha').is('deleted_at', null),
+      supabase.from('shows').select('id, notes').eq('status', 'hecha').is('deleted_at', null),
       supabase.from('borderos').select('show_id'),
     ])
     const cerradosSet = new Set((cerrados ?? []).map(b => b.show_id))
-    pendientesLiquidar = (hechas ?? []).filter(h => !cerradosSet.has(h.id)).length
+    // solo fechas reales (no la precarga histórica) sin borderó cerrado
+    pendientesLiquidar = (hechas ?? []).filter(h => !cerradosSet.has(h.id) && !String(h.notes ?? '').startsWith('import:')).length
   }
 
   return (
@@ -73,6 +76,11 @@ export default async function AsistentePage() {
           <h1 className="text-3xl font-bold mt-2">🤖 Tu asistente</h1>
           <p className="text-gray-400 mt-1">Resumen de cómo venís. Hoy es {todayKey}.</p>
         </div>
+
+        {/* Panorama generado por IA */}
+        <Suspense fallback={<AsistenteSkeleton variant="full" />}>
+          <AsistenteIA profile={profile} variant="full" />
+        </Suspense>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Stat label="Tareas pendientes" value={openTasks.length} href="/tareas" />
@@ -114,7 +122,7 @@ export default async function AsistentePage() {
         </section>
 
         <p className="text-xs text-gray-500">
-          💡 Próximamente este asistente va a darte consejos automáticos con IA (resúmenes, dónde poner el foco, estrategias de venta). Requiere conectar la Claude API.
+          💡 El panorama de arriba lo arma un asistente con IA a partir de tus datos reales (ventas, fechas, tareas y cuentas).
         </p>
       </div>
     </main>

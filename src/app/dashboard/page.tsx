@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { getUserAndProfile, roleLabels } from '@/lib/supabase/auth'
 import { logout } from '@/app/auth/actions'
+import AsistenteIA, { AsistenteSkeleton } from '@/components/AsistenteIA'
 
 type ModuleCard = {
   title: string
@@ -251,6 +253,13 @@ export default async function DashboardPage() {
             </button>
           </form>
         </div>
+
+        {/* Asistente IA: saludo + resumen de cómo viene todo */}
+        <section className="mb-10">
+          <Suspense fallback={<AsistenteSkeleton variant="dashboard" />}>
+            <AsistenteIA profile={profile} variant="dashboard" />
+          </Suspense>
+        </section>
 
         {/* Módulos */}
         <section>
