@@ -9,8 +9,9 @@
 - **Fase 2:** Ventas (curva día a día, ocupación, indicador), `/sales`.
 - **Fase 3 (plata):** Gastos (lista fija + sueltas + reparto entre fechas), Ads (Meta/Google + 30% impuestos digitales), **Borderós** (motor de liquidación verificado contra planilla real: impuestos → reparto sala → gastos → reparto artista, con cierre/snapshot), Cuentas corrientes (ganado/cobrado/saldo + pagos manuales), Ganancias (admin), Campañas.
 - **Fase 4 (permisos):** Invitaciones por email (`/equipo`, requiere `SUPABASE_SERVICE_ROLE_KEY`), RLS por rol (admin total; comediante ve solo lo suyo), dashboards por rol, `/mi-cuenta`, `/mis-fechas`, `/mis-borderos` (vista segura), `/mi-wrapped`.
-- **Otros:** Tareas, Organigrama/Asignaciones, Planificación (conflictos de ciudad), Asistente (resumen real), `spectacle` por fecha + filtro en Wrapped.
-- **Placeholders (requieren integración externa):** Métricas de redes, Google Calendar, Agente IA.
+- **Otros:** Tareas (cada uno crea las suyas auto-asignadas + admin asigna a cualquiera; policy RLS `users create own tasks`), Organigrama/Asignaciones, Planificación (conflictos de ciudad), `spectacle` por fecha + filtro en Wrapped.
+- **Agente IA (jul 2026):** ✅ Asistente con **Claude API (Opus 4.8)** en `/dashboard` y `/asistente`. Al entrar: saludo cálido + resumen de los días (resalta lo bueno) + consejos por rol + "lo que no se te puede pasar" (prioriza hoy/mañana). Para admin: **panorama del equipo** (cómo viene cada uno y qué tiene pendiente, agrupando tareas por persona). Código en `src/lib/ai/{anthropic,assistant}.ts` + `src/components/AsistenteIA.tsx`; corre server-side en cada carga con `<Suspense>`; salida estructurada (`output_config.format` json_schema). **Degrada con elegancia sin key** (admin ve recordatorio, el resto nada). Costo ~2–4 ¢ por carga. **Requiere `ANTHROPIC_API_KEY`** (ver Config pendiente).
+- **Placeholders (requieren integración externa):** Métricas de redes, Google Calendar.
 
 ## 📦 Precarga histórica de borderós (en curso)
 Pipeline en `C:\Users\feder\AppData\Local\Temp\xlsxtool\import-all.js` (Node + SheetJS, usa service-role de `.env.local`). **Idempotente** (re-correr no duplica). Marca las fechas con `notes = 'import:<año>'`. Loads con `node import-all.js load <comediante>`.
@@ -68,6 +69,7 @@ Pipeline en `C:\Users\feder\AppData\Local\Temp\xlsxtool\import-all.js` (Node + S
 
 ## ⚙️ Config pendiente de Fede
 - Cargar `SUPABASE_SERVICE_ROLE_KEY` en Vercel (ya está en `.env.local` local) para que las invitaciones funcionen en producción.
+- Cargar `ANTHROPIC_API_KEY` en Vercel (Settings → Environment Variables) + Redeploy, para que el **Agente IA** funcione en producción. La key se saca de console.anthropic.com (Individual + crédito); está en `.env.local` local. **Rotar la key** que se usó en jun/jul 2026 (se filtró en una captura).
 - Agregar redirect URLs en Supabase (Auth → URL Configuration): `http://localhost:3000/**` y `https://chistestandapp.vercel.app/**`.
 
 ## 🔧 Notas técnicas
