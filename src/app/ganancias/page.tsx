@@ -42,13 +42,23 @@ export default async function GananciasPage() {
   const agg = new Map<string, Agg>()
   let grandArs = 0, grandUsd = 0, sinCotizacionTotal = 0
   for (const b of rows) {
-    if (b.currency !== 'ARS') continue   // los borderós en moneda extranjera ya están en su moneda
     const performer = b.show?.performer_type === 'elenco' ? (b.show?.ensemble?.name ?? '—') : (b.show?.comedian?.stage_name ?? '—')
+    const cur = agg.get(performer) ?? { performer, ars: 0, usd: 0, count: 0, sinCotizacion: 0 }
+
+    if (b.currency === 'USD') {
+      // borderós internacionales: ya están en dólares, suman al USD real (no al nominal en pesos)
+      const usd = Number(b.productora_share) || 0
+      cur.usd += usd
+      cur.count += 1
+      agg.set(performer, cur)
+      grandUsd += usd
+      continue
+    }
+    if (b.currency !== 'ARS') continue   // otras monedas: no se suman
+
     const ars = Number(b.productora_share) || 0
     const rate = rateFor(dateKeyOf(b.show?.show_date ?? null))
     const usd = rate ? ars / rate : 0
-
-    const cur = agg.get(performer) ?? { performer, ars: 0, usd: 0, count: 0, sinCotizacion: 0 }
     cur.ars += ars
     cur.usd += usd
     cur.count += 1

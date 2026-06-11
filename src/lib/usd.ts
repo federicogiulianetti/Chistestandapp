@@ -20,18 +20,25 @@ export function dateKeyOf(value: string | null): string | null {
   return d.toLocaleDateString('en-CA', { timeZone: 'America/Argentina/Buenos_Aires' })
 }
 
-// Balances en USD real a partir de movimientos de cuenta (solo ARS), convirtiendo cada
-// movimiento al dólar de su fecha. ganado = créditos, cobrado = débitos.
+// Balances en USD real a partir de movimientos de cuenta. Los movimientos en ARS se
+// convierten al dólar de su fecha; los movimientos ya en USD (borderós internacionales)
+// se suman directos. ganado = créditos, cobrado = débitos.
 export function usdBalances(
   movs: { direction: string; amount: number; currency: string; movement_date: string | null }[],
   rateFor: (dateKey: string | null) => number | null,
 ): { ganado: number; cobrado: number; saldo: number; sinRate: number } {
   let ganado = 0, cobrado = 0, sinRate = 0
   for (const m of movs) {
-    if (m.currency !== 'ARS') continue
-    const rate = rateFor(dateKeyOf(m.movement_date))
-    if (!rate) { sinRate++; continue }
-    const usd = (Number(m.amount) || 0) / rate
+    let usd: number
+    if (m.currency === 'USD') {
+      usd = Number(m.amount) || 0              // ya está en dólares (internacional)
+    } else if (m.currency === 'ARS') {
+      const rate = rateFor(dateKeyOf(m.movement_date))
+      if (!rate) { sinRate++; continue }
+      usd = (Number(m.amount) || 0) / rate
+    } else {
+      continue                                  // otras monedas no se suman al USD real
+    }
     if (m.direction === 'credit') ganado += usd; else cobrado += usd
   }
   return { ganado, cobrado, saldo: ganado - cobrado, sinRate }
