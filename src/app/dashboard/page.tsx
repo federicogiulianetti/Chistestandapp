@@ -63,6 +63,13 @@ const adminModules: ModuleCard[] = [
     available: true,
   },
   {
+    title: 'Borderós',
+    description: 'Todas las liquidaciones cerradas, con buscador y descarga.',
+    href: '/borderos',
+    icon: '📄',
+    available: true,
+  },
+  {
     title: 'Cuentas corrientes',
     description: 'Ganado, cobrado y saldo de cada persona del equipo.',
     href: '/cuentas',
