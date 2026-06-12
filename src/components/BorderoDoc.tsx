@@ -2,8 +2,9 @@ import Image from 'next/image'
 import type { BorderoContext } from '@/app/shows/[id]/bordero/data'
 
 // Documento de borderó con el estilo del PDF de Chiste Stand Up.
-// Se usa tanto en la vista en pantalla como en la versión imprimible / PDF.
-// Siempre sobre papel blanco (como un documento).
+// Se usa en la vista en pantalla y en la versión imprimible (A4).
+// Para borderós históricos/cerrados muestra los TOTALES GUARDADOS y el desglose
+// TAL CUAL la planilla (percentage de la planilla; el monto exacto manda).
 
 function money(n: number, cur: string): string {
   const s = (Number(n) || 0).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
@@ -20,123 +21,176 @@ function fechaLarga(f: string | null): string {
   return day && m && y ? `${day}/${m}/${y}` : d
 }
 
+// flyers de espectáculos (extraídos de las planillas) — public/flyers/
+const FLYERS: Record<string, string> = {
+  'Crónico': 'cronico.png',
+  'Artesanal': 'artesanal.png',
+  'Anécdotas': 'anecdotas.jpg',
+  'Probando material': 'probando-material.png',
+  'Cheto y Choto': 'cheto-y-choto.png',
+  'Sí pero no': 'si-pero-no.png',
+  'Todo Navidad': 'todo-navidad.png',
+  'Hay Rabas': 'hay-rabas.png',
+  'Atropelló, mató y huyó': 'atropello-mato-y-huyo.png',
+  'Ya no se puede decir todo': 'ya-no-se-puede-decir-todo.jpg',
+  'Ángel Caído': 'angel-caido.png',
+  'En un confuso episodio': 'en-un-confuso-episodio.jpg',
+  'Deslices y desmanes': 'deslices-y-desmanes.png',
+  'Metanoia': 'metanoia.png',
+}
+
 const HEAD = { background: '#bcd6ec' } // celeste del header de tabla
 const TOTAL = { background: '#e5e7eb' } // gris de las filas de total
+const ADS_RE = /^ads\b|fb\/insta|iva servicios digitales|imp\.? y sellos|percepci[oó]n imp/i
 
 export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   const { result: b, summary, currency: cur } = ctx
-  // totales reales guardados (fuente de verdad para históricos); el desglose se pega de la planilla
+  // totales reales guardados (fuente de verdad); el desglose va tal cual la planilla
   const snap = ctx.snapshot
   const recaud = snap?.recaudacion ?? b.recaudacion
   const artistaFinal = snap?.artista_final ?? b.artistaFinal
   const productoraFinal = snap?.productora_share ?? b.productoraShare
   const netoFinal = snap?.total_neto ?? b.totalNeto
   const precio = ctx.ticketPrice ?? (summary.vendidas > 0 ? recaud / summary.vendidas : 0)
-  const teatroParte = b.netoSala !== null ? b.netoSala - b.parteProductoraSala : null
-  const prodPctSala = b.netoSala && b.netoSala !== 0 ? (b.parteProductoraSala / b.netoSala) * 100 : null
-  const teatroPctSala = prodPctSala !== null ? 100 - prodPctSala : null
 
-  const th = 'border border-gray-500 px-3 py-1.5 text-center font-semibold tracking-wide'
-  const td = 'border border-gray-500 px-3 py-1.5 text-center'
-  const tdL = 'border border-gray-500 px-3 py-1.5 text-left'
+  // desglose tal cual la planilla
+  const dedLines = ctx.deductionsRaw.map(d => ({
+    label: d.label,
+    pctTxt: d.percentage != null ? pct(d.percentage) : 'Fijo',
+    amount: d.fixed_amount ?? (d.percentage != null ? recaud * (d.percentage / 100) : 0),
+    note: d.notes ?? (d.goes_to_artist ? 'lo cobra el artista' : ''),
+  }))
+  const dedTotal = dedLines.reduce((a, l) => a + l.amount, 0)
+  const netoTrasImpuestos = recaud - dedTotal
+
+  // sala: % tal cual el arreglo guardado del show
+  const teatroParte = b.netoSala !== null ? b.netoSala - b.parteProductoraSala : null
+
+  // ocupación: asistencia (vendidas + free) / aforo
+  const ocupacion = ctx.capacity && ctx.capacity > 0 ? Math.round((summary.asistencia / ctx.capacity) * 100) : null
+
+  // gastos: separar los de Ads (van recuadrados)
+  const gastoRows: { label: string; amount: number; note: string | null; ads: boolean }[] = [
+    ...ctx.expenseLines.map(g => ({ label: g.category, amount: g.amount, note: g.notes, ads: ADS_RE.test(g.category) })),
+    ...(b.adSpendTotal > 0 ? [{ label: 'Ads (Meta / Google)', amount: b.adSpendTotal, note: null, ads: true }] : []),
+    ...(b.adSpendTotal > 0 ? b.adTaxLines.map(l => ({ label: l.label, amount: l.amount, note: null, ads: true })) : []),
+  ]
+  // mover los de ads al final, juntos (recuadro contiguo)
+  const normales = gastoRows.filter(g => !g.ads)
+  const adsRows = gastoRows.filter(g => g.ads)
+  const gastosTotal = gastoRows.reduce((a, g) => a + g.amount, 0)
+
+  const th = 'border border-gray-500 px-2 py-0.5 text-center font-semibold'
+  const td = 'border border-gray-500 px-2 py-0.5 text-center'
 
   return (
-    <div className="bg-white text-black mx-auto" style={{ maxWidth: 800, fontFamily: 'Arial, Helvetica, sans-serif', letterSpacing: '0.04em' }}>
-      {/* Cabecera */}
-      <div className="flex items-center justify-center gap-4 py-6 border-b border-gray-300">
-        <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={150} height={84} style={{ height: 56, width: 'auto' }} priority />
-        <span className="text-2xl font-extrabold tracking-widest">BORDERÓ</span>
+    <div className="bg-white text-black mx-auto" style={{ maxWidth: 800, fontFamily: 'Arial, Helvetica, sans-serif' }}>
+      {/* Cabecera: logo + separador + título */}
+      <div className="flex items-center justify-center gap-5 pt-5 pb-4">
+        <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={260} height={146} style={{ height: 88, width: 'auto' }} priority />
+        <div style={{ width: 2, height: 64, background: '#222' }} />
+        <span className="text-3xl" style={{ fontWeight: 500, letterSpacing: '0.18em' }}>BORDERÓ</span>
       </div>
 
-      {/* Sub-cabecera */}
-      <div className="flex justify-between text-sm font-semibold py-4 px-2">
-        <div>
-          <div>{ctx.performer}{ctx.spectacle ? ` — ${ctx.spectacle}` : ''}</div>
-          <div>{fechaLarga(ctx.showDate)}</div>
+      {/* Sub-cabecera: comediante + flyer / fecha · teatro / ciudad */}
+      <div className="flex items-center justify-between text-sm font-semibold py-3 px-3">
+        <div className="text-center">
+          <div className="flex items-center gap-3">
+            <span>{ctx.performer}</span>
+            {ctx.spectacle && FLYERS[ctx.spectacle] ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={`/flyers/${FLYERS[ctx.spectacle]}`} alt={ctx.spectacle} style={{ height: 34, width: 'auto' }} />
+            ) : ctx.spectacle ? <span>— {ctx.spectacle}</span> : null}
+          </div>
+          <div className="text-left">{fechaLarga(ctx.showDate)}</div>
         </div>
         <div className="text-right">
           <div>{ctx.theaterName ?? '—'}</div>
           <div>{ctx.city ?? ''}</div>
+          {ctx.capacity ? (
+            <div className="text-xs font-normal text-gray-700">
+              Capacidad: {ctx.capacity} · Ocupación: {ocupacion !== null ? `${ocupacion}%` : '—'}
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className="px-2 pb-8 space-y-5 text-sm">
+      <div className="px-3 pb-6 space-y-3 text-xs">
         {/* Recaudación */}
         <table className="w-full border-collapse">
           <thead><tr style={HEAD}><th className={th}>Entrada</th><th className={th}>Cantidad</th><th className={th}>Precio</th><th className={th}>Total</th></tr></thead>
           <tbody>
             <tr><td className={td}>Boletería</td><td className={td}>{summary.vendidas}</td><td className={td}>{money(precio, cur)}</td><td className={td}>{money(recaud, cur)}</td></tr>
-            <tr style={TOTAL} className="font-semibold"><td className={td} colSpan={2}>Total: {summary.vendidas}</td><td className={td} colSpan={2}>Bruto: {money(recaud, cur)}</td></tr>
+            {summary.courtesy > 0 && <tr><td className={td}>Free / Cortesías</td><td className={td}>{summary.courtesy}</td><td className={td}>$0</td><td className={td}>$0</td></tr>}
+            <tr style={TOTAL} className="font-semibold"><td className={td} colSpan={2}>Total: {summary.asistencia}</td><td className={td} colSpan={2}>Bruto: {money(recaud, cur)}</td></tr>
           </tbody>
         </table>
 
-        {/* Impuestos / Deducciones */}
-        {b.deductionLines.length > 0 && (
+        {/* Impuestos / Deducciones — tal cual la planilla */}
+        {dedLines.length > 0 && (
           <table className="w-full border-collapse">
             <thead><tr style={HEAD}><th className={th}>Impuestos / Deducciones</th><th className={th}>%</th><th className={th}>$</th><th className={th}>Comentarios</th></tr></thead>
             <tbody>
-              {b.deductionLines.map((l, i) => (
+              {dedLines.map((l, i) => (
                 <tr key={i}>
-                  <td className={tdL}>{l.label}</td>
-                  <td className={td}>{recaud > 0 ? pct((l.amount / recaud) * 100) : '—'}</td>
+                  <td className={td}>{l.label}</td>
+                  <td className={td}>{l.pctTxt}</td>
                   <td className={td}>{money(l.amount, cur)}</td>
-                  <td className={tdL}>{l.goesToArtist ? 'lo cobra el artista' : ''}</td>
+                  <td className={td}>{l.note}</td>
                 </tr>
               ))}
               <tr style={TOTAL} className="font-semibold">
                 <td className={td}>Bruto: {money(recaud, cur)}</td>
-                <td className={td} colSpan={2}>Deducir: {money(b.impuestosTotal, cur)}</td>
-                <td className={td}>Neto: {money(b.netoSala ?? b.recaudacion, cur)}</td>
+                <td className={td} colSpan={2}>Deducir: {money(dedTotal, cur)}</td>
+                <td className={td}>Neto: {money(netoTrasImpuestos, cur)}</td>
               </tr>
             </tbody>
           </table>
         )}
 
-        {/* Reparto con la sala */}
+        {/* Reparto con la sala — % del arreglo guardado */}
         {teatroParte !== null && (
           <table className="w-full border-collapse">
             <tbody>
-              <tr style={TOTAL} className="font-semibold"><td className={td}>Teatro: {teatroPctSala !== null ? pct(teatroPctSala) : ''}</td><td className={td}>Neto: {money(teatroParte, cur)}</td></tr>
-              <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {prodPctSala !== null ? pct(prodPctSala) : ''}</td><td className={td}>Neto: {money(b.parteProductoraSala, cur)}</td></tr>
+              <tr style={TOTAL} className="font-semibold"><td className={td}>Teatro: {pct(100 - (b.dealLabel.match(/(\d+(?:\.\d+)?)%/) ? Number(b.dealLabel.match(/(\d+(?:\.\d+)?)%/)![1]) : 0))}</td><td className={td}>{money(teatroParte, cur)}</td></tr>
+              <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {b.dealLabel.match(/(\d+(?:\.\d+)?)%/) ? pct(Number(b.dealLabel.match(/(\d+(?:\.\d+)?)%/)![1])) : b.dealLabel}</td><td className={td}>{money(b.parteProductoraSala, cur)}</td></tr>
             </tbody>
           </table>
         )}
 
-        {/* Gastos */}
-        {(ctx.expenseLines.length > 0 || b.gastosTotal > 0) && (
+        {/* Gastos — notas en Detalle; bloque Ads recuadrado */}
+        {gastoRows.length > 0 && (
           <table className="w-full border-collapse">
             <thead><tr style={HEAD}><th className={th}>Gasto</th><th className={th}>Monto</th><th className={th}>Detalle</th></tr></thead>
             <tbody>
-              {ctx.expenseLines.map((g, i) => (
-                <tr key={i}><td className={tdL}>{g.category}</td><td className={td}>{money(g.amount, cur)}</td><td className={tdL}></td></tr>
+              {normales.map((g, i) => (
+                <tr key={i}><td className={td}>{g.label}</td><td className={td}>{money(g.amount, cur)}</td><td className={td}>{g.note ?? ''}</td></tr>
               ))}
-              {b.adSpendTotal > 0 && <tr><td className={tdL}>Ads (Meta / Google)</td><td className={td}>{money(b.adSpendTotal, cur)}</td><td className={tdL}></td></tr>}
-              {b.adSpendTotal > 0 && b.adTaxLines.map((l, i) => (
-                <tr key={`t${i}`}><td className={tdL}>{l.label}</td><td className={td}>{money(l.amount, cur)}</td><td className={tdL}></td></tr>
-              ))}
-              <tr style={TOTAL} className="font-semibold"><td className={td}>Total: {money(b.gastosTotal, cur)}</td><td className={td} colSpan={2}>Neto: {money(netoFinal, cur)}</td></tr>
+              {adsRows.map((g, i) => {
+                const edge = {
+                  ...(i === 0 ? { borderTop: '2px solid #444' } : {}),
+                  ...(i === adsRows.length - 1 ? { borderBottom: '2px solid #444' } : {}),
+                }
+                return (
+                  <tr key={`a${i}`}>
+                    <td className={td} style={{ borderLeft: '2px solid #444', ...edge }}>{g.label}</td>
+                    <td className={td} style={edge}>{money(g.amount, cur)}</td>
+                    <td className={td} style={{ borderRight: '2px solid #444', ...edge }}>{g.note ?? ''}</td>
+                  </tr>
+                )
+              })}
+              <tr style={TOTAL} className="font-semibold"><td className={td}>Total: {money(gastosTotal, cur)}</td><td className={td} colSpan={2}>Neto: {money(netoFinal, cur)}</td></tr>
             </tbody>
           </table>
         )}
 
-        {/* Reparto final */}
+        {/* Reparto final — sin la palabra "Neto" */}
         <table className="w-full border-collapse">
           <tbody>
-            <tr style={TOTAL} className="font-semibold"><td className={td}>Artista: {pct(b.artistPercentage)}</td><td className={td}>Neto: {money(artistaFinal, cur)}</td></tr>
-            <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {pct(b.productoraPercentage)}</td><td className={td}>Neto: {money(productoraFinal, cur)}</td></tr>
+            <tr style={TOTAL} className="font-semibold"><td className={td}>Artista: {pct(b.artistPercentage)}</td><td className={td}>{money(artistaFinal, cur)}</td></tr>
+            <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {pct(b.productoraPercentage)}</td><td className={td}>{money(productoraFinal, cur)}</td></tr>
           </tbody>
         </table>
-
-        {/* Firmas */}
-        <div className="grid grid-cols-3 gap-6 pt-16 text-center text-xs">
-          {['Comediante', 'Productor', 'Chiste Stand Up'].map(s => (
-            <div key={s}>
-              <div className="border-t border-dashed border-gray-500 mb-1" />
-              <div className="font-semibold">Firma y aclaración</div>
-              <div>{s}</div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   )

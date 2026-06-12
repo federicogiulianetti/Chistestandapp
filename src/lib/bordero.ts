@@ -50,9 +50,11 @@ export const AD_TAX_RATES = [
 
 export function computeBordero(input: BorderoInput): BorderoResult {
   // 1. Impuestos sobre la recaudación (antes del reparto con la sala)
+  // Si una deducción tiene monto exacto Y porcentaje, el monto manda (el % es informativo,
+  // tal cual la planilla original). El % solo calcula cuando no hay monto.
   const deductionLines = input.deductions.map(d => ({
     label: d.label,
-    amount: d.percentage != null ? input.recaudacion * (d.percentage / 100) : (d.fixed_amount ?? 0),
+    amount: d.fixed_amount != null ? d.fixed_amount : (d.percentage != null ? input.recaudacion * (d.percentage / 100) : 0),
     goesToArtist: d.goes_to_artist,
   }))
   const impuestosTotal = deductionLines.reduce((a, l) => a + l.amount, 0)
