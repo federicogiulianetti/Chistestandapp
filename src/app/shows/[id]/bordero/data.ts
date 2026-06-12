@@ -11,20 +11,31 @@ export interface ExpensePayee {
   category: string
 }
 
+export interface ExpenseLine {
+  category: string
+  amount: number
+}
+
 export interface BorderoContext {
   showDate: string | null
   performer: string
+  spectacle: string | null
   performerType: string | null
   comedianId: string | null
   ensembleId: string | null
   ensembleMemberIds: string[]
   argentoresPorFuera: boolean
   theaterName: string | null
+  city: string | null
+  ticketPrice: number | null
   currency: string
   summary: SalesSummary
   result: BorderoResult
   expensePayees: ExpensePayee[]
+  expenseLines: ExpenseLine[]
   closed: { id: string; closed_at: string } | null
+  // valores reales guardados al cerrar (fuente de verdad para históricos/cerrados)
+  snapshot: { recaudacion: number; total_neto: number; artista_final: number; productora_share: number } | null
 }
 
 export async function loadBordero(showId: string): Promise<BorderoContext | null> {
@@ -32,7 +43,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
 
   const { data: show } = await supabase
     .from('shows')
-    .select('id, show_date, currency, deal_type, deal_fixed_amount, deal_percentage, artist_percentage, capacity, courtesy_count, reserved_seats, ticket_price, performer_type, comedian_id, ensemble_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist)')
+    .select('id, show_date, spectacle, city, currency, deal_type, deal_fixed_amount, deal_percentage, artist_percentage, capacity, courtesy_count, reserved_seats, ticket_price, performer_type, comedian_id, ensemble_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name, city), deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist)')
     .eq('id', showId)
     .is('deleted_at', null)
     .single()
@@ -43,17 +54,17 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
     supabase.from('ticket_sales').select('id, sale_date, qty_sold, unit_price, notes').eq('show_id', showId),
     supabase.from('expenses').select('amount, category, payee_type, payee_id').eq('show_id', showId),
     supabase.from('ad_spend').select('amount').eq('show_id', showId),
-    supabase.from('borderos').select('id, closed_at').eq('show_id', showId).maybeSingle(),
+    supabase.from('borderos').select('id, closed_at, recaudacion, total_neto, artista_final, productora_share').eq('show_id', showId).maybeSingle(),
   ])
 
   const sh = show as unknown as {
-    show_date: string | null; currency: string
+    show_date: string | null; spectacle: string | null; city: string | null; currency: string
     deal_type: string | null; deal_fixed_amount: number | null; deal_percentage: number | null; artist_percentage: number | null
     capacity: number | null; courtesy_count: number; reserved_seats: number; ticket_price: number | null
     performer_type: string | null; comedian_id: string | null; ensemble_id: string | null
     comedian: { stage_name: string | null } | null
     ensemble: { name: string | null } | null
-    theater: { name: string | null } | null
+    theater: { name: string | null; city: string | null } | null
     deductions: DeductionInput[]
   }
 
@@ -96,19 +107,34 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
       !!(e as { payee_type?: string }).payee_type && !!(e as { payee_id?: string }).payee_id)
     .map(e => ({ payee_type: e.payee_type, payee_id: e.payee_id, amount: Number(e.amount) || 0, category: e.category }))
 
+  const expenseLines: ExpenseLine[] = (expData ?? []).map(e => ({
+    category: (e as { category?: string }).category || 'Gasto',
+    amount: Number((e as { amount?: number }).amount) || 0,
+  }))
+
   return {
     showDate: sh.show_date,
     performer,
+    spectacle: sh.spectacle,
     performerType: sh.performer_type,
     comedianId: sh.comedian_id,
     ensembleId: sh.ensemble_id,
     ensembleMemberIds,
     argentoresPorFuera,
     theaterName: sh.theater?.name ?? null,
+    city: sh.city ?? sh.theater?.city ?? null,
+    ticketPrice: sh.ticket_price,
     currency: sh.currency,
     summary,
     result,
     expensePayees,
+    expenseLines,
     closed: borderoRow ? { id: borderoRow.id, closed_at: borderoRow.closed_at } : null,
+    snapshot: borderoRow ? {
+      recaudacion: Number(borderoRow.recaudacion) || 0,
+      total_neto: Number(borderoRow.total_neto) || 0,
+      artista_final: Number(borderoRow.artista_final) || 0,
+      productora_share: Number(borderoRow.productora_share) || 0,
+    } : null,
   }
 }
