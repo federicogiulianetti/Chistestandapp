@@ -86,23 +86,23 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   return (
     <div className="bg-white text-black mx-auto" style={{ maxWidth: 800, fontFamily: 'Arial, Helvetica, sans-serif' }}>
       {/* Cabecera: logo + separador + título */}
-      <div className="flex items-center justify-center gap-5 pt-5 pb-4">
-        <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={260} height={146} style={{ height: 88, width: 'auto' }} priority />
-        <div style={{ width: 2, height: 64, background: '#222' }} />
-        <span className="text-3xl" style={{ fontWeight: 500, letterSpacing: '0.18em' }}>BORDERÓ</span>
+      <div className="flex items-center justify-center gap-4 pt-5 pb-4">
+        <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={380} height={214} style={{ height: 128, width: 'auto' }} priority />
+        <div style={{ width: 2, height: 80, background: '#222' }} />
+        <span className="text-2xl" style={{ fontWeight: 500, letterSpacing: '0.04em' }}>Borderó</span>
       </div>
 
-      {/* Sub-cabecera: comediante + flyer / fecha · teatro / ciudad */}
+      {/* Sub-cabecera: comediante / flyer centrado / teatro · ciudad */}
       <div className="flex items-center justify-between text-sm font-semibold py-3 px-3">
-        <div className="text-center">
-          <div className="flex items-center gap-3">
-            <span>{ctx.performer}</span>
-            {ctx.spectacle && FLYERS[ctx.spectacle] ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={`/flyers/${FLYERS[ctx.spectacle]}`} alt={ctx.spectacle} style={{ height: 34, width: 'auto' }} />
-            ) : ctx.spectacle ? <span>— {ctx.spectacle}</span> : null}
-          </div>
-          <div className="text-left">{fechaLarga(ctx.showDate)}</div>
+        <div>
+          <div>{ctx.performer}</div>
+          <div>{fechaLarga(ctx.showDate)}</div>
+        </div>
+        <div className="flex-1 flex justify-center px-4">
+          {ctx.spectacle && FLYERS[ctx.spectacle] ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={`/flyers/${FLYERS[ctx.spectacle]}`} alt={ctx.spectacle} style={{ height: 64, width: 'auto', maxWidth: 260, objectFit: 'contain' }} />
+          ) : ctx.spectacle ? <span>{ctx.spectacle}</span> : null}
         </div>
         <div className="text-right">
           <div>{ctx.theaterName ?? '—'}</div>
