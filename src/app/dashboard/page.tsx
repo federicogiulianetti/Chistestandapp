@@ -63,7 +63,7 @@ const adminModules: ModuleCard[] = [
     available: true,
   },
   {
-    title: 'Borderós',
+    title: 'Bordereaux',
     description: 'Todas las liquidaciones cerradas, con buscador y descarga.',
     href: '/borderos',
     icon: '📄',

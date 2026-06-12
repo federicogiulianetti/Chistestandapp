@@ -76,7 +76,7 @@ export default async function BorderosPage({
       <main className="min-h-screen bg-black text-white p-8">
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 text-sm text-gray-400">
-            <Link href="/borderos" className="hover:text-white">Borderós</Link>
+            <Link href="/borderos" className="hover:text-white">Bordereaux</Link>
             {' / '}<Link href={`/borderos?quien=${encodeURIComponent(quien)}`} className="hover:text-white">{quien}</Link>
             {' / '}<span className="text-white">{anio}</span>
           </div>
@@ -101,7 +101,7 @@ export default async function BorderosPage({
       <main className="min-h-screen bg-black text-white p-8">
         <div className="max-w-3xl mx-auto">
           <div className="mb-6 text-sm text-gray-400">
-            <Link href="/borderos" className="hover:text-white">Borderós</Link>{' / '}<span className="text-white">{quien}</span>
+            <Link href="/borderos" className="hover:text-white">Bordereaux</Link>{' / '}<span className="text-white">{quien}</span>
           </div>
           <h1 className="text-3xl font-bold mb-6">{quien} — elegí un año</h1>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -127,7 +127,7 @@ export default async function BorderosPage({
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
           <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Borderós 📄</h1>
+          <h1 className="text-3xl font-bold mt-2">Bordereaux 📄</h1>
           <p className="text-gray-400 mt-1">Elegí un comediante para ver sus liquidaciones.</p>
         </div>
         {comedianes.length === 0 ? (

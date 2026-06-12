@@ -89,7 +89,7 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
       <div className="flex items-center justify-center gap-4 pt-5 pb-4">
         <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={380} height={214} style={{ height: 128, width: 'auto' }} priority />
         <div style={{ width: 2, height: 80, background: '#222' }} />
-        <span className="text-2xl" style={{ fontWeight: 500, letterSpacing: '0.04em' }}>Borderó</span>
+        <span className="text-2xl" style={{ fontWeight: 500, letterSpacing: '0.04em' }}>Bordereau</span>
       </div>
 
       {/* Sub-cabecera: comediante / flyer centrado / teatro · ciudad */}
@@ -98,10 +98,10 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
           <div>{ctx.performer}</div>
           <div>{fechaLarga(ctx.showDate)}</div>
         </div>
-        <div className="flex-1 flex justify-center px-4">
+        <div className="flex-1 flex justify-center px-4" style={{ alignSelf: 'flex-start', marginTop: -10 }}>
           {ctx.spectacle && FLYERS[ctx.spectacle] ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={`/flyers/${FLYERS[ctx.spectacle]}`} alt={ctx.spectacle} style={{ height: 64, width: 'auto', maxWidth: 260, objectFit: 'contain' }} />
+            <img src={`/flyers/${FLYERS[ctx.spectacle]}`} alt={ctx.spectacle} style={{ height: 84, width: 'auto', maxWidth: 320, objectFit: 'contain' }} />
           ) : ctx.spectacle ? <span>{ctx.spectacle}</span> : null}
         </div>
         <div className="text-right">
