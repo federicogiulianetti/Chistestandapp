@@ -60,7 +60,8 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
     label: d.label,
     pctTxt: d.percentage != null ? pct(d.percentage) : 'Fijo',
     amount: d.fixed_amount ?? (d.percentage != null ? recaud * (d.percentage / 100) : 0),
-    note: d.notes ?? (d.goes_to_artist ? 'lo cobra el artista' : ''),
+    note: d.notes ?? '',
+    argentores: /argentor|agadu/i.test(d.label),
   }))
   const dedTotal = dedLines.reduce((a, l) => a + l.amount, 0)
   const netoTrasImpuestos = recaud - dedTotal
@@ -132,7 +133,7 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
             <thead><tr style={HEAD}><th className={th}>Impuestos / Deducciones</th><th className={th}>%</th><th className={th}>$</th><th className={th}>Comentarios</th></tr></thead>
             <tbody>
               {dedLines.map((l, i) => (
-                <tr key={i}>
+                <tr key={i} style={l.argentores ? { background: '#ffff00' } : undefined}>
                   <td className={td}>{l.label}</td>
                   <td className={td}>{l.pctTxt}</td>
                   <td className={td}>{money(l.amount, cur)}</td>
