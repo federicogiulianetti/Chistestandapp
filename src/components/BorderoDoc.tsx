@@ -65,6 +65,7 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   }))
   const dedTotal = dedLines.reduce((a, l) => a + l.amount, 0)
   const netoTrasImpuestos = recaud - dedTotal
+  const argentoresTotal = dedLines.filter(l => l.argentores).reduce((a, l) => a + l.amount, 0)
 
   // sala: % tal cual el arreglo guardado del show
   const teatroParte = b.netoSala !== null ? b.netoSala - b.parteProductoraSala : null
@@ -185,10 +186,13 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
           </table>
         )}
 
-        {/* Reparto final — sin la palabra "Neto" */}
+        {/* Reparto final — sin la palabra "Neto". La fila "+ Argentores" SÍ se calcula: artista + argentores. */}
         <table className="w-full border-collapse">
           <tbody>
             <tr style={TOTAL} className="font-semibold"><td className={td}>Artista: {pct(b.artistPercentage)}</td><td className={td}>{money(artistaFinal, cur)}</td></tr>
+            {argentoresTotal > 0 && (
+              <tr style={TOTAL} className="font-semibold"><td className={td}>Comediante {pct(b.artistPercentage)} + Argentores</td><td className={td}>{money(artistaFinal + argentoresTotal, cur)}</td></tr>
+            )}
             <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {pct(b.productoraPercentage)}</td><td className={td}>{money(productoraFinal, cur)}</td></tr>
           </tbody>
         </table>
