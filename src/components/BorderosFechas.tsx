@@ -87,6 +87,7 @@ export default function BorderosFechas({ rows }: { rows: FechaRow[] }) {
                 <td className="px-4 py-3 text-sm text-right text-green-300 font-medium">{fmt(r.artista_final, r.currency)}</td>
                 <td className="px-4 py-3 text-right whitespace-nowrap">
                   <Link href={`/shows/${r.show_id}/bordero`} className="text-indigo-300 hover:text-indigo-200 text-sm mr-3">Ver</Link>
+                  <Link href={`/shows/${r.show_id}/bordero/editar`} className="text-amber-300 hover:text-amber-200 text-sm mr-3">Editar</Link>
                   <Link href={`/shows/${r.show_id}/bordero/print`} className="text-gray-300 hover:text-white text-sm">PDF ⬇</Link>
                 </td>
               </tr>

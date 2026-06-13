@@ -102,7 +102,7 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   const td = 'border border-gray-500 px-2 py-0.5 text-center'
 
   return (
-    <div className="bg-white text-black mx-auto" style={{ maxWidth: 800, fontFamily: 'Arial, Helvetica, sans-serif' }}>
+    <div className="bg-white text-black mx-auto" style={{ maxWidth: 800, fontFamily: 'Arial, Helvetica, sans-serif', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
       {/* Cabecera: logo + separador + título */}
       <div className="flex items-center justify-center pt-5 pb-4">
         <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={155} height={49} style={{ height: 49, width: 'auto' }} priority />

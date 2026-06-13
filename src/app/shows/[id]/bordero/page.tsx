@@ -35,7 +35,10 @@ export default async function BorderoPage({
       <div className="max-w-3xl mx-auto space-y-5">
         <div className="flex items-center justify-between gap-4">
           <Link href={`/shows/${id}/ver`} className="text-gray-400 hover:text-white text-sm">← Volver al show</Link>
-          <Link href={`/shows/${id}/bordero/print`} className="px-3 py-1.5 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">🖨️ Descargar PDF</Link>
+          <div className="flex items-center gap-2">
+            <Link href={`/shows/${id}/bordero/editar`} className="px-3 py-1.5 border border-amber-700/60 text-amber-200 rounded-md hover:bg-amber-900/20 transition text-sm">✏️ Editar</Link>
+            <Link href={`/shows/${id}/bordero/print`} className="px-3 py-1.5 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">🖨️ Descargar PDF</Link>
+          </div>
         </div>
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md">{sp.error}</div>}
