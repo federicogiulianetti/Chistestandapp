@@ -76,8 +76,8 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   // sala: % tal cual el arreglo guardado del show
   const teatroParte = b.netoSala !== null ? b.netoSala - b.parteProductoraSala : null
 
-  // ocupación: asistencia (vendidas + free) / aforo
-  const ocupacion = ctx.capacity && ctx.capacity > 0 ? Math.round((summary.asistencia / ctx.capacity) * 100) : null
+  // ocupación: asistencia (vendidas + free) / aforo, tope 100% (a veces se agregan sillas extra)
+  const ocupacion = ctx.capacity && ctx.capacity > 0 ? Math.min(100, Math.round((summary.asistencia / ctx.capacity) * 100)) : null
 
   // gastos EN EL ORDEN de la planilla (sort_order). El recuadro de Ads abarca el bloque
   // contiguo real: arranca en "Ads ..." y sigue mientras las filas sean impuestos de ads.
