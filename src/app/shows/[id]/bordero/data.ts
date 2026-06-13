@@ -25,6 +25,13 @@ export interface DeductionLineRaw {
   notes: string | null
 }
 
+export interface TicketLine {
+  label: string
+  qty: number | null
+  price: number | null
+  subtotal: number | null
+}
+
 export interface BorderoContext {
   showDate: string | null
   performer: string
@@ -44,6 +51,7 @@ export interface BorderoContext {
   expensePayees: ExpensePayee[]
   expenseLines: ExpenseLine[]
   deductionsRaw: DeductionLineRaw[]
+  ticketLines: TicketLine[]
   closed: { id: string; closed_at: string } | null
   // valores reales guardados al cerrar (fuente de verdad para históricos/cerrados)
   snapshot: { recaudacion: number; total_neto: number; artista_final: number; productora_share: number } | null
@@ -61,10 +69,11 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
 
   if (!show) return null
 
-  const [{ data: salesData }, { data: expData }, { data: adData }, { data: borderoRow }] = await Promise.all([
+  const [{ data: salesData }, { data: expData }, { data: adData }, { data: tlData }, { data: borderoRow }] = await Promise.all([
     supabase.from('ticket_sales').select('id, sale_date, qty_sold, unit_price, notes').eq('show_id', showId),
     supabase.from('expenses').select('amount, category, payee_type, payee_id, notes, sort_order').eq('show_id', showId).order('sort_order', { ascending: true, nullsFirst: false }),
     supabase.from('ad_spend').select('amount').eq('show_id', showId),
+    supabase.from('show_ticket_lines').select('label, qty, price, subtotal, sort_order').eq('show_id', showId).order('sort_order', { ascending: true, nullsFirst: false }),
     supabase.from('borderos').select('id, closed_at, recaudacion, total_neto, artista_final, productora_share').eq('show_id', showId).maybeSingle(),
   ])
 
@@ -142,6 +151,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
     result,
     expensePayees,
     expenseLines,
+    ticketLines: ((tlData ?? []) as { label: string; qty: number | null; price: number | null; subtotal: number | null }[]).map(t => ({ label: t.label, qty: t.qty, price: t.price, subtotal: t.subtotal })),
     deductionsRaw: (sh.deductions ?? []).map(d => ({ label: d.label, percentage: d.percentage, fixed_amount: d.fixed_amount, goes_to_artist: d.goes_to_artist, notes: d.notes ?? null })),
     closed: borderoRow ? { id: borderoRow.id, closed_at: borderoRow.closed_at } : null,
     snapshot: borderoRow ? {

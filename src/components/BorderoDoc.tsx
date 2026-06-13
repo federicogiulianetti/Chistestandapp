@@ -136,13 +136,32 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
       </div>
 
       <div className="px-3 pb-6 space-y-3 text-xs">
-        {/* Recaudación */}
+        {/* Recaudación — tipos de entrada TAL CUAL la planilla (fallback: línea única) */}
         <table className="w-full border-collapse">
           <thead><tr style={HEAD}><th className={th}>Entrada</th><th className={th}>Cantidad</th><th className={th}>Precio</th><th className={th}>Total</th></tr></thead>
           <tbody>
-            <tr><td className={td}>Platea precio único</td><td className={td}>{summary.vendidas}</td><td className={td}>{money(precio, cur)}</td><td className={td}>{money(recaud, cur)}</td></tr>
-            {summary.courtesy > 0 && <tr><td className={td}>Free / Cortesías</td><td className={td}>{summary.courtesy}</td><td className={td}>$0</td><td className={td}>$0</td></tr>}
-            <tr style={TOTAL} className="font-semibold"><td className={td} colSpan={2}>Total: {summary.asistencia}</td><td className={td} colSpan={2}>Bruto: {money(recaud, cur)}</td></tr>
+            {ctx.ticketLines.length > 0 ? (
+              <>
+                {ctx.ticketLines.map((l, i) => (
+                  <tr key={i}>
+                    <td className={td}>{l.label}</td>
+                    <td className={td}>{l.qty ?? '—'}</td>
+                    <td className={td}>{l.price != null ? money(l.price, cur) : '—'}</td>
+                    <td className={td}>{l.subtotal != null ? money(l.subtotal, cur) : ''}</td>
+                  </tr>
+                ))}
+                <tr style={TOTAL} className="font-semibold">
+                  <td className={td} colSpan={2}>Total: {ctx.ticketLines.reduce((a, l) => a + (l.qty ?? 0), 0)}</td>
+                  <td className={td} colSpan={2}>Bruto: {money(recaud, cur)}</td>
+                </tr>
+              </>
+            ) : (
+              <>
+                <tr><td className={td}>Platea precio único</td><td className={td}>{summary.vendidas}</td><td className={td}>{money(precio, cur)}</td><td className={td}>{money(recaud, cur)}</td></tr>
+                {summary.courtesy > 0 && <tr><td className={td}>Free / Cortesías</td><td className={td}>{summary.courtesy}</td><td className={td}>$0</td><td className={td}>$0</td></tr>}
+                <tr style={TOTAL} className="font-semibold"><td className={td} colSpan={2}>Total: {summary.asistencia}</td><td className={td} colSpan={2}>Bruto: {money(recaud, cur)}</td></tr>
+              </>
+            )}
           </tbody>
         </table>
 
