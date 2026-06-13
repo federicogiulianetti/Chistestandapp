@@ -73,7 +73,8 @@ export default async function BorderosPage({
   const quien = sp.quien ? decodeURIComponent(sp.quien) : null
   const anio = sp.anio ?? null
 
-  const card = 'bg-zinc-900 border border-zinc-800 rounded-lg p-5 hover:border-zinc-600 hover:bg-zinc-800/40 transition flex items-center justify-between'
+  const row = 'flex items-center justify-between px-4 py-3 hover:bg-zinc-800/40 transition'
+  const listBox = 'bg-zinc-900 border border-zinc-800 rounded-lg divide-y divide-zinc-800 overflow-hidden'
 
   // --- Paso 3: fechas de un comediante + año ---
   if (quien && anio) {
@@ -110,10 +111,10 @@ export default async function BorderosPage({
             <Link href="/borderos" className="hover:text-white">Bordereaux</Link>{' / '}<span className="text-white">{quien}</span>
           </div>
           <h1 className="text-3xl font-bold mb-6">{quien} — elegí un año</h1>
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className={listBox}>
             {anios.map(([y, n]) => (
-              <Link key={y} href={`/borderos?quien=${encodeURIComponent(quien)}&anio=${y}`} className={card}>
-                <span className="text-xl font-semibold">{y}</span>
+              <Link key={y} href={`/borderos?quien=${encodeURIComponent(quien)}&anio=${y}`} className={row}>
+                <span className="text-lg font-semibold">{y}</span>
                 <span className="text-sm text-gray-400">{n} bordereau{n === 1 ? '' : 'x'}</span>
               </Link>
             ))}
@@ -148,15 +149,15 @@ export default async function BorderosPage({
         {comedianes.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">Todavía no hay bordereaux cerrados.</div>
         ) : (
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className={listBox}>
             {comedianes.map(([c, n]) => (
-              <Link key={c} href={`/borderos?quien=${encodeURIComponent(c)}`} className={card}>
+              <Link key={c} href={`/borderos?quien=${encodeURIComponent(c)}`} className={row}>
                 <span className="flex items-center gap-3 min-w-0">
                   {fotoDe.get(c) ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={fotoDe.get(c)} alt={c} className="w-11 h-11 rounded-full object-cover border border-zinc-700 shrink-0" />
+                    <img src={fotoDe.get(c)} alt={c} className="w-10 h-10 rounded-full object-cover border border-zinc-700 shrink-0" />
                   ) : (
-                    <span className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-sm font-semibold shrink-0">{c.charAt(0)}</span>
+                    <span className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-sm font-semibold shrink-0">{c.charAt(0)}</span>
                   )}
                   <span className="text-lg font-semibold truncate">{c}</span>
                 </span>
