@@ -189,11 +189,11 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
         {/* Reparto final — sin la palabra "Neto". La fila "+ Argentores" SÍ se calcula: artista + argentores. */}
         <table className="w-full border-collapse">
           <tbody>
-            <tr style={TOTAL} className="font-semibold"><td className={td}>Artista: {pct(b.artistPercentage)}</td><td className={td}>{money(artistaFinal, cur)}</td></tr>
+            <tr style={TOTAL} className="font-semibold"><td className={td}>{ctx.performer}: {pct(b.artistPercentage)}</td><td className={td}>{money(artistaFinal, cur)}</td></tr>
             {argentoresTotal > 0 && (
-              <tr style={TOTAL} className="font-semibold"><td className={td}>Comediante {pct(b.artistPercentage)} + Argentores</td><td className={td}>{money(artistaFinal + argentoresTotal, cur)}</td></tr>
+              <tr style={{ background: '#ffff00' }} className="font-semibold"><td className={td}>{ctx.performer} {pct(b.artistPercentage)} + Argentores</td><td className={td}>{money(artistaFinal + argentoresTotal, cur)}</td></tr>
             )}
-            <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {pct(b.productoraPercentage)}</td><td className={td}>{money(productoraFinal, cur)}</td></tr>
+            <tr style={TOTAL} className="font-semibold"><td className={td}>Chiste Stand Up: {pct(b.productoraPercentage)}</td><td className={td}>{money(productoraFinal, cur)}</td></tr>
           </tbody>
         </table>
       </div>
