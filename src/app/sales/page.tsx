@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { arDateKey, formatShowDate } from '@/lib/shows'
 import { summarizeSales, salesIndicator, formatPct, type SaleRow } from '@/lib/sales'
+import { comedianColor } from '@/lib/comedianColor'
+import { performerPhotoMap } from '@/lib/performerPhotos'
+import PerformerAvatar from '@/components/PerformerAvatar'
 
 type RawShow = {
   id: string
@@ -23,11 +26,14 @@ export default async function SalesPage() {
   void profile
 
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('shows')
-    .select('id, show_date, capacity, ticket_price, reserved_seats, courtesy_count, performer_type, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name, city), ticket_sales(qty_sold, unit_price, sale_date)')
-    .is('deleted_at', null)
-    .order('show_date', { ascending: true })
+  const [{ data }, fotoDe] = await Promise.all([
+    supabase
+      .from('shows')
+      .select('id, show_date, capacity, ticket_price, reserved_seats, courtesy_count, performer_type, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name, city), ticket_sales(qty_sold, unit_price, sale_date)')
+      .is('deleted_at', null)
+      .order('show_date', { ascending: true }),
+    performerPhotoMap(supabase),
+  ])
 
   const todayKey = arDateKey(new Date().toISOString())
 
@@ -55,61 +61,51 @@ export default async function SalesPage() {
   const upcoming = rows.filter(r => r.summary.daysLeft !== null && r.summary.daysLeft >= 0)
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-6 sm:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Ventas — próximas fechas</h1>
-          <p className="text-gray-400 mt-1">Cómo viene cada fecha según ocupación y días que faltan.</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Ventas — próximas fechas</h1>
+          <p className="text-faint mt-1">Cómo viene cada fecha según ocupación y días que faltan.</p>
         </div>
 
         {upcoming.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-            <p className="text-gray-400">No hay fechas próximas cargadas.</p>
+          <div className="bg-surface border border-line rounded-xl p-12 text-center text-faint">
+            No hay fechas próximas cargadas.
           </div>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-zinc-800/50 border-b border-zinc-800">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Fecha</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Artista</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Teatro</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold whitespace-nowrap">Vendidas</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold whitespace-nowrap">Ocupación</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold whitespace-nowrap">Días</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Estado</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {upcoming.map(r => (
-                  <tr key={r.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
-                    <td className="px-4 py-3 text-sm whitespace-nowrap">{formatShowDate(r.show_date)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="mr-1">{r.performer_type === 'elenco' ? '🎭' : '🎤'}</span>
-                      <span className="font-medium">{r.performer}</span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">
-                      {r.theater}{r.city ? ` · ${r.city}` : ''}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">
-                      {r.summary.vendidas}<span className="text-gray-500">/{r.summary.capacityToSell}</span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{formatPct(r.summary.ocupacion)}</td>
-                    <td className="px-4 py-3 text-sm text-right whitespace-nowrap">{r.summary.daysLeft}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={`inline-block px-2 py-1 rounded text-xs ${r.indicator.badge}`}>
-                        {r.indicator.emoji} {r.indicator.label}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <Link href={`/shows/${r.id}/ventas`} className="text-blue-400 hover:underline text-sm">Cargar / ver</Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {upcoming.map(r => {
+              const color = comedianColor(r.performer)
+              return (
+                <Link
+                  key={r.id}
+                  href={`/shows/${r.id}/ventas`}
+                  className="group bg-surface border border-line border-t-2 rounded-b-xl p-4 transition-colors hover:bg-surface-2"
+                  style={{ borderTopColor: color }}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <PerformerAvatar name={r.performer} photoUrl={fotoDe.get(r.performer)} size={42} />
+                    <div className="min-w-0">
+                      <div className="text-[14px] font-semibold truncate text-body">{r.performer}</div>
+                      <div className="text-[11px] text-faint truncate">{r.theater}{r.city ? ` · ${r.city}` : ''}</div>
+                    </div>
+                    <span className={`ml-auto shrink-0 px-2 py-1 rounded text-[11px] ${r.indicator.badge}`}>{r.indicator.label}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-line">
+                    <div>
+                      <div className="text-2xl font-bold leading-none text-body">{formatPct(r.summary.ocupacion)}</div>
+                      <div className="text-[10px] uppercase tracking-wide text-faint mt-1">ocupación</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[13px] text-body">{r.summary.vendidas}<span className="text-faint">/{r.summary.capacityToSell}</span></div>
+                      <div className="text-[11px] text-faint">{r.summary.daysLeft} día{r.summary.daysLeft === 1 ? '' : 's'} · {formatShowDate(r.show_date)}</div>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>

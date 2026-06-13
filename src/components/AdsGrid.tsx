@@ -27,14 +27,14 @@ export default function AdsGrid({
     return { meta, google, all: meta + google }
   }, [data])
 
-  const inp = "w-full px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white text-right text-sm"
+  const inp = "w-full px-2 py-1.5 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body text-right text-sm"
   const money = (n: number) => `$${Math.round(n).toLocaleString('es-AR')}`
 
   return (
     <form action={action}>
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+      <div className="bg-surface border border-line rounded-xl overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-zinc-800/50 border-b border-zinc-800">
+          <thead className="bg-surface-2 border-b border-line">
             <tr>
               <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Fecha</th>
               <th className="text-right px-4 py-3 text-sm font-semibold whitespace-nowrap w-40">Meta ($)</th>
@@ -43,7 +43,7 @@ export default function AdsGrid({
           </thead>
           <tbody>
             {data.map(r => (
-              <tr key={r.id} className="border-b border-zinc-800 last:border-0">
+              <tr key={r.id} className="border-b border-line last:border-0">
                 <td className="px-4 py-2 text-sm">{r.label}</td>
                 <td className="px-4 py-2">
                   <input name={`meta_${r.id}`} type="number" step="0.01" min="0" placeholder="0"
@@ -57,7 +57,7 @@ export default function AdsGrid({
             ))}
           </tbody>
           <tfoot>
-            <tr className="border-t border-zinc-700 bg-zinc-800/30">
+            <tr className="border-t border-line bg-surface-2">
               <td className="px-4 py-3 text-sm font-semibold">Totales — {money(totals.all)} (+ 30% imp. digitales en cada borderó)</td>
               <td className="px-4 py-3 text-right font-bold text-sm">{money(totals.meta)}</td>
               <td className="px-4 py-3 text-right font-bold text-sm">{money(totals.google)}</td>
@@ -67,7 +67,7 @@ export default function AdsGrid({
       </div>
 
       <div className="flex justify-end mt-4">
-        <button type="submit" className="px-6 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">
+        <button type="submit" className="px-6 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">
           Guardar Ads
         </button>
       </div>

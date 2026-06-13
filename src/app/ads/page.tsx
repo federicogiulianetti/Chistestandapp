@@ -25,7 +25,7 @@ export default async function AdsPage({
 
   if (profile.role !== 'admin') {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
+      <main className="min-h-screen bg-ink text-body p-8">
         <p className="text-red-400">No tenés permisos para ver Ads.</p>
       </main>
     )
@@ -51,20 +51,20 @@ export default async function AdsPage({
   })
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-6 sm:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Ads / Publicidad</h1>
-          <p className="text-gray-400 mt-1">Gasto de pauta (Meta / Google) por fecha. El borderó le suma el 30% de impuestos digitales.</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Ads / Publicidad</h1>
+          <p className="text-faint mt-1">Gasto de pauta (Meta / Google) por fecha. El borderó le suma el 30% de impuestos digitales.</p>
         </div>
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md mb-6">{sp.error}</div>}
-        {sp.success && <div className="bg-green-900/30 border border-green-700 text-green-300 px-4 py-3 rounded-md mb-6">Ads guardados ✅</div>}
+        {sp.success && <div className="bg-green-900/30 border border-green-700 text-green-300 px-4 py-3 rounded-md mb-6">Ads guardados</div>}
 
         {rows.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-            <p className="text-gray-400">No hay fechas cargadas.</p>
+          <div className="bg-surface border border-line rounded-xl p-12 text-center text-faint">
+            No hay fechas cargadas.
           </div>
         ) : (
           <AdsGrid action={saveAdSpend} rows={rows} />

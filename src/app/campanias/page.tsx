@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Plus, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { formatShowDate } from '@/lib/shows'
@@ -26,7 +27,7 @@ export default async function CampaniasPage({
   const { profile } = await getUserAndProfile()
   const sp = await searchParams
   if (profile.role !== 'admin') {
-    return <main className="min-h-screen bg-black text-white p-8"><p className="text-red-400">Sin permisos.</p></main>
+    return <main className="min-h-screen bg-ink text-body p-8"><p className="text-red-400">Sin permisos.</p></main>
   }
 
   const supabase = await createClient()
@@ -39,21 +40,21 @@ export default async function CampaniasPage({
   const shows = ((showsData ?? []) as unknown as { id: string; show_date: string | null; theater: { name: string | null } | null }[])
     .map(s => ({ id: s.id, label: `${formatShowDate(s.show_date)} · ${s.theater?.name ?? '—'}` }))
 
-  const inp = "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white"
+  const inp = "w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body"
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <main className="min-h-screen bg-ink text-body p-6 sm:p-8">
+      <div className="max-w-5xl mx-auto space-y-6">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Campañas / Ads</h1>
-          <p className="text-gray-400 mt-1">Las campañas de publicidad por fecha. (El gasto que entra al borderó se carga en el módulo Ads.)</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Campañas / Ads</h1>
+          <p className="text-faint mt-1">Las campañas de publicidad por fecha. (El gasto que entra al borderó se carga en el módulo Ads.)</p>
         </div>
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md">{sp.error}</div>}
 
-        <form action={createCampaign} className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 space-y-3">
-          <h2 className="text-lg font-semibold">➕ Nueva campaña</h2>
+        <form action={createCampaign} className="bg-surface border border-line rounded-xl p-5 space-y-3">
+          <h2 className="text-lg font-semibold flex items-center gap-2"><Plus className="w-4 h-4 text-brand" /> Nueva campaña</h2>
           <input name="name" type="text" required placeholder="Nombre de la campaña" className={inp} />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <select name="platform" defaultValue="Meta" className={inp}>
@@ -79,29 +80,29 @@ export default async function CampaniasPage({
             </div>
           </div>
           <div className="flex justify-end">
-            <button type="submit" className="px-5 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">Crear</button>
+            <button type="submit" className="px-5 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">Crear</button>
           </div>
         </form>
 
         {campaigns.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">No hay campañas cargadas.</div>
+          <div className="bg-surface border border-line rounded-xl p-12 text-center text-faint">No hay campañas cargadas.</div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {campaigns.map(c => (
-              <div key={c.id} className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-medium">{c.name} <span className="text-xs text-gray-400">· {c.platform}</span></p>
-                  <div className="flex flex-wrap gap-3 text-xs text-gray-400 mt-1">
+              <div key={c.id} className="bg-surface border border-line rounded-xl p-4 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{c.name} <span className="text-xs text-faint">· {c.platform}</span></p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-faint mt-1">
                     {c.budget != null && <span>Presupuesto {formatMoney(c.budget)}</span>}
                     {c.spent != null && <span>Gastado {formatMoney(c.spent)}</span>}
                     {c.start_date && <span>{c.start_date} → {c.end_date ?? '...'}</span>}
-                    {c.show && <span>🎭 {c.show.theater?.name ?? formatShowDate(c.show.show_date)}</span>}
+                    {c.show && <span>{c.show.theater?.name ?? formatShowDate(c.show.show_date)}</span>}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 shrink-0">
                   <span className={`px-2 py-1 rounded text-xs ${STATUS[c.status] ?? STATUS.borrador}`}>{c.status}</span>
                   <form action={deleteCampaign.bind(null, c.id)}>
-                    <button type="submit" className="text-red-400 hover:text-red-300 text-xs">✕</button>
+                    <button type="submit" aria-label="Eliminar campaña" className="text-red-400 hover:text-red-300"><X className="w-4 h-4" /></button>
                   </form>
                 </div>
               </div>
