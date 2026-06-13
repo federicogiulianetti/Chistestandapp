@@ -54,7 +54,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
 
   const { data: show } = await supabase
     .from('shows')
-    .select('id, show_date, spectacle, city, currency, deal_type, deal_fixed_amount, deal_percentage, artist_percentage, capacity, courtesy_count, reserved_seats, ticket_price, performer_type, comedian_id, ensemble_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name, city, capacity_platea, capacity_pullman), deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist, notes)')
+    .select('id, show_date, spectacle, city, currency, deal_type, deal_fixed_amount, deal_percentage, artist_percentage, capacity, courtesy_count, reserved_seats, ticket_price, performer_type, comedian_id, ensemble_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name, city, capacity_platea, capacity_pullman), deductions:show_deductions(label, percentage, fixed_amount, goes_to_artist, notes, sort_order)')
     .eq('id', showId)
     .is('deleted_at', null)
     .single()
@@ -63,7 +63,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
 
   const [{ data: salesData }, { data: expData }, { data: adData }, { data: borderoRow }] = await Promise.all([
     supabase.from('ticket_sales').select('id, sale_date, qty_sold, unit_price, notes').eq('show_id', showId),
-    supabase.from('expenses').select('amount, category, payee_type, payee_id, notes').eq('show_id', showId),
+    supabase.from('expenses').select('amount, category, payee_type, payee_id, notes, sort_order').eq('show_id', showId).order('sort_order', { ascending: true, nullsFirst: false }),
     supabase.from('ad_spend').select('amount').eq('show_id', showId),
     supabase.from('borderos').select('id, closed_at, recaudacion, total_neto, artista_final, productora_share').eq('show_id', showId).maybeSingle(),
   ])
@@ -90,6 +90,7 @@ export async function loadBordero(showId: string): Promise<BorderoContext | null
   }
 
   // ¿el argentores se paga "por fuera" (directo al artista, 8%)? Se detecta por la etiqueta de la deducción.
+  sh.deductions = (sh.deductions ?? []).slice().sort((a, b) => ((a as { sort_order?: number | null }).sort_order ?? 0) - ((b as { sort_order?: number | null }).sort_order ?? 0))
   const argentoresPorFuera = (sh.deductions ?? []).some(d => d.goes_to_artist && /fuera/i.test(d.label || ''))
 
   const performer = sh.performer_type === 'elenco' ? (sh.ensemble?.name ?? '—') : (sh.comedian?.stage_name ?? '—')

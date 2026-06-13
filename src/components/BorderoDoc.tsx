@@ -50,7 +50,6 @@ const FLYERS_PERFORMER: Record<string, string> = {
 
 const HEAD = { background: '#bcd6ec' } // celeste del header de tabla
 const TOTAL = { background: '#e5e7eb' } // gris de las filas de total
-const ADS_RE = /^ads\b|fb\/insta|iva servicios digitales|imp\.? y sellos|percepci[oó]n imp/i
 
 export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   const { result: b, summary, currency: cur } = ctx
@@ -80,16 +79,24 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
   // ocupación: asistencia (vendidas + free) / aforo
   const ocupacion = ctx.capacity && ctx.capacity > 0 ? Math.round((summary.asistencia / ctx.capacity) * 100) : null
 
-  // gastos: separar los de Ads (van recuadrados)
-  const gastoRows: { label: string; amount: number; note: string | null; ads: boolean }[] = [
-    ...ctx.expenseLines.map(g => ({ label: g.category, amount: g.amount, note: g.notes, ads: ADS_RE.test(g.category) })),
-    ...(b.adSpendTotal > 0 ? [{ label: 'Ads (Meta / Google)', amount: b.adSpendTotal, note: null, ads: true }] : []),
-    ...(b.adSpendTotal > 0 ? b.adTaxLines.map(l => ({ label: l.label, amount: l.amount, note: null, ads: true })) : []),
+  // gastos EN EL ORDEN de la planilla (sort_order). El recuadro de Ads abarca el bloque
+  // contiguo real: arranca en "Ads ..." y sigue mientras las filas sean impuestos de ads.
+  const gastoRows: { label: string; amount: number; note: string | null }[] = [
+    ...ctx.expenseLines.map(g => ({ label: g.category, amount: g.amount, note: g.notes })),
+    ...(b.adSpendTotal > 0 ? [{ label: 'Ads (Meta / Google)', amount: b.adSpendTotal, note: null }] : []),
+    ...(b.adSpendTotal > 0 ? b.adTaxLines.map(l => ({ label: l.label, amount: l.amount, note: null })) : []),
   ]
-  // mover los de ads al final, juntos (recuadro contiguo)
-  const normales = gastoRows.filter(g => !g.ads)
-  const adsRows = gastoRows.filter(g => g.ads)
   const gastosTotal = gastoRows.reduce((a, g) => a + g.amount, 0)
+  const ADS_START = /^ads\b|fb\/insta|pauta/i
+  const ADS_TAX = /^imp|^iva\b|percepci[oó]n|afip|sello/i
+  let adsFrom = -1, adsTo = -1
+  for (let i = 0; i < gastoRows.length; i++) {
+    if (ADS_START.test(gastoRows[i].label)) {
+      adsFrom = i; adsTo = i
+      for (let j = i + 1; j < gastoRows.length && ADS_TAX.test(gastoRows[j].label); j++) adsTo = j
+      break
+    }
+  }
 
   const th = 'border border-gray-500 px-2 py-0.5 text-center font-semibold'
   const td = 'border border-gray-500 px-2 py-0.5 text-center'
@@ -161,12 +168,12 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
           </table>
         )}
 
-        {/* Reparto con la sala — % del arreglo guardado */}
+        {/* Reparto con la sala — Producción primero (como la planilla), % del arreglo guardado */}
         {teatroParte !== null && (
           <table className="w-full border-collapse">
             <tbody>
+              <tr style={TOTAL} className="font-semibold"><td className={td}>Producción: {b.dealLabel.match(/(\d+(?:\.\d+)?)%/) ? pct(Number(b.dealLabel.match(/(\d+(?:\.\d+)?)%/)![1])) : b.dealLabel}</td><td className={td}>{money(b.parteProductoraSala, cur)}</td></tr>
               <tr style={TOTAL} className="font-semibold"><td className={td}>Teatro: {pct(100 - (b.dealLabel.match(/(\d+(?:\.\d+)?)%/) ? Number(b.dealLabel.match(/(\d+(?:\.\d+)?)%/)![1]) : 0))}</td><td className={td}>{money(teatroParte, cur)}</td></tr>
-              <tr style={TOTAL} className="font-semibold"><td className={td}>Productora: {b.dealLabel.match(/(\d+(?:\.\d+)?)%/) ? pct(Number(b.dealLabel.match(/(\d+(?:\.\d+)?)%/)![1])) : b.dealLabel}</td><td className={td}>{money(b.parteProductoraSala, cur)}</td></tr>
             </tbody>
           </table>
         )}
@@ -176,19 +183,17 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
           <table className="w-full border-collapse">
             <thead><tr style={HEAD}><th className={th}>Gasto</th><th className={th}>Monto</th><th className={th}>Detalle</th></tr></thead>
             <tbody>
-              {normales.map((g, i) => (
-                <tr key={i}><td className={td}>{g.label}</td><td className={td}>{money(g.amount, cur)}</td><td className={td}>{g.note ?? ''}</td></tr>
-              ))}
-              {adsRows.map((g, i) => {
-                const edge = {
-                  ...(i === 0 ? { borderTop: '2px solid #444' } : {}),
-                  ...(i === adsRows.length - 1 ? { borderBottom: '2px solid #444' } : {}),
-                }
+              {gastoRows.map((g, i) => {
+                const inAds = adsFrom >= 0 && i >= adsFrom && i <= adsTo
+                const edge = inAds ? {
+                  ...(i === adsFrom ? { borderTop: '2px solid #444' } : {}),
+                  ...(i === adsTo ? { borderBottom: '2px solid #444' } : {}),
+                } : {}
                 return (
-                  <tr key={`a${i}`}>
-                    <td className={td} style={{ borderLeft: '2px solid #444', ...edge }}>{g.label}</td>
-                    <td className={td} style={edge}>{money(g.amount, cur)}</td>
-                    <td className={td} style={{ borderRight: '2px solid #444', ...edge }}>{g.note ?? ''}</td>
+                  <tr key={i}>
+                    <td className={td} style={inAds ? { borderLeft: '2px solid #444', ...edge } : undefined}>{g.label}</td>
+                    <td className={td} style={inAds ? edge : undefined}>{money(g.amount, cur)}</td>
+                    <td className={td} style={inAds ? { borderRight: '2px solid #444', ...edge } : undefined}>{g.note ?? ''}</td>
                   </tr>
                 )
               })}
