@@ -16,9 +16,11 @@ function pct(n: number): string {
 }
 function fechaLarga(f: string | null): string {
   if (!f) return '—'
-  const d = f.slice(0, 10)
-  const [y, m, day] = d.split('-')
-  return day && m && y ? `${day}/${m}/${y}` : d
+  const d = new Date(f)
+  if (isNaN(d.getTime())) return f.slice(0, 10)
+  const fecha = d.toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', year: 'numeric' })
+  const hora = d.toLocaleTimeString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour: '2-digit', minute: '2-digit', hour12: false })
+  return `${fecha} · ${hora}hs`
 }
 
 // flyers de espectáculos (extraídos de las planillas) — public/flyers/
@@ -107,11 +109,9 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
         <div className="text-right">
           <div>{ctx.theaterName ?? '—'}</div>
           <div>{ctx.city ?? ''}</div>
-          {ctx.capacity ? (
-            <div className="text-xs font-normal text-gray-700">
-              Capacidad: {ctx.capacity} · Ocupación: {ocupacion !== null ? `${ocupacion}%` : '—'}
-            </div>
-          ) : null}
+          <div className="text-xs font-normal text-gray-700">
+            Capacidad: {ctx.capacity ?? '—'} · Ocupación: {ocupacion !== null ? `${ocupacion}%` : '—'}
+          </div>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
         <table className="w-full border-collapse">
           <thead><tr style={HEAD}><th className={th}>Entrada</th><th className={th}>Cantidad</th><th className={th}>Precio</th><th className={th}>Total</th></tr></thead>
           <tbody>
-            <tr><td className={td}>Boletería</td><td className={td}>{summary.vendidas}</td><td className={td}>{money(precio, cur)}</td><td className={td}>{money(recaud, cur)}</td></tr>
+            <tr><td className={td}>Platea precio único</td><td className={td}>{summary.vendidas}</td><td className={td}>{money(precio, cur)}</td><td className={td}>{money(recaud, cur)}</td></tr>
             {summary.courtesy > 0 && <tr><td className={td}>Free / Cortesías</td><td className={td}>{summary.courtesy}</td><td className={td}>$0</td><td className={td}>$0</td></tr>}
             <tr style={TOTAL} className="font-semibold"><td className={td} colSpan={2}>Total: {summary.asistencia}</td><td className={td} colSpan={2}>Bruto: {money(recaud, cur)}</td></tr>
           </tbody>
