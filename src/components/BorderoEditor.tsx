@@ -32,12 +32,33 @@ function n(v: string): number | null {
   const x = Number(v.replace(/\./g, '').replace(',', '.'))
   return Number.isFinite(x) ? x : null
 }
+const r2 = (v: number | null) => v == null ? '' : (Math.round(v * 100) / 100).toString()
+
+function Field({ label, hint, value, onChange, prefix, suffix }: {
+  label: string; hint?: string; value: number | null; onChange: (v: number | null) => void; prefix?: string; suffix?: string
+}) {
+  const inpCls = 'w-full px-2 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-white text-sm text-right focus:outline-none focus:border-zinc-500'
+  return (
+    <label className="text-sm block">
+      <span className="block text-xs text-gray-400 mb-0.5">{label}</span>
+      <div className="relative">
+        {prefix && <span className="absolute left-2 top-1.5 text-gray-500 text-sm">{prefix}</span>}
+        <input className={`${inpCls} ${prefix ? 'pl-6' : ''} ${suffix ? 'pr-6' : ''}`} defaultValue={r2(value)} onChange={e => onChange(n(e.target.value))} />
+        {suffix && <span className="absolute right-2 top-1.5 text-gray-500 text-sm">{suffix}</span>}
+      </div>
+      {hint && <span className="block text-[11px] text-gray-600 mt-0.5">{hint}</span>}
+    </label>
+  )
+}
 
 export default function BorderoEditor({ data }: { data: EditorData }) {
   const [entradas, setEntradas] = useState<Entrada[]>(data.entradas.length ? data.entradas : [{ label: '', qty: null, price: null, subtotal: null }])
   const [impuestos, setImpuestos] = useState<Impuesto[]>(data.impuestos)
   const [gastos, setGastos] = useState<Gasto[]>(data.gastos)
-  const [tot, setTot] = useState({
+  const [tot, setTot] = useState<{
+    recaudacion: number | null; total_neto: number | null; artista_final: number | null; productora_share: number | null
+    capacity: number | null; deal_percentage: number | null; artist_percentage: number | null
+  }>({
     recaudacion: data.recaudacion, total_neto: data.total_neto,
     artista_final: data.artista_final, productora_share: data.productora_share,
     capacity: data.capacity, deal_percentage: data.deal_percentage, artist_percentage: data.artist_percentage,
@@ -114,23 +135,45 @@ export default function BorderoEditor({ data }: { data: EditorData }) {
       </section>
 
       {/* Totales + reparto */}
-      <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-        <h2 className="font-semibold mb-3">🧮 Totales y reparto</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {([
-            ['recaudacion', 'Recaudación (bruto)'],
-            ['total_neto', 'Total neto a repartir'],
-            ['artista_final', 'Artista (monto final)'],
-            ['productora_share', 'Productora (monto)'],
-            ['deal_percentage', 'Productora con sala (%)'],
-            ['artist_percentage', 'Artista en reparto (%)'],
-            ['capacity', 'Capacidad de sala'],
-          ] as const).map(([k, label]) => (
-            <label key={k} className="text-sm">
-              <span className="block text-xs text-gray-400 mb-0.5">{label}</span>
-              <input className={numInp} defaultValue={(tot[k] as number | null) ?? ''} onChange={ev => setTot(t => ({ ...t, [k]: n(ev.target.value) }))} />
-            </label>
-          ))}
+      <section className="space-y-4">
+        {/* Recaudación */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+          <h2 className="font-semibold mb-3">🧮 Recaudación y neto</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Recaudación (bruto)" hint="lo que entró por entradas" value={tot.recaudacion} onChange={v => setTot(t => ({ ...t, recaudacion: v }))} prefix="$" />
+            <Field label="Total neto a repartir" hint="después de impuestos, sala y gastos" value={tot.total_neto} onChange={v => setTot(t => ({ ...t, total_neto: v }))} prefix="$" />
+          </div>
+        </div>
+
+        {/* Reparto final */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+          <h2 className="font-semibold mb-1">🤝 Reparto final</h2>
+          <p className="text-xs text-gray-500 mb-3">Cuánto se lleva cada uno del total neto.</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="bg-zinc-800/40 border border-zinc-700 rounded-lg p-3">
+              <p className="text-sm font-semibold text-green-300 mb-2">🎤 {data.performer}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="% en el reparto" value={tot.artist_percentage} onChange={v => setTot(t => ({ ...t, artist_percentage: v }))} suffix="%" />
+                <Field label="Monto que cobra" value={tot.artista_final} onChange={v => setTot(t => ({ ...t, artista_final: v }))} prefix="$" />
+              </div>
+            </div>
+            <div className="bg-zinc-800/40 border border-zinc-700 rounded-lg p-3">
+              <p className="text-sm font-semibold text-indigo-300 mb-2">🏢 Chiste Stand Up</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="% en el reparto" value={tot.artist_percentage != null ? 100 - tot.artist_percentage : null} onChange={v => setTot(t => ({ ...t, artist_percentage: v != null ? 100 - v : null }))} suffix="%" />
+                <Field label="Monto que cobra" value={tot.productora_share} onChange={v => setTot(t => ({ ...t, productora_share: v }))} prefix="$" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sala / aforo */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+          <h2 className="font-semibold mb-3">🏛️ Sala</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Arreglo: % de la productora con la sala" value={tot.deal_percentage} onChange={v => setTot(t => ({ ...t, deal_percentage: v }))} suffix="%" />
+            <Field label="Capacidad de la sala" hint="para calcular la ocupación" value={tot.capacity} onChange={v => setTot(t => ({ ...t, capacity: v }))} />
+          </div>
         </div>
       </section>
 
