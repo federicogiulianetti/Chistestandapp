@@ -10,6 +10,19 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Identidad de marca (logo neón) — base sobria oscura + acentos neón */
+  --color-brand: #2ee65c;        /* verde neón (CHISTE) */
+  --color-brand-cyan: #19e3c6;   /* cyan (degradé) */
+  --color-brand-amber: #ff9e1b;  /* naranja (STAND APP) */
+  --color-brand-violet: #a24bff; /* violeta (circuito) */
+  --color-ink: #0b0c0e;          /* fondo de página */
+  --color-surface: #141517;      /* tarjetas */
+  --color-surface-2: #161719;    /* chips / superficies elevadas */
+  --color-line: #222428;         /* bordes */
+  --color-body: #e6e7e9;         /* texto principal */
+  --color-muted: #9aa0a6;        /* texto secundario */
+  --color-faint: #6b7075;        /* texto terciario / hints */
 }
 
 @media (prefers-color-scheme: dark) {
