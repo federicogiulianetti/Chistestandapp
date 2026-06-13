@@ -39,6 +39,13 @@ const FLYERS: Record<string, string> = {
   'En un confuso episodio': 'en-un-confuso-episodio.jpg',
   'Deslices y desmanes': 'deslices-y-desmanes.png',
   'Metanoia': 'metanoia.png',
+  'Los demás son un montón': 'los-demas-son-un-monton.png',
+}
+
+// shows sin espectáculo: el flyer es el nombre del comediante (Selci / Xamila)
+const FLYERS_PERFORMER: Record<string, string> = {
+  'Guillermo Selci': 'selci.png',
+  'Xamila Denise': 'xamila.jpg',
 }
 
 const HEAD = { background: '#bcd6ec' } // celeste del header de tabla
@@ -103,10 +110,14 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
           <div>{fechaLarga(ctx.showDate)}</div>
         </div>
         <div className="flex-1 flex justify-center px-4" style={{ alignSelf: 'flex-start', marginTop: -10 }}>
-          {ctx.spectacle && FLYERS[ctx.spectacle] ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={`/flyers/${FLYERS[ctx.spectacle]}`} alt={ctx.spectacle} style={{ height: 84, width: 'auto', maxWidth: 320, objectFit: 'contain' }} />
-          ) : ctx.spectacle ? <span>{ctx.spectacle}</span> : null}
+          {(() => {
+            const flyer = (ctx.spectacle && FLYERS[ctx.spectacle]) || (!ctx.spectacle && FLYERS_PERFORMER[ctx.performer]) || null
+            if (flyer) {
+              // eslint-disable-next-line @next/next/no-img-element
+              return <img src={`/flyers/${flyer}`} alt={ctx.spectacle ?? ctx.performer} style={{ height: 84, width: 'auto', maxWidth: 320, objectFit: 'contain' }} />
+            }
+            return ctx.spectacle ? <span>{ctx.spectacle}</span> : null
+          })()}
         </div>
         <div className="text-right">
           <div>{ctx.theaterName ?? '—'}</div>
