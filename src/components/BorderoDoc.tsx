@@ -89,7 +89,7 @@ export default function BorderoDoc({ ctx }: { ctx: BorderoContext }) {
     <div className="bg-white text-black mx-auto" style={{ maxWidth: 800, fontFamily: 'Arial, Helvetica, sans-serif' }}>
       {/* Cabecera: logo + separador + título */}
       <div className="flex items-center justify-center pt-5 pb-4">
-        <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={203} height={64} style={{ height: 64, width: 'auto' }} priority />
+        <Image src="/chiste-logo.png" alt="Chiste Stand Up" width={165} height={52} style={{ height: 52, width: 'auto' }} priority />
         <div style={{ width: 2, height: 64, background: '#222', marginLeft: 24, marginRight: 24 }} />
         <span className="text-2xl" style={{ fontWeight: 500, letterSpacing: '0.04em' }}>Bordereau</span>
       </div>
