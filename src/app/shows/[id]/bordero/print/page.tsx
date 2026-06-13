@@ -13,8 +13,8 @@ export default async function BorderoPrintPage({ params }: { params: Promise<{ i
   if (!ctx) notFound()
 
   return (
-    <main className="min-h-screen bg-white text-black p-6 print:p-0">
-      <div className="max-w-[820px] mx-auto">
+    <main className="min-h-screen bg-white text-black p-6" style={{ printColorAdjust: 'exact' }}>
+      <div className="max-w-[820px] mx-auto" style={{ paddingTop: '8mm', paddingBottom: '8mm' }}>
         <div className="flex justify-end mb-4 print:hidden">
           <PrintButton />
         </div>

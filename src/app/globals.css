@@ -32,3 +32,10 @@ body {
     print-color-adjust: exact !important;
   }
 }
+
+/* Margen de página 0 → el navegador NO dibuja fecha/hora, título, URL ni nro de página
+   en los márgenes. El documento pone su propio espaciado. */
+@page {
+  size: A4;
+  margin: 0;
+}
