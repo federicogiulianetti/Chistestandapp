@@ -41,11 +41,17 @@ export default async function BorderosPage({
   }
 
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('borderos')
-    .select('id, show_id, currency, recaudacion, artista_final, productora_share, show:show_id(show_date, city, spectacle, performer_type, theater:theater_id(name, city), comedian:comedian_id(stage_name), ensemble:ensemble_id(name))')
-
-  const raw = (data ?? []) as unknown as RawBordero[]
+  // Supabase limita a 1.000 filas por consulta → paginar para traer TODOS los borderós
+  const raw: RawBordero[] = []
+  for (let from = 0; ; from += 1000) {
+    const { data } = await supabase
+      .from('borderos')
+      .select('id, show_id, currency, recaudacion, artista_final, productora_share, show:show_id(show_date, city, spectacle, performer_type, theater:theater_id(name, city), comedian:comedian_id(stage_name), ensemble:ensemble_id(name))')
+      .range(from, from + 999)
+    const page = (data ?? []) as unknown as RawBordero[]
+    raw.push(...page)
+    if (page.length < 1000) break
+  }
   const rows = raw.map(b => {
     const s = b.show
     const comediante = s?.performer_type === 'elenco' ? (s?.ensemble?.name ?? '—') : (s?.comedian?.stage_name ?? '—')
@@ -81,7 +87,7 @@ export default async function BorderosPage({
             {' / '}<span className="text-white">{anio}</span>
           </div>
           <h1 className="text-3xl font-bold mb-1">{quien} · {anio} 📄</h1>
-          <p className="text-gray-400 mb-6">{fechas.length} borderó{fechas.length === 1 ? '' : 's'}. Filtrá por teatro, ciudad o fecha.</p>
+          <p className="text-gray-400 mb-6">{fechas.length} bordereau{fechas.length === 1 ? '' : 'x'}. Filtrá por teatro, ciudad o fecha.</p>
           <BorderosFechas rows={fechas} />
         </div>
       </main>
@@ -108,7 +114,7 @@ export default async function BorderosPage({
             {anios.map(([y, n]) => (
               <Link key={y} href={`/borderos?quien=${encodeURIComponent(quien)}&anio=${y}`} className={card}>
                 <span className="text-xl font-semibold">{y}</span>
-                <span className="text-sm text-gray-400">{n} borderó{n === 1 ? '' : 's'}</span>
+                <span className="text-sm text-gray-400">{n} bordereau{n === 1 ? '' : 'x'}</span>
               </Link>
             ))}
           </div>
@@ -131,13 +137,13 @@ export default async function BorderosPage({
           <p className="text-gray-400 mt-1">Elegí un comediante para ver sus liquidaciones.</p>
         </div>
         {comedianes.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">Todavía no hay borderós cerrados.</div>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">Todavía no hay bordereaux cerrados.</div>
         ) : (
           <div className="grid sm:grid-cols-2 gap-3">
             {comedianes.map(([c, n]) => (
               <Link key={c} href={`/borderos?quien=${encodeURIComponent(c)}`} className={card}>
                 <span className="text-lg font-semibold">{c}</span>
-                <span className="text-sm text-gray-400">{n} borderó{n === 1 ? '' : 's'}</span>
+                <span className="text-sm text-gray-400">{n} bordereau{n === 1 ? '' : 'x'}</span>
               </Link>
             ))}
           </div>
