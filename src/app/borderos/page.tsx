@@ -128,6 +128,15 @@ export default async function BorderosPage({
   for (const r of rows) porQuien.set(r.comediante, (porQuien.get(r.comediante) ?? 0) + 1)
   const comedianes = [...porQuien.entries()].sort((a, b) => a[0].localeCompare(b[0]))
 
+  // fotos (del módulo Comediantes / Elencos), mapeadas por nombre
+  const [{ data: coms }, { data: ens }] = await Promise.all([
+    supabase.from('comedians').select('stage_name, photo_url'),
+    supabase.from('ensembles').select('name, photo_url'),
+  ])
+  const fotoDe = new Map<string, string>()
+  for (const c of coms ?? []) if (c.stage_name && c.photo_url) fotoDe.set(c.stage_name, c.photo_url)
+  for (const e of ens ?? []) if (e.name && e.photo_url) fotoDe.set(e.name, e.photo_url)
+
   return (
     <main className="min-h-screen bg-black text-white p-8">
       <div className="max-w-3xl mx-auto">
@@ -142,8 +151,16 @@ export default async function BorderosPage({
           <div className="grid sm:grid-cols-2 gap-3">
             {comedianes.map(([c, n]) => (
               <Link key={c} href={`/borderos?quien=${encodeURIComponent(c)}`} className={card}>
-                <span className="text-lg font-semibold">{c}</span>
-                <span className="text-sm text-gray-400">{n} bordereau{n === 1 ? '' : 'x'}</span>
+                <span className="flex items-center gap-3 min-w-0">
+                  {fotoDe.get(c) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={fotoDe.get(c)} alt={c} className="w-11 h-11 rounded-full object-cover border border-zinc-700 shrink-0" />
+                  ) : (
+                    <span className="w-11 h-11 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-sm font-semibold shrink-0">{c.charAt(0)}</span>
+                  )}
+                  <span className="text-lg font-semibold truncate">{c}</span>
+                </span>
+                <span className="text-sm text-gray-400 shrink-0">{n} bordereau{n === 1 ? '' : 'x'}</span>
               </Link>
             ))}
           </div>
