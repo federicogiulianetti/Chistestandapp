@@ -29,6 +29,7 @@ export const MODULE_GROUPS: ModuleGroup[] = [
       { key: 'gastos', label: 'Gastos', href: '/gastos' },
       { key: 'borderos', label: 'Bordereaux', href: '/borderos' },
       { key: 'cuentas', label: 'Cuentas corrientes', href: '/cuentas' },
+      { key: 'sueldos', label: 'Sueldos', href: '/sueldos' },
       { key: 'ganancias', label: 'Mis ganancias', href: '/ganancias' },
       { key: 'argentores', label: 'Argentores', href: '/argentores' },
       { key: 'ads', label: 'Ads / Publicidad', href: '/ads' },
