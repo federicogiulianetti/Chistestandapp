@@ -49,7 +49,7 @@ async function runActor(actorId: string, input: unknown, retries = 1): Promise<u
 
 const num = (v: unknown): number | null => (typeof v === 'number' && !isNaN(v) ? v : null)
 
-export async function scrapeInstagram(handle: string, limit = 12): Promise<PlatformMetrics> {
+export async function scrapeInstagram(handle: string, limit = 30): Promise<PlatformMetrics> {
   const u = normalizeHandle(handle)
   const items = await runActor('apify~instagram-scraper', {
     directUrls: [`https://www.instagram.com/${u}/`],
@@ -76,7 +76,7 @@ export async function scrapeInstagram(handle: string, limit = 12): Promise<Platf
   }
 }
 
-export async function scrapeTiktok(handle: string, limit = 12): Promise<PlatformMetrics> {
+export async function scrapeTiktok(handle: string, limit = 30): Promise<PlatformMetrics> {
   const u = normalizeHandle(handle)
   const items = await runActor('clockworks~tiktok-scraper', {
     profiles: [u],
