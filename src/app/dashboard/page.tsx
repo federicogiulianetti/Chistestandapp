@@ -8,6 +8,7 @@ import {
   Calendar,
   BedDouble,
   TrendingUp,
+  ClipboardList,
   ReceiptText,
   Wallet,
   Lock,
@@ -57,6 +58,7 @@ const adminGroups: ModuleGroup[] = [
     label: 'Plata',
     modules: [
       { title: 'Ventas', description: 'Curva diaria de ventas y métricas por show.', href: '/sales', Icon: TrendingUp },
+      { title: 'Gastos', description: 'Checklist operativo y costos por fecha.', href: '/gastos', Icon: ClipboardList },
       { title: 'Bordereaux', description: 'Todas las liquidaciones cerradas, con descarga.', href: '/borderos', Icon: ReceiptText },
       { title: 'Cuentas corrientes', description: 'Ganado, cobrado y saldo de cada persona.', href: '/cuentas', Icon: Wallet },
       { title: 'Mis ganancias', description: 'Lo que gana la productora por comediante. Privado.', href: '/ganancias', Icon: Lock },
