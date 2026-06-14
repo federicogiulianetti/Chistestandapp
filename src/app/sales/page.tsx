@@ -60,6 +60,17 @@ export default async function SalesPage() {
     }
   }
 
+  // Cruce con Ads: shows con gasto de Meta cargado = están pautados.
+  const metaShows = new Set<string>()
+  if (shows.length) {
+    const { data: ads } = await supabase
+      .from('ad_spend')
+      .select('show_id, amount')
+      .eq('platform', 'Meta')
+      .in('show_id', shows.map(s => s.id))
+    for (const a of ads ?? []) if ((Number(a.amount) || 0) > 0) metaShows.add(a.show_id as string)
+  }
+
   const performerOf = (s: ShowRow) => s.performer_type === 'elenco' ? (s.ensemble?.name ?? '—') : (s.comedian?.stage_name ?? '—')
 
   const colOf = (s: ShowRow): VentaCol => {
@@ -98,6 +109,7 @@ export default async function SalesPage() {
         objetivo: s.sales_target != null ? String(s.sales_target) : '—',
         ocup: cap ? pct(total / cap) : '—',
         dias: daysLeft != null ? String(daysLeft) : '—',
+        meta: metaShows.has(s.id) ? 'Sí' : 'No',
       },
     }
   }

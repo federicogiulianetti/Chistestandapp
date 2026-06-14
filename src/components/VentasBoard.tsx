@@ -29,6 +29,7 @@ const ROWS: { key: string; label: string; strong?: boolean }[] = [
   { key: 'objetivo', label: 'Objetivo' },
   { key: 'ocup', label: '% Ocupación', strong: true },
   { key: 'dias', label: 'Días faltantes' },
+  { key: 'meta', label: 'Ads Meta' },
 ]
 
 function Avatar({ name, photo, color }: { name: string; photo: string | null; color: string }) {
@@ -83,9 +84,15 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
                 {ROWS.map(row => (
                   <tr key={row.key}>
                     <td className={`sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-center ${row.strong ? 'font-semibold text-body' : 'text-muted'}`}>{row.label}</td>
-                    {g.shows.map(s => (
-                      <td key={s.id} className={`border-b border-line px-3 py-2 text-center text-[13px] tabular-nums ${row.strong ? 'font-bold text-body' : 'text-muted'}`}>{s.cells[row.key]}</td>
-                    ))}
+                    {g.shows.map(s => {
+                      const val = s.cells[row.key]
+                      const cls = row.key === 'meta'
+                        ? (val === 'Sí' ? 'text-brand font-semibold' : 'text-faint')
+                        : (row.strong ? 'font-bold text-body' : 'text-muted')
+                      return (
+                        <td key={s.id} className={`border-b border-line px-3 py-2 text-center text-[13px] tabular-nums ${cls}`}>{val}</td>
+                      )
+                    })}
                   </tr>
                 ))}
                 {/* Botón Ver gráfico abajo de cada columna */}
