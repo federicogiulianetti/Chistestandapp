@@ -29,9 +29,9 @@ function ChecklistSelect({ showId, itemKey, value }: { showId: string; itemKey: 
   const [val, setVal] = useState(value)
   const [pending, start] = useTransition()
   const cls =
-    val === 'si' ? 'bg-green-900/40 text-green-300 border-green-800'
-    : val === 'incompleto' ? 'bg-amber-900/40 text-amber-300 border-amber-800'
-    : val === 'no' ? 'bg-surface-2 text-muted border-line'
+    val === 'listo' ? 'bg-green-900/40 text-green-300 border-green-800'
+    : val === 'no_listo' ? 'bg-amber-900/40 text-amber-300 border-amber-800'
+    : val === 'no_aplica' ? 'bg-surface-2 text-muted border-line'
     : 'bg-surface text-faint border-line'
   return (
     <select
@@ -41,9 +41,9 @@ function ChecklistSelect({ showId, itemKey, value }: { showId: string; itemKey: 
       className={`w-full text-[12px] rounded-md border px-2 py-1.5 text-center cursor-pointer focus:outline-none transition-colors ${cls} ${pending ? 'opacity-60' : ''}`}
     >
       <option value="">—</option>
-      <option value="si">Sí</option>
-      <option value="no">No</option>
-      <option value="incompleto">Incompleto</option>
+      <option value="listo">Listo</option>
+      <option value="no_listo">No listo</option>
+      <option value="no_aplica">No aplica</option>
     </select>
   )
 }

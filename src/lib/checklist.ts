@@ -14,11 +14,11 @@ export const CHECKLIST_ITEMS: { key: string; label: string }[] = [
 
 export const CHECKLIST_KEYS = new Set(CHECKLIST_ITEMS.map(i => i.key))
 
-export type ChecklistStatus = 'si' | 'no' | 'incompleto'
-export const CHECKLIST_STATUSES: ChecklistStatus[] = ['si', 'no', 'incompleto']
+export type ChecklistStatus = 'listo' | 'no_listo' | 'no_aplica'
+export const CHECKLIST_STATUSES: ChecklistStatus[] = ['listo', 'no_listo', 'no_aplica']
 
 export const statusLabel: Record<ChecklistStatus, string> = {
-  si: 'Sí',
-  no: 'No',
-  incompleto: 'Incompleto',
+  listo: 'Listo',
+  no_listo: 'No listo',
+  no_aplica: 'No aplica',
 }
