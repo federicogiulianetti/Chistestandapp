@@ -20,7 +20,7 @@ export default async function ShowDetailPage({
 
   if (profile.role !== 'admin') {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
+      <main className="min-h-screen bg-ink text-body p-8">
         <p className="text-red-400">No tenés permisos para editar fechas.</p>
       </main>
     )
@@ -41,12 +41,12 @@ export default async function ShowDetailPage({
   const deleteAction = deleteShow.bind(null, id)
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/shows" className="text-gray-400 hover:text-white text-sm">
+        <Link href="/shows" className="text-muted hover:text-body text-sm">
           ← Volver a fechas
         </Link>
-        <h1 className="text-3xl font-bold mt-2 mb-8">Editar fecha</h1>
+        <h1 className="text-2xl font-bold mt-2 mb-8">Editar fecha</h1>
         <ShowForm
           action={updateAction}
           deleteAction={deleteAction}

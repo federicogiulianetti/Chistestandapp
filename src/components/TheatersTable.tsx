@@ -61,7 +61,7 @@ export default function TheatersTable({
       ? `${t.deal_percentage ?? '?'}%`
       : '—'
 
-  const fieldCls = "bg-zinc-800 border border-zinc-700 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
+  const fieldCls = "bg-surface-2 border border-line text-body rounded-md px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
   const hasFilters = search || province || city || minCapacity
 
   return (
@@ -93,24 +93,24 @@ export default function TheatersTable({
         />
         {hasFilters && (
           <button type="button" onClick={() => { setSearch(''); setProvince(''); setCity(''); setMinCapacity('') }}
-            className="text-sm text-gray-400 hover:text-white px-2">
+            className="text-sm text-muted hover:text-body px-2">
             Limpiar filtros
           </button>
         )}
       </div>
 
-      <p className="text-gray-400 text-sm mb-3">
+      <p className="text-muted text-sm mb-3">
         {filtered.length} {filtered.length === 1 ? 'teatro' : 'teatros'}
       </p>
 
       {filtered.length === 0 ? (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-          <p className="text-gray-400">No hay teatros que coincidan con la búsqueda.</p>
+        <div className="bg-surface border border-line rounded-lg p-12 text-center">
+          <p className="text-muted">No hay teatros que coincidan con la búsqueda.</p>
         </div>
       ) : (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+        <div className="bg-surface border border-line rounded-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-zinc-800/50 border-b border-zinc-800">
+            <thead className="bg-surface-2 border-b border-line">
               <tr>
                 <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Teatro</th>
                 <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">País</th>
@@ -124,25 +124,25 @@ export default function TheatersTable({
             </thead>
             <tbody>
               {filtered.map(t => (
-                <tr key={t.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
+                <tr key={t.id} className="border-b border-line last:border-0 hover:bg-surface-2">
                   <td className="px-4 py-3 font-medium whitespace-nowrap">{t.name}</td>
-                  <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap"><CountryFlag country={t.country} /></td>
-                  <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">{t.province || '—'}</td>
-                  <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">{t.city || '—'}</td>
-                  <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">{t.capacity_platea ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">{arregloOf(t)}</td>
+                  <td className="px-4 py-3 text-muted text-sm whitespace-nowrap"><CountryFlag country={t.country} /></td>
+                  <td className="px-4 py-3 text-muted text-sm whitespace-nowrap">{t.province || '—'}</td>
+                  <td className="px-4 py-3 text-muted text-sm whitespace-nowrap">{t.city || '—'}</td>
+                  <td className="px-4 py-3 text-muted text-sm whitespace-nowrap">{t.capacity_platea ?? '—'}</td>
+                  <td className="px-4 py-3 text-muted text-sm whitespace-nowrap">{arregloOf(t)}</td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {t.is_active ? (
                       <span className="inline-block bg-green-900/40 text-green-300 px-2 py-1 rounded text-xs">Activo</span>
                     ) : (
-                      <span className="inline-block bg-zinc-800 text-gray-400 px-2 py-1 rounded text-xs">Inactivo</span>
+                      <span className="inline-block bg-surface-2 text-muted px-2 py-1 rounded text-xs">Inactivo</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
                     <div className="flex gap-3 justify-end">
-                      <Link href={`/theaters/${t.id}/ver`} className="text-blue-400 hover:underline text-sm">Ver</Link>
+                      <Link href={`/theaters/${t.id}/ver`} className="text-brand hover:underline text-sm">Ver</Link>
                       {canManage && (
-                        <Link href={`/theaters/${t.id}`} className="text-white hover:underline text-sm">Editar</Link>
+                        <Link href={`/theaters/${t.id}`} className="text-body hover:underline text-sm">Editar</Link>
                       )}
                     </div>
                   </td>

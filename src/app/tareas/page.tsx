@@ -6,15 +6,15 @@ import ConfirmSubmit from '@/components/ConfirmSubmit'
 import { createTask, setTaskStatus, deleteTask } from './actions'
 
 const STATUS = {
-  pendiente: { label: '⏳ Pendiente', badge: 'bg-yellow-900/40 text-yellow-300' },
-  en_curso: { label: '🔵 En curso', badge: 'bg-blue-900/40 text-blue-300' },
-  hecha: { label: '✅ Hecha', badge: 'bg-green-900/40 text-green-300' },
+  pendiente: { label: 'Pendiente', badge: 'bg-yellow-900/40 text-yellow-300' },
+  en_curso: { label: 'En curso', badge: 'bg-blue-900/40 text-blue-300' },
+  hecha: { label: 'Hecha', badge: 'bg-green-900/40 text-green-300' },
 } as const
 
 const PRIORITY = {
-  alta: { label: '🔴 Alta', badge: 'bg-red-900/40 text-red-300' },
-  normal: { label: 'Normal', badge: 'bg-zinc-800 text-gray-400' },
-  baja: { label: 'Baja', badge: 'bg-zinc-800 text-gray-500' },
+  alta: { label: 'Alta', badge: 'bg-red-900/40 text-red-300' },
+  normal: { label: 'Normal', badge: 'bg-surface-2 text-muted' },
+  baja: { label: 'Baja', badge: 'bg-surface-2 text-faint' },
 } as const
 
 type TaskRow = {
@@ -59,21 +59,21 @@ export default async function TareasPage({
       .map(s => ({ id: s.id, label: `${formatShowDate(s.show_date)} · ${s.theater?.name ?? '—'}` }))
   }
 
-  const inp = "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white"
+  const inp = "w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body"
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">{isAdmin ? 'Tareas del equipo' : 'Mis tareas'}</h1>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">{isAdmin ? 'Tareas del equipo' : 'Mis tareas'}</h1>
         </div>
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md">{sp.error}</div>}
 
-        <form action={createTask} className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 space-y-3">
-          <h2 className="text-lg font-semibold">{isAdmin ? '➕ Nueva tarea' : '➕ Anotá un pendiente'}</h2>
-          {!isAdmin && <p className="text-xs text-gray-500">Lo que cargues acá es tuyo, y tu asistente te lo recuerda al día siguiente.</p>}
+        <form action={createTask} className="bg-surface border border-line rounded-lg p-5 space-y-3">
+          <h2 className="text-lg font-semibold">{isAdmin ? 'Nueva tarea' : 'Anotá un pendiente'}</h2>
+          {!isAdmin && <p className="text-xs text-faint">Lo que cargues acá es tuyo, y tu asistente te lo recuerda al día siguiente.</p>}
           <input name="title" type="text" required placeholder="¿Qué hay que hacer?" className={inp} />
           <textarea name="description" rows={2} placeholder="Detalle (opcional)" className={inp} />
           <div className={`grid grid-cols-1 gap-3 ${isAdmin ? 'sm:grid-cols-4' : 'sm:grid-cols-2'}`}>
@@ -97,12 +97,12 @@ export default async function TareasPage({
             )}
           </div>
           <div className="flex justify-end">
-            <button type="submit" className="px-5 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">{isAdmin ? 'Crear tarea' : 'Anotar'}</button>
+            <button type="submit" className="px-5 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">{isAdmin ? 'Crear tarea' : 'Anotar'}</button>
           </div>
         </form>
 
         {tasks.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">
+          <div className="bg-surface border border-line rounded-lg p-12 text-center text-muted">
             {isAdmin ? 'No hay tareas cargadas.' : 'No tenés tareas asignadas.'}
           </div>
         ) : (
@@ -111,16 +111,16 @@ export default async function TareasPage({
               const st = STATUS[t.status as keyof typeof STATUS] ?? STATUS.pendiente
               const pr = PRIORITY[t.priority as keyof typeof PRIORITY] ?? PRIORITY.normal
               return (
-                <div key={t.id} className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <div key={t.id} className="bg-surface border border-line rounded-lg p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-medium">{t.title}</p>
-                      {t.description && <p className="text-sm text-gray-400 mt-0.5">{t.description}</p>}
+                      {t.description && <p className="text-sm text-muted mt-0.5">{t.description}</p>}
                       <div className="flex flex-wrap items-center gap-2 mt-2 text-xs">
                         <span className={`px-2 py-0.5 rounded ${pr.badge}`}>{pr.label}</span>
-                        {isAdmin && t.assignee && <span className="text-gray-400">👤 {t.assignee.full_name || t.assignee.email}</span>}
-                        {t.due_date && <span className="text-gray-400">📅 {t.due_date}</span>}
-                        {t.show && <span className="text-gray-400">🎭 {t.show.theater?.name ?? formatShowDate(t.show.show_date)}</span>}
+                        {isAdmin && t.assignee && <span className="text-muted">{t.assignee.full_name || t.assignee.email}</span>}
+                        {t.due_date && <span className="text-muted">{t.due_date}</span>}
+                        {t.show && <span className="text-muted">{t.show.theater?.name ?? formatShowDate(t.show.show_date)}</span>}
                       </div>
                     </div>
                     <span className={`px-2 py-1 rounded text-xs whitespace-nowrap ${st.badge}`}>{st.label}</span>
@@ -129,7 +129,7 @@ export default async function TareasPage({
                     {(['pendiente', 'en_curso', 'hecha'] as const).map(s => (
                       <form key={s} action={setTaskStatus.bind(null, t.id, s)}>
                         <button type="submit" disabled={t.status === s}
-                          className={`px-2 py-1 rounded text-xs border transition ${t.status === s ? 'border-zinc-600 text-gray-500 cursor-default' : 'border-zinc-700 text-gray-300 hover:bg-zinc-800'}`}>
+                          className={`px-2 py-1 rounded text-xs border transition ${t.status === s ? 'border-zinc-600 text-faint cursor-default' : 'border-line text-muted hover:bg-surface-2'}`}>
                           {STATUS[s].label}
                         </button>
                       </form>

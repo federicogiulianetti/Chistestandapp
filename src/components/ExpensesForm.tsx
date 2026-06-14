@@ -66,7 +66,7 @@ export default function ExpensesForm({
   const updateCustom = (id: number, patch: Partial<CustomRow>) =>
     setCustom(prev => prev.map(r => (r.id === id ? { ...r, ...patch } : r)))
 
-  const inp = "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white"
+  const inp = "w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body"
   const PayeeSelect = ({ name, defaultValue, value, onChange }: { name: string; defaultValue?: string; value?: string; onChange?: (v: string) => void }) => (
     <select name={name} defaultValue={value === undefined ? defaultValue : undefined} value={value}
       onChange={onChange ? e => onChange(e.target.value) : undefined} className={`${inp} text-sm`}>
@@ -79,9 +79,9 @@ export default function ExpensesForm({
 
   return (
     <form action={action} className="space-y-6">
-      <section className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+      <section className="bg-surface border border-line rounded-lg overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-zinc-800/50 border-b border-zinc-800">
+          <thead className="bg-surface-2 border-b border-line">
             <tr>
               <th className="text-left px-4 py-2 text-sm font-semibold">Categoría</th>
               <th className="text-right px-4 py-2 text-sm font-semibold w-36">Monto ($)</th>
@@ -93,7 +93,7 @@ export default function ExpensesForm({
             {fixedCategories.map(cat => {
               const i = idx++
               return (
-                <tr key={cat} className="border-b border-zinc-800 last:border-0">
+                <tr key={cat} className="border-b border-line last:border-0">
                   <td className="px-4 py-2 text-sm">
                     {cat}
                     <input type="hidden" name={`cat_${i}`} value={cat} />
@@ -117,7 +117,7 @@ export default function ExpensesForm({
             {custom.map(r => {
               const i = idx++
               return (
-                <tr key={r.id} className="border-b border-zinc-800 last:border-0 bg-zinc-900/40">
+                <tr key={r.id} className="border-b border-line last:border-0 bg-surface/40">
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2">
                       <input name={`cat_${i}`} type="text" placeholder="Categoría suelta"
@@ -140,7 +140,7 @@ export default function ExpensesForm({
             })}
           </tbody>
           <tfoot>
-            <tr className="border-t border-zinc-700 bg-zinc-800/30">
+            <tr className="border-t border-line bg-surface-2">
               <td className="px-4 py-3 text-sm font-semibold">Total de gastos directos</td>
               <td className="px-4 py-3 text-right font-bold">${Math.round(total).toLocaleString('es-AR')}</td>
               <td colSpan={2}></td>
@@ -150,14 +150,14 @@ export default function ExpensesForm({
       </section>
 
       <div className="flex items-center justify-between">
-        <button type="button" onClick={addCustom} className="text-sm text-gray-400 hover:text-white transition">
+        <button type="button" onClick={addCustom} className="text-sm text-muted hover:text-body transition">
           + Agregar categoría suelta
         </button>
-        <button type="submit" className="px-6 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">
+        <button type="submit" className="px-6 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">
           Guardar gastos
         </button>
       </div>
-      <p className="text-xs text-gray-500">La columna «Pagar a» enlaza ese gasto con la cuenta corriente de la persona: al cerrar el borderó se le acredita como ganado.</p>
+      <p className="text-xs text-faint">La columna «Pagar a» enlaza ese gasto con la cuenta corriente de la persona: al cerrar el borderó se le acredita como ganado.</p>
     </form>
   )
 }

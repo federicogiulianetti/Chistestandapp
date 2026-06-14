@@ -95,13 +95,13 @@ export default function PhotoUpload({
           <img
             src={photoUrl}
             alt="Foto del comediante"
-            className="w-32 h-32 object-cover rounded-lg border border-zinc-700"
+            className="w-32 h-32 object-cover rounded-lg border border-line"
           />
           {!disabled && (
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
+              className="absolute -top-2 -right-2 bg-red-600 text-body rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
               title="Quitar foto"
             >
               ✕
@@ -109,7 +109,7 @@ export default function PhotoUpload({
           )}
         </div>
       ) : (
-        <div className="w-32 h-32 bg-zinc-800 border border-zinc-700 rounded-lg flex items-center justify-center text-gray-500 text-xs text-center px-2">
+        <div className="w-32 h-32 bg-surface-2 border border-line rounded-lg flex items-center justify-center text-faint text-xs text-center px-2">
           Sin foto
         </div>
       )}
@@ -117,7 +117,7 @@ export default function PhotoUpload({
       {/* Botón de upload */}
       {!disabled && (
         <div>
-          <label className="inline-block px-4 py-2 bg-zinc-800 border border-zinc-700 text-white rounded-md hover:bg-zinc-700 transition cursor-pointer text-sm">
+          <label className="inline-block px-4 py-2 bg-surface-2 border border-line text-body rounded-md hover:bg-surface-2 transition cursor-pointer text-sm">
             {uploading ? 'Subiendo...' : photoUrl ? 'Cambiar foto' : 'Subir foto'}
             <input
               type="file"
@@ -127,7 +127,7 @@ export default function PhotoUpload({
               className="hidden"
             />
           </label>
-          <p className="text-xs text-gray-500 mt-1">Imagen, máximo 5MB</p>
+          <p className="text-xs text-faint mt-1">Imagen, máximo 5MB</p>
         </div>
       )}
 

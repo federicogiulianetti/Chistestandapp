@@ -75,7 +75,7 @@ export default function CalendarView({
   }
   const goToday = () => { setYear(initialYear); setMonth(initialMonth) }
 
-  const btn = "px-3 py-1.5 border border-zinc-700 rounded-md hover:bg-zinc-800 transition text-sm"
+  const btn = "px-3 py-1.5 border border-line rounded-md hover:bg-surface-2 transition text-sm"
 
   return (
     <div>
@@ -87,7 +87,7 @@ export default function CalendarView({
           <button type="button" onClick={goNext} className={btn} aria-label="Mes siguiente">→</button>
         </div>
         <h2 className="text-xl font-semibold">{monthLabel}</h2>
-        <span className="text-sm text-gray-400">{monthCount} {monthCount === 1 ? 'fecha' : 'fechas'}</span>
+        <span className="text-sm text-muted">{monthCount} {monthCount === 1 ? 'fecha' : 'fechas'}</span>
       </div>
 
       <div className="overflow-x-auto">
@@ -95,20 +95,20 @@ export default function CalendarView({
           {/* Encabezados de día */}
           <div className="gap-px mb-px" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))' }}>
             {WEEKDAYS.map(d => (
-              <div key={d} className="bg-zinc-800/50 text-center text-xs font-semibold text-gray-400 py-2">{d}</div>
+              <div key={d} className="bg-surface-2 text-center text-xs font-semibold text-muted py-2">{d}</div>
             ))}
           </div>
 
           {/* Celdas */}
-          <div className="gap-px bg-zinc-800" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))' }}>
+          <div className="gap-px bg-surface-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))' }}>
             {cells.map((day, i) => {
-              if (day === null) return <div key={i} className="bg-black min-h-[110px]" />
+              if (day === null) return <div key={i} className="bg-ink min-h-[110px]" />
               const key = `${year}-${pad(month + 1)}-${pad(day)}`
               const dayShows = byDay.get(key) ?? []
               const isToday = key === todayKey
               return (
-                <div key={i} className="bg-zinc-900 min-h-[110px] p-1.5 align-top">
-                  <div className={`text-xs mb-1 ${isToday ? 'inline-flex items-center justify-center w-6 h-6 rounded-full bg-white text-black font-bold' : 'text-gray-400'}`}>
+                <div key={i} className="bg-surface min-h-[110px] p-1.5 align-top">
+                  <div className={`text-xs mb-1 ${isToday ? 'inline-flex items-center justify-center w-6 h-6 rounded-full bg-brand text-[#06210f] font-bold' : 'text-muted'}`}>
                     {day}
                   </div>
                   <div className="space-y-1">

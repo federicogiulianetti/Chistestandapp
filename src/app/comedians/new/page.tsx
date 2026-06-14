@@ -19,12 +19,12 @@ export default async function NewComedianPage({
   const error = params.error
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/comedians" className="text-gray-400 hover:text-white text-sm">
+        <Link href="/comedians" className="text-muted hover:text-body text-sm">
           ← Volver a comediantes
         </Link>
-        <h1 className="text-3xl font-bold mt-2 mb-8">Nuevo comediante</h1>
+        <h1 className="text-2xl font-bold mt-2 mb-8">Nuevo comediante</h1>
 
         {error && (
           <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md mb-6">
@@ -34,44 +34,44 @@ export default async function NewComedianPage({
 
         <form action={createComedian} className="space-y-6">
           {/* Sección: Identidad */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">🎭 Identidad</h2>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Identidad</h2>
 
             <div>
               <label htmlFor="stage_name" className="block text-sm mb-1">
-                🎭 Nombre artístico <span className="text-red-400">*</span>
+                Nombre artístico <span className="text-red-400">*</span>
               </label>
               <input
                 id="stage_name"
                 name="stage_name"
                 type="text"
                 required
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
             <div>
-              <label htmlFor="full_name" className="block text-sm mb-1">🧑 Nombre real</label>
+              <label htmlFor="full_name" className="block text-sm mb-1">Nombre real</label>
               <input
                 id="full_name"
                 name="full_name"
                 type="text"
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="date_of_birth" className="block text-sm mb-1">🎂 Fecha de nacimiento</label>
+                <label htmlFor="date_of_birth" className="block text-sm mb-1">Fecha de nacimiento</label>
                 <input
                   id="date_of_birth"
                   name="date_of_birth"
                   type="date"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label className="block text-sm mb-1">📸 Foto</label>
+                <label className="block text-sm mb-1">Foto</label>
                 <PhotoUpload
                   name="photo_url"
                   bucket="comedian-photos"
@@ -80,150 +80,150 @@ export default async function NewComedianPage({
             </div>
 
             <div>
-              <label htmlFor="bio" className="block text-sm mb-1">📝 Bio</label>
+              <label htmlFor="bio" className="block text-sm mb-1">Bio</label>
               <textarea
                 id="bio"
                 name="bio"
                 rows={3}
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
           </section>
 
           {/* Sección: Contacto */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">📞 Contacto</h2>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Contacto</h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm mb-1">📧 Email</label>
+                <label htmlFor="email" className="block text-sm mb-1">Email</label>
                 <input
                   id="email"
                   name="email"
                   type="email"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="phone" className="block text-sm mb-1">📞 Teléfono</label>
+                <label htmlFor="phone" className="block text-sm mb-1">Teléfono</label>
                 <input
                   id="phone"
                   name="phone"
                   type="tel"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="country" className="block text-sm mb-1">🌎 País</label>
+                <label htmlFor="country" className="block text-sm mb-1">País</label>
                 <input
                   id="country"
                   name="country"
                   type="text"
                   defaultValue="Argentina"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="city" className="block text-sm mb-1">🏙️ Ciudad</label>
+                <label htmlFor="city" className="block text-sm mb-1">Ciudad</label>
                 <input
                   id="city"
                   name="city"
                   type="text"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
           </section>
 
           {/* Sección: Redes sociales */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">📱 Redes sociales</h2>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Redes sociales</h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="instagram_handle" className="block text-sm mb-1">📷 Instagram (sin @)</label>
+                <label htmlFor="instagram_handle" className="block text-sm mb-1">Instagram (sin @)</label>
                 <input
                   id="instagram_handle"
                   name="instagram_handle"
                   type="text"
                   placeholder="usuario"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="twitter_handle" className="block text-sm mb-1">🐦 Twitter (sin @)</label>
+                <label htmlFor="twitter_handle" className="block text-sm mb-1">Twitter (sin @)</label>
                 <input
                   id="twitter_handle"
                   name="twitter_handle"
                   type="text"
                   placeholder="usuario"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="tiktok_handle" className="block text-sm mb-1">🎵 TikTok (sin @)</label>
+                <label htmlFor="tiktok_handle" className="block text-sm mb-1">TikTok (sin @)</label>
                 <input
                   id="tiktok_handle"
                   name="tiktok_handle"
                   type="text"
                   placeholder="usuario"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                  <label htmlFor="facebook_url" className="block text-sm mb-1">📘 Facebook (URL)</label>
+                  <label htmlFor="facebook_url" className="block text-sm mb-1">Facebook (URL)</label>
                   <input
                     id="facebook_url"
                     name="facebook_url"
                     type="url"
                     placeholder="https://facebook.com/..."
-                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                    className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                   />
                 </div>
               <div>
-                <label htmlFor="youtube_url" className="block text-sm mb-1">▶️ YouTube (URL)</label>
+                <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
                 <input
                   id="youtube_url"
                   name="youtube_url"
                   type="url"
                   placeholder="https://youtube.com/..."
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="spotify_url" className="block text-sm mb-1">🎧 Spotify (URL)</label>
+                <label htmlFor="spotify_url" className="block text-sm mb-1">Spotify (URL)</label>
                 <input
                   id="spotify_url"
                   name="spotify_url"
                   type="url"
                   placeholder="https://open.spotify.com/..."
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="website_url" className="block text-sm mb-1">🌐 Sitio web</label>
+              <label htmlFor="website_url" className="block text-sm mb-1">Sitio web</label>
               <input
                 id="website_url"
                 name="website_url"
                 type="url"
                 placeholder="https://..."
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
           </section>
 
          {/* Sección: Datos personales */}
-         <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">🧳 Datos personales y operativos</h2>
+         <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Datos personales y operativos</h2>
 
             <div>
               <label htmlFor="dni" className="block text-sm mb-1">
-                🪪 DNI <span className="text-red-400">*</span>
+                DNI <span className="text-red-400">*</span>
               </label>
               <input
                 id="dni"
@@ -231,66 +231,66 @@ export default async function NewComedianPage({
                 type="text"
                 required
                 placeholder="12345678"
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
             <div>
-              <label htmlFor="home_address" className="block text-sm mb-1">🏠 Dirección de casa</label>
+              <label htmlFor="home_address" className="block text-sm mb-1">Dirección de casa</label>
               <input
                 id="home_address"
                 name="home_address"
                 type="text"
                 placeholder="Calle, número, piso, depto, ciudad"
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="frequent_flyer" className="block text-sm mb-1">✈️ Pasajero frecuente</label>
+                <label htmlFor="frequent_flyer" className="block text-sm mb-1">Pasajero frecuente</label>
                 <input
                   id="frequent_flyer"
                   name="frequent_flyer"
                   type="text"
                   placeholder="Aerolínea y número"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="seat_preference" className="block text-sm mb-1">💺 Preferencia de asiento</label>
+                <label htmlFor="seat_preference" className="block text-sm mb-1">Preferencia de asiento</label>
                 <input
                   id="seat_preference"
                   name="seat_preference"
                   type="text"
                   placeholder="Ventana, pasillo, adelante..."
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="dressing_room_preferences" className="block text-sm mb-1">🚪 Preferencias de camarín</label>
+              <label htmlFor="dressing_room_preferences" className="block text-sm mb-1">Preferencias de camarín</label>
               <textarea
                 id="dressing_room_preferences"
                 name="dressing_room_preferences"
                 rows={3}
                 placeholder="Bebidas, snacks, ambiente, etc."
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
           </section>
           {/* Sección: Interno */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">📝 Notas internas</h2>
-            <p className="text-xs text-gray-400">Solo visible para el equipo, no se comparte con el comediante.</p>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Notas internas</h2>
+            <p className="text-xs text-muted">Solo visible para el equipo, no se comparte con el comediante.</p>
 
             <div>
               <textarea
                 id="notes"
                 name="notes"
                 rows={3}
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
@@ -303,7 +303,7 @@ export default async function NewComedianPage({
                 className="w-4 h-4"
               />
               <label htmlFor="performs_solo" className="text-sm">
-                🎙️ Hace shows solo (unipersonales)
+                Hace shows solo (unipersonales)
               </label>
             </div>
             <div className="flex items-center gap-2">
@@ -315,7 +315,7 @@ export default async function NewComedianPage({
                 className="w-4 h-4"
               />
               <label htmlFor="is_active" className="text-sm">
-                ✅ Está activo (recibe shows)
+                Está activo (recibe shows)
               </label>
             </div>
           </section>
@@ -323,13 +323,13 @@ export default async function NewComedianPage({
           <div className="flex gap-3 justify-end">
             <Link
               href="/comedians"
-              className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition"
+              className="px-4 py-2 border border-line text-body rounded-md hover:bg-surface-2 transition"
             >
               Cancelar
             </Link>
             <button
               type="submit"
-              className="px-6 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition"
+              className="px-6 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition"
             >
               Crear comediante
             </button>

@@ -39,13 +39,13 @@ export default function RepartirForm({
 
   const assignedTotal = selected.reduce((a, id) => a + (Number(shareValue(id)) || 0), 0)
 
-  const inp = "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white"
+  const inp = "w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body"
 
   return (
     <form action={action} className="space-y-6">
       <input type="hidden" name="return_to" value={returnTo} />
 
-      <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+      <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm mb-1">🏷️ Categoría <span className="text-red-400">*</span></label>
@@ -71,17 +71,17 @@ export default function RepartirForm({
         </label>
       </section>
 
-      <section className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+      <section className="bg-surface border border-line rounded-lg overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-line">
           <h2 className="text-lg font-semibold">📅 Fechas ({selected.length})</h2>
-          <span className="text-sm text-gray-400">Asignado: ${Math.round(assignedTotal).toLocaleString('es-AR')} / ${Math.round(totalNum).toLocaleString('es-AR')}</span>
+          <span className="text-sm text-muted">Asignado: ${Math.round(assignedTotal).toLocaleString('es-AR')} / ${Math.round(totalNum).toLocaleString('es-AR')}</span>
         </div>
         <table className="w-full">
           <tbody>
             {shows.map(s => {
               const on = selected.includes(s.id)
               return (
-                <tr key={s.id} className="border-b border-zinc-800 last:border-0">
+                <tr key={s.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-2 w-8">
                     <input type="checkbox" checked={on} onChange={() => toggle(s.id)} />
                   </td>
@@ -106,10 +106,10 @@ export default function RepartirForm({
       </section>
 
       <div className="flex gap-3 justify-end">
-        <Link href={returnTo ? `/shows/${returnTo}/gastos` : '/shows'} className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition">
+        <Link href={returnTo ? `/shows/${returnTo}/gastos` : '/shows'} className="px-4 py-2 border border-line text-body rounded-md hover:bg-surface-2 transition">
           Cancelar
         </Link>
-        <button type="submit" disabled={selected.length === 0} className="px-6 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition disabled:opacity-50">
+        <button type="submit" disabled={selected.length === 0} className="px-6 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition disabled:opacity-50">
           Repartir gasto
         </button>
       </div>

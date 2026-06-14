@@ -74,7 +74,7 @@ export default function AddressAutocomplete({
       onChange={(e) => setValue(e.target.value)}
       disabled={disabled}
       placeholder="Buscá el nombre o dirección del teatro..."
-      className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
+      className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 disabled:opacity-70"
     />
   )
 }

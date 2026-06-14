@@ -59,31 +59,31 @@ export default async function MiCuentaPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Mi cuenta corriente</h1>
-          <p className="text-gray-400 mt-1">{name}</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Mi cuenta corriente</h1>
+          <p className="text-muted mt-1">{name}</p>
         </div>
 
         {bals.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 text-gray-400">
+          <div className="bg-surface border border-line rounded-lg p-6 text-muted">
             Todavía no hay movimientos. Aparecerán cuando se cierren tus borderós y se carguen tus pagos.
           </div>
         ) : (
           bals.map(b => (
             <div key={b.currency} className="grid grid-cols-3 gap-3">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-xs text-gray-400">Ganado ({b.currency})</p>
+              <div className="bg-surface border border-line rounded-lg p-4">
+                <p className="text-xs text-muted">Ganado ({b.currency})</p>
                 <p className="text-xl font-bold mt-1">{fmt(b.ganado, b.currency)}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-xs text-gray-400">Cobrado</p>
+              <div className="bg-surface border border-line rounded-lg p-4">
+                <p className="text-xs text-muted">Cobrado</p>
                 <p className="text-xl font-bold mt-1">{fmt(b.cobrado, b.currency)}</p>
               </div>
-              <div className={`border rounded-lg p-4 ${b.balance > 0 ? 'bg-green-900/20 border-green-800' : 'bg-zinc-900 border-zinc-800'}`}>
-                <p className="text-xs text-gray-400">Falta cobrar</p>
+              <div className={`border rounded-lg p-4 ${b.balance > 0 ? 'bg-green-900/20 border-green-800' : 'bg-surface border-line'}`}>
+                <p className="text-xs text-muted">Falta cobrar</p>
                 <p className="text-xl font-bold mt-1">{fmt(b.balance, b.currency)}</p>
               </div>
             </div>
@@ -93,27 +93,27 @@ export default async function MiCuentaPage() {
         {/* USD real (ajustado por inflación con el dólar de cada fecha) */}
         {hasArs && (
           <div>
-            <p className="text-xs text-gray-500 mb-2">💵 En dólares reales (cada movimiento al dólar de su fecha)</p>
+            <p className="text-xs text-faint mb-2">En dólares reales (cada movimiento al dólar de su fecha)</p>
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-xs text-gray-400">Ganado (USD)</p>
+              <div className="bg-surface border border-line rounded-lg p-4">
+                <p className="text-xs text-muted">Ganado (USD)</p>
                 <p className="text-xl font-bold mt-1">{fmtUsd(usd.ganado)}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-xs text-gray-400">Cobrado (USD)</p>
+              <div className="bg-surface border border-line rounded-lg p-4">
+                <p className="text-xs text-muted">Cobrado (USD)</p>
                 <p className="text-xl font-bold mt-1">{fmtUsd(usd.cobrado)}</p>
               </div>
-              <div className={`border rounded-lg p-4 ${usd.saldo > 0 ? 'bg-green-900/20 border-green-800' : 'bg-zinc-900 border-zinc-800'}`}>
-                <p className="text-xs text-gray-400">Falta cobrar (USD)</p>
+              <div className={`border rounded-lg p-4 ${usd.saldo > 0 ? 'bg-green-900/20 border-green-800' : 'bg-surface border-line'}`}>
+                <p className="text-xs text-muted">Falta cobrar (USD)</p>
                 <p className="text-xl font-bold mt-1">{fmtUsd(usd.saldo)}</p>
               </div>
             </div>
           </div>
         )}
 
-        <section className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+        <section className="bg-surface border border-line rounded-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-zinc-800/50 border-b border-zinc-800">
+            <thead className="bg-surface-2 border-b border-line">
               <tr>
                 <th className="text-left px-4 py-2 text-sm font-semibold">Fecha</th>
                 <th className="text-left px-4 py-2 text-sm font-semibold">Concepto</th>
@@ -124,14 +124,14 @@ export default async function MiCuentaPage() {
             </thead>
             <tbody>
               {withRunning.length === 0 ? (
-                <tr><td colSpan={5} className="px-4 py-3 text-sm text-gray-500">Sin movimientos.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-3 text-sm text-faint">Sin movimientos.</td></tr>
               ) : withRunning.map(({ m, running }) => (
-                <tr key={m.id} className="border-b border-zinc-800 last:border-0">
+                <tr key={m.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-2 text-sm whitespace-nowrap">{m.movement_date}</td>
                   <td className="px-4 py-2 text-sm">{m.concept ?? '—'}</td>
                   <td className="px-4 py-2 text-sm text-right text-green-300">{m.direction === 'credit' ? fmt(Number(m.amount), m.currency) : ''}</td>
-                  <td className="px-4 py-2 text-sm text-right text-blue-300">{m.direction === 'debit' ? fmt(Number(m.amount), m.currency) : ''}</td>
-                  <td className="px-4 py-2 text-sm text-right text-gray-300">{fmt(running, m.currency)}</td>
+                  <td className="px-4 py-2 text-sm text-right text-brand">{m.direction === 'debit' ? fmt(Number(m.amount), m.currency) : ''}</td>
+                  <td className="px-4 py-2 text-sm text-right text-muted">{fmt(running, m.currency)}</td>
                 </tr>
               ))}
             </tbody>
@@ -142,8 +142,8 @@ export default async function MiCuentaPage() {
         {com && (
           <section className="space-y-3">
             <div>
-              <h2 className="text-lg font-semibold">🎟️ Argentores</h2>
-              <p className="text-gray-400 text-sm">Plata que cobrás de Argentores por trámite, aparte del borderó. El estado de cobro lo marca tu productor.</p>
+              <h2 className="text-lg font-semibold">Argentores</h2>
+              <p className="text-muted text-sm">Plata que cobrás de Argentores por trámite, aparte del borderó. El estado de cobro lo marca tu productor.</p>
             </div>
             <ArgentoresLedger entries={argEntries} canToggle={false} revalidate="/mi-cuenta" />
           </section>

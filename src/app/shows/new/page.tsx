@@ -15,7 +15,7 @@ export default async function NewShowPage({
 
   if (profile.role !== 'admin') {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
+      <main className="min-h-screen bg-ink text-body p-8">
         <p className="text-red-400">No tenés permisos para acceder a esta página.</p>
       </main>
     )
@@ -24,12 +24,12 @@ export default async function NewShowPage({
   const { comedians, ensembles, theaters, existingShows } = await getShowFormOptions()
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/shows" className="text-gray-400 hover:text-white text-sm">
+        <Link href="/shows" className="text-muted hover:text-body text-sm">
           ← Volver a fechas
         </Link>
-        <h1 className="text-3xl font-bold mt-2 mb-8">Nueva fecha</h1>
+        <h1 className="text-2xl font-bold mt-2 mb-8">Nueva fecha</h1>
         <ShowForm
           action={createShow}
           comedians={comedians}

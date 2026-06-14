@@ -19,13 +19,13 @@ export default async function NewEnsemblePage({
   const error = params.error
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/ensembles" className="text-gray-400 hover:text-white text-sm">
+        <Link href="/ensembles" className="text-muted hover:text-body text-sm">
           ← Elencos
         </Link>
 
-        <h1 className="text-3xl font-bold mt-2 mb-8">Nuevo elenco</h1>
+        <h1 className="text-2xl font-bold mt-2 mb-8">Nuevo elenco</h1>
 
         {error && (
           <div className="mb-6 p-3 bg-red-900/30 border border-red-700 text-red-300 rounded-md text-sm">
@@ -35,17 +35,17 @@ export default async function NewEnsemblePage({
 
         <form action={createEnsemble} className="space-y-6">
           {/* Sección: Identidad */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">🎭 Identidad</h2>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Identidad</h2>
 
             <div>
-              <label className="block text-sm mb-2">📸 Foto / logo del elenco</label>
+              <label className="block text-sm mb-2">Foto / logo del elenco</label>
               <PhotoUpload bucket="ensemble-photos" name="photo_url" />
             </div>
 
             <div>
               <label htmlFor="name" className="block text-sm mb-1">
-                🎭 Nombre del elenco <span className="text-red-400">*</span>
+                Nombre del elenco <span className="text-red-400">*</span>
               </label>
               <input
                 id="name"
@@ -53,103 +53,103 @@ export default async function NewEnsemblePage({
                 type="text"
                 required
                 placeholder="Ej: Tres tristes tigres"
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
             <div>
-              <label htmlFor="bio" className="block text-sm mb-1">📝 Bio / descripción</label>
+              <label htmlFor="bio" className="block text-sm mb-1">Bio / descripción</label>
               <textarea
                 id="bio"
                 name="bio"
                 rows={4}
                 placeholder="Descripción del elenco, historia, propuesta artística..."
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="city" className="block text-sm mb-1">🏙️ Ciudad</label>
+                <label htmlFor="city" className="block text-sm mb-1">Ciudad</label>
                 <input
                   id="city"
                   name="city"
                   type="text"
                   placeholder="CABA, Buenos Aires..."
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="country" className="block text-sm mb-1">🌎 País</label>
+                <label htmlFor="country" className="block text-sm mb-1">País</label>
                 <input
                   id="country"
                   name="country"
                   type="text"
                   placeholder="Argentina"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
           </section>
 
           {/* Sección: Redes sociales */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">📱 Redes sociales</h2>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Redes sociales</h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="instagram_handle" className="block text-sm mb-1">📷 Instagram</label>
+                <label htmlFor="instagram_handle" className="block text-sm mb-1">Instagram</label>
                 <input
                   id="instagram_handle"
                   name="instagram_handle"
                   type="text"
                   placeholder="elenco_oficial (sin @)"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="tiktok_handle" className="block text-sm mb-1">🎵 TikTok</label>
+                <label htmlFor="tiktok_handle" className="block text-sm mb-1">TikTok</label>
                 <input
                   id="tiktok_handle"
                   name="tiktok_handle"
                   type="text"
                   placeholder="elenco_oficial (sin @)"
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="youtube_url" className="block text-sm mb-1">▶️ YouTube (URL)</label>
+                <label htmlFor="youtube_url" className="block text-sm mb-1">YouTube (URL)</label>
                 <input
                   id="youtube_url"
                   name="youtube_url"
                   type="url"
                   placeholder="https://youtube.com/@..."
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
               <div>
-                <label htmlFor="website_url" className="block text-sm mb-1">🌐 Sitio web</label>
+                <label htmlFor="website_url" className="block text-sm mb-1">Sitio web</label>
                 <input
                   id="website_url"
                   name="website_url"
                   type="url"
                   placeholder="https://..."
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+                  className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
                 />
               </div>
             </div>
           </section>
 
           {/* Sección: Notas */}
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-semibold mb-2">📝 Notas internas</h2>
-            <p className="text-sm text-gray-400">Solo visible para el equipo, no se comparte con el elenco.</p>
+          <section className="bg-surface border border-line rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-semibold mb-2">Notas internas</h2>
+            <p className="text-sm text-muted">Solo visible para el equipo, no se comparte con el elenco.</p>
 
             <textarea
               id="notes"
               name="notes"
               rows={4}
-              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500"
+              className="w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500"
             />
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -159,7 +159,7 @@ export default async function NewEnsemblePage({
                 defaultChecked
                 className="w-4 h-4 accent-white"
               />
-              <span className="text-sm">✅ Está activo (recibe shows)</span>
+              <span className="text-sm">Está activo (recibe shows)</span>
             </label>
           </section>
 
@@ -167,13 +167,13 @@ export default async function NewEnsemblePage({
           <div className="flex items-center justify-end gap-3">
             <Link
               href="/ensembles"
-              className="px-4 py-2 bg-zinc-800 border border-zinc-700 text-white rounded-md hover:bg-zinc-700 transition"
+              className="px-4 py-2 bg-surface-2 border border-line text-body rounded-md hover:bg-surface-2 transition"
             >
               Cancelar
             </Link>
             <button
               type="submit"
-              className="px-4 py-2 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition"
+              className="px-4 py-2 bg-brand text-[#06210f] font-medium rounded-md hover:opacity-90 transition"
             >
               Crear elenco
             </button>

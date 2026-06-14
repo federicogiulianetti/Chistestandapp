@@ -18,7 +18,7 @@ type RawShow = {
 export default async function PlanificacionPage() {
   const { profile } = await getUserAndProfile()
   if (profile.role !== 'admin') {
-    return <main className="min-h-screen bg-black text-white p-8"><p className="text-red-400">Sin permisos.</p></main>
+    return <main className="min-h-screen bg-ink text-body p-8"><p className="text-red-400">Sin permisos.</p></main>
   }
 
   const supabase = await createClient()
@@ -61,26 +61,26 @@ export default async function PlanificacionPage() {
   const cities = Array.from(byCity.keys()).sort()
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Planificación</h1>
-          <p className="text-gray-400 mt-1">Detecta comediantes que se pisan en la misma ciudad (menos de {GAP_DAYS} días).</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Planificación</h1>
+          <p className="text-muted mt-1">Detecta comediantes que se pisan en la misma ciudad (menos de {GAP_DAYS} días).</p>
         </div>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">⚠️ Conflictos ({conflicts.length})</h2>
+          <h2 className="text-xl font-semibold mb-3">Conflictos ({conflicts.length})</h2>
           {conflicts.length === 0 ? (
             <div className="bg-green-900/20 border border-green-800 rounded-lg p-6 text-green-300 text-sm">
-              No hay comediantes pisándose dentro de {GAP_DAYS} días. 🎉
+              No hay comediantes pisándose dentro de {GAP_DAYS} días.
             </div>
           ) : (
             <div className="space-y-2">
               {conflicts.map((c, i) => (
                 <div key={i} className="bg-red-900/20 border border-red-800 rounded-lg p-4 text-sm">
-                  <p className="font-medium">🏙️ {c.city} — a {c.days} días</p>
-                  <p className="text-gray-300 mt-1">
+                  <p className="font-medium">{c.city} — a {c.days} días</p>
+                  <p className="text-muted mt-1">
                     {c.a.performer} ({formatShowDate(c.a.date)}) ↔ {c.b.performer} ({formatShowDate(c.b.date)})
                   </p>
                 </div>
@@ -90,10 +90,10 @@ export default async function PlanificacionPage() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-3">📍 Agenda por ciudad</h2>
+          <h2 className="text-xl font-semibold mb-3">Agenda por ciudad</h2>
           <div className="space-y-4">
             {cities.map(city => (
-              <div key={city} className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+              <div key={city} className="bg-surface border border-line rounded-lg p-4">
                 <p className="font-medium mb-2">{city}</p>
                 <div className="space-y-1">
                   {(byCity.get(city) ?? []).map(s => {

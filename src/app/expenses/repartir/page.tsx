@@ -25,7 +25,7 @@ export default async function RepartirPage({
 
   if (profile.role !== 'admin') {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
+      <main className="min-h-screen bg-ink text-body p-8">
         <p className="text-red-400">No tenés permisos para repartir gastos.</p>
       </main>
     )
@@ -47,12 +47,12 @@ export default async function RepartirPage({
   const returnTo = from ?? ''
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <Link href={from ? `/shows/${from}/gastos` : '/dashboard'} className="text-gray-400 hover:text-white text-sm">← Volver</Link>
-          <h1 className="text-3xl font-bold mt-2">Repartir un gasto entre fechas</h1>
-          <p className="text-gray-400 mt-1">Un mismo gasto (ej: aéreos de una gira) dividido entre varias fechas.</p>
+          <Link href={from ? `/shows/${from}/gastos` : '/dashboard'} className="text-muted hover:text-body text-sm">← Volver</Link>
+          <h1 className="text-2xl font-bold mt-2">Repartir un gasto entre fechas</h1>
+          <p className="text-muted mt-1">Un mismo gasto (ej: aéreos de una gira) dividido entre varias fechas.</p>
         </div>
 
         {sp.error && (
@@ -63,8 +63,8 @@ export default async function RepartirPage({
         )}
 
         {shows.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-            <p className="text-gray-400">No hay fechas cargadas para repartir.</p>
+          <div className="bg-surface border border-line rounded-lg p-12 text-center">
+            <p className="text-muted">No hay fechas cargadas para repartir.</p>
           </div>
         ) : (
           <RepartirForm

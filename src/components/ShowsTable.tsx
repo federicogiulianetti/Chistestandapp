@@ -60,7 +60,7 @@ export default function ShowsTable({ shows, canManage }: { shows: ShowRow[]; can
     })
   }, [shows, search, status, city, performerType, from, to])
 
-  const fieldCls = "bg-zinc-800 border border-zinc-700 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
+  const fieldCls = "bg-surface-2 border border-line text-body rounded-md px-3 py-2 text-sm focus:outline-none focus:border-zinc-500"
   const hasFilters = search || status || city || performerType || from || to
 
   return (
@@ -87,34 +87,34 @@ export default function ShowsTable({ shows, canManage }: { shows: ShowRow[]; can
           <option value="comedian">Comediantes</option>
           <option value="elenco">Elencos</option>
         </select>
-        <label className="flex items-center gap-2 text-sm text-gray-400">
+        <label className="flex items-center gap-2 text-sm text-muted">
           Desde
           <input type="date" value={from} onChange={e => setFrom(e.target.value)} className={fieldCls} />
         </label>
-        <label className="flex items-center gap-2 text-sm text-gray-400">
+        <label className="flex items-center gap-2 text-sm text-muted">
           Hasta
           <input type="date" value={to} onChange={e => setTo(e.target.value)} className={fieldCls} />
         </label>
         {hasFilters && (
           <button type="button" onClick={() => { setSearch(''); setStatus(''); setCity(''); setPerformerType(''); setFrom(''); setTo('') }}
-            className="text-sm text-gray-400 hover:text-white px-2">
+            className="text-sm text-muted hover:text-body px-2">
             Limpiar filtros
           </button>
         )}
       </div>
 
-      <p className="text-gray-400 text-sm mb-3">
+      <p className="text-muted text-sm mb-3">
         {filtered.length} {filtered.length === 1 ? 'fecha' : 'fechas'}
       </p>
 
       {filtered.length === 0 ? (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-          <p className="text-gray-400">No hay fechas que coincidan con la búsqueda.</p>
+        <div className="bg-surface border border-line rounded-lg p-12 text-center">
+          <p className="text-muted">No hay fechas que coincidan con la búsqueda.</p>
         </div>
       ) : (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+        <div className="bg-surface border border-line rounded-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-zinc-800/50 border-b border-zinc-800">
+            <thead className="bg-surface-2 border-b border-line">
               <tr>
                 <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Fecha</th>
                 <th className="text-left px-4 py-3 text-sm font-semibold whitespace-nowrap">Artista</th>
@@ -128,7 +128,7 @@ export default function ShowsTable({ shows, canManage }: { shows: ShowRow[]; can
               {filtered.map((show) => {
                 const st = statusMeta(show.status)
                 return (
-                  <tr key={show.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
+                  <tr key={show.id} className="border-b border-line last:border-0 hover:bg-surface-2">
                     <td className="px-4 py-3 text-sm whitespace-nowrap">{formatShowDate(show.show_date)}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-2">
@@ -136,18 +136,18 @@ export default function ShowsTable({ shows, canManage }: { shows: ShowRow[]; can
                         <span className="font-medium">{performerName(show)}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">{show.theater?.name ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-300 text-sm whitespace-nowrap">{show.city || '—'}</td>
+                    <td className="px-4 py-3 text-muted text-sm whitespace-nowrap">{show.theater?.name ?? '—'}</td>
+                    <td className="px-4 py-3 text-muted text-sm whitespace-nowrap">{show.city || '—'}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`inline-block px-2 py-1 rounded text-xs ${st.badge}`}>{st.label}</span>
                     </td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <div className="flex gap-3 justify-end">
-                        <Link href={`/shows/${show.id}/ver`} className="text-blue-400 hover:underline text-sm">
+                        <Link href={`/shows/${show.id}/ver`} className="text-brand hover:underline text-sm">
                           Ver
                         </Link>
                         {canManage && (
-                          <Link href={`/shows/${show.id}`} className="text-white hover:underline text-sm">
+                          <Link href={`/shows/${show.id}`} className="text-body hover:underline text-sm">
                             Editar
                           </Link>
                         )}

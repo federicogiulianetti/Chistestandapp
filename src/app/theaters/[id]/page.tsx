@@ -31,12 +31,12 @@ export default async function TheaterDetailPage({
   const deleteAction = deleteTheater.bind(null, id)
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/theaters" className="text-gray-400 hover:text-white text-sm">
+        <Link href="/theaters" className="text-muted hover:text-body text-sm">
           ← Volver a teatros
         </Link>
-        <h1 className="text-3xl font-bold mt-2 mb-8">
+        <h1 className="text-2xl font-bold mt-2 mb-8">
           {canEdit ? 'Editar teatro' : theater.name}
         </h1>
 

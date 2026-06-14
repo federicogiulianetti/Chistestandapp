@@ -15,10 +15,10 @@ export default function InviteForm({
   unlinkedComedians: ComedianOption[]
 }) {
   const [role, setRole] = useState('comediante')
-  const inp = "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white"
+  const inp = "w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body"
 
   return (
-    <form action={action} className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4">
+    <form action={action} className="bg-surface border border-line rounded-lg p-6 space-y-4">
       <h2 className="text-lg font-semibold">✉️ Invitar a alguien</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -49,12 +49,12 @@ export default function InviteForm({
             <option value="">— No vincular (cuenta nueva) —</option>
             {unlinkedComedians.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
-          <p className="text-xs text-gray-500 mt-1">Así el comediante ve sus fechas, borderós y cuenta corriente.</p>
+          <p className="text-xs text-faint mt-1">Así el comediante ve sus fechas, borderós y cuenta corriente.</p>
         </div>
       )}
 
       <div className="flex justify-end">
-        <button type="submit" className="px-5 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">
+        <button type="submit" className="px-5 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">
           Enviar invitación
         </button>
       </div>

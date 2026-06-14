@@ -18,7 +18,7 @@ function SocialIcon({
       target="_blank"
       rel="noopener noreferrer"
       title={label}
-      className="text-gray-400 hover:text-white transition"
+      className="text-muted hover:text-body transition"
     >
       {children}
     </a>
@@ -55,16 +55,16 @@ export default async function ComediansPage({
   const totalElencos = ensembles?.length ?? 0
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
         <div className="mb-8">
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">
             ← Dashboard
           </Link>
-          <h1 className="text-3xl font-bold mt-2">Comediantes y Elencos</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-2xl font-bold mt-2">Comediantes y Elencos</h1>
+          <p className="text-muted mt-1">
             {totalComediantes} {totalComediantes === 1 ? 'comediante' : 'comediantes'} · {totalElencos} {totalElencos === 1 ? 'elenco' : 'elencos'}
           </p>
         </div>
@@ -82,29 +82,29 @@ export default async function ComediansPage({
             {canManage && (
               <Link
                 href="/comedians/new"
-                className="px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition text-sm"
+                className="px-4 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition text-sm"
               >
-                + Nuevo comediante
+                Nuevo comediante
               </Link>
             )}
           </div>
 
           {(!comedians || comedians.length === 0) ? (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-              <p className="text-gray-400 mb-4">Todavía no hay comediantes cargados.</p>
+            <div className="bg-surface border border-line rounded-lg p-12 text-center">
+              <p className="text-muted mb-4">Todavía no hay comediantes cargados.</p>
               {canManage && (
                 <Link
                   href="/comedians/new"
-                  className="inline-block px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition"
+                  className="inline-block px-4 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition"
                 >
                   Cargar el primero
                 </Link>
               )}
             </div>
           ) : (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+            <div className="bg-surface border border-line rounded-lg overflow-hidden">
               <table className="w-full">
-                <thead className="bg-zinc-800/50 border-b border-zinc-800">
+                <thead className="bg-surface-2 border-b border-line">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-semibold">Comediante</th>
                     <th className="text-left px-4 py-3 text-sm font-semibold">Ciudad</th>
@@ -115,7 +115,7 @@ export default async function ComediansPage({
                 </thead>
                 <tbody>
                   {comedians.map((c) => (
-                    <tr key={c.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
+                    <tr key={c.id} className="border-b border-line last:border-0 hover:bg-surface-2">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           {c.photo_url ? (
@@ -123,22 +123,22 @@ export default async function ComediansPage({
                             <img
                               src={c.photo_url}
                               alt={c.stage_name}
-                              className="w-10 h-10 rounded-full object-cover border border-zinc-700"
+                              className="w-10 h-10 rounded-full object-cover border border-line"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs text-gray-500">
+                            <div className="w-10 h-10 rounded-full bg-surface-2 border border-line flex items-center justify-center text-xs text-faint">
                               {c.stage_name?.[0]?.toUpperCase() ?? '?'}
                             </div>
                           )}
                           <div>
                             <div className="font-medium">{c.stage_name}</div>
                             {c.full_name && (
-                              <div className="text-xs text-gray-400">{c.full_name}</div>
+                              <div className="text-xs text-muted">{c.full_name}</div>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-300">{c.city || '—'}</td>
+                      <td className="px-4 py-3 text-muted">{c.city || '—'}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <SocialIcon
@@ -193,7 +193,7 @@ export default async function ComediansPage({
                             Activo
                           </span>
                         ) : (
-                          <span className="inline-block bg-zinc-800 text-gray-400 px-2 py-1 rounded text-xs">
+                          <span className="inline-block bg-surface-2 text-muted px-2 py-1 rounded text-xs">
                             Inactivo
                           </span>
                         )}
@@ -202,14 +202,14 @@ export default async function ComediansPage({
                         <div className="flex gap-3 justify-end">
                           <Link
                             href={`/comedians/${c.id}?ver=1`}
-                            className="text-blue-400 hover:underline text-sm"
+                            className="text-brand hover:underline text-sm"
                           >
                             Ver
                           </Link>
                           {canManage && (
                             <Link
                               href={`/comedians/${c.id}`}
-                              className="text-white hover:underline text-sm"
+                              className="text-body hover:underline text-sm"
                             >
                               Editar
                             </Link>
@@ -231,29 +231,29 @@ export default async function ComediansPage({
             {canManage && (
               <Link
                 href="/ensembles/new"
-                className="px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition text-sm"
+                className="px-4 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition text-sm"
               >
-                + Nuevo elenco
+                Nuevo elenco
               </Link>
             )}
           </div>
 
           {(!ensembles || ensembles.length === 0) ? (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
-              <p className="text-gray-400 mb-4">Todavía no hay elencos cargados.</p>
+            <div className="bg-surface border border-line rounded-lg p-12 text-center">
+              <p className="text-muted mb-4">Todavía no hay elencos cargados.</p>
               {canManage && (
                 <Link
                   href="/ensembles/new"
-                  className="inline-block px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition"
+                  className="inline-block px-4 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition"
                 >
                   Crear el primero
                 </Link>
               )}
             </div>
           ) : (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+            <div className="bg-surface border border-line rounded-lg overflow-hidden">
               <table className="w-full">
-                <thead className="bg-zinc-800/50 border-b border-zinc-800">
+                <thead className="bg-surface-2 border-b border-line">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-semibold">Elenco</th>
                     <th className="text-left px-4 py-3 text-sm font-semibold">Miembros</th>
@@ -267,7 +267,7 @@ export default async function ComediansPage({
                   {ensembles.map((e) => {
                     const memberCount = (e.ensemble_members as { count: number }[])?.[0]?.count ?? 0
                     return (
-                      <tr key={e.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
+                      <tr key={e.id} className="border-b border-line last:border-0 hover:bg-surface-2">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             {e.photo_url ? (
@@ -275,18 +275,18 @@ export default async function ComediansPage({
                               <img
                                 src={e.photo_url}
                                 alt={e.name}
-                                className="w-10 h-10 rounded-lg object-cover border border-zinc-700"
+                                className="w-10 h-10 rounded-lg object-cover border border-line"
                               />
                             ) : (
-                              <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-lg">
+                              <div className="w-10 h-10 rounded-lg bg-surface-2 border border-line flex items-center justify-center text-lg">
                                 🎭
                               </div>
                             )}
                             <div className="font-medium">{e.name}</div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-300 text-sm">{memberCount}</td>
-                        <td className="px-4 py-3 text-gray-300">{e.city || '—'}</td>
+                        <td className="px-4 py-3 text-muted text-sm">{memberCount}</td>
+                        <td className="px-4 py-3 text-muted">{e.city || '—'}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <SocialIcon
@@ -323,18 +323,18 @@ export default async function ComediansPage({
                               Activo
                             </span>
                           ) : (
-                            <span className="inline-block bg-zinc-800 text-gray-400 px-2 py-1 rounded text-xs">
+                            <span className="inline-block bg-surface-2 text-muted px-2 py-1 rounded text-xs">
                               Inactivo
                             </span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex gap-3 justify-end">
-                            <Link href={`/ensembles/${e.id}?ver=1`} className="text-blue-400 hover:underline text-sm">
+                            <Link href={`/ensembles/${e.id}?ver=1`} className="text-brand hover:underline text-sm">
                               Ver
                             </Link>
                             {canManage && (
-                              <Link href={`/ensembles/${e.id}`} className="text-white hover:underline text-sm">
+                              <Link href={`/ensembles/${e.id}`} className="text-body hover:underline text-sm">
                                 Editar
                               </Link>
                             )}

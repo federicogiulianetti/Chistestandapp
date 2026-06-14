@@ -35,23 +35,23 @@ export default async function OrganigramaPage({
     byComedian.set(a.comedian_id, arr)
   }
 
-  const inp = "w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 text-white"
+  const inp = "w-full px-3 py-2 bg-surface-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 text-body"
   // Productores candidatos: todo el equipo que no sea comediante
   const producers = (profiles ?? []).filter(p => p.role !== 'comediante')
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Organigrama</h1>
-          <p className="text-gray-400 mt-1">Qué productores tiene asignado cada comediante.</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Organigrama</h1>
+          <p className="text-muted mt-1">Qué productores tiene asignado cada comediante.</p>
         </div>
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md">{sp.error}</div>}
 
         {isAdmin && (
-          <form action={addAssignment} className="bg-zinc-900 border border-zinc-800 rounded-lg p-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+          <form action={addAssignment} className="bg-surface border border-line rounded-lg p-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
             <div>
               <label className="block text-sm mb-1">Comediante</label>
               <select name="comedian_id" required className={inp}>
@@ -70,7 +70,7 @@ export default async function OrganigramaPage({
               <label className="block text-sm mb-1">Rol (opcional)</label>
               <input name="role" type="text" placeholder="Ej: productor acompañante" className={inp} />
             </div>
-            <button type="submit" className="px-4 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">Asignar</button>
+            <button type="submit" className="px-4 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">Asignar</button>
           </form>
         )}
 
@@ -78,16 +78,16 @@ export default async function OrganigramaPage({
           {(comedians ?? []).map(c => {
             const list = byComedian.get(c.id) ?? []
             return (
-              <div key={c.id} className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="font-medium mb-2">🎤 {c.stage_name}</p>
+              <div key={c.id} className="bg-surface border border-line rounded-lg p-4">
+                <p className="font-medium mb-2">{c.stage_name}</p>
                 {list.length === 0 ? (
-                  <p className="text-sm text-gray-500">Sin productores asignados.</p>
+                  <p className="text-sm text-faint">Sin productores asignados.</p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {list.map(a => (
-                      <span key={a.id} className="inline-flex items-center gap-2 bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1 text-sm">
-                        👥 {a.producer?.full_name || a.producer?.email}
-                        {a.role && <span className="text-gray-400 text-xs">· {a.role}</span>}
+                      <span key={a.id} className="inline-flex items-center gap-2 bg-surface-2 border border-line rounded-full px-3 py-1 text-sm">
+                        {a.producer?.full_name || a.producer?.email}
+                        {a.role && <span className="text-muted text-xs">· {a.role}</span>}
                         {isAdmin && (
                           <form action={removeAssignment.bind(null, a.id)}>
                             <ConfirmSubmit message="¿Quitar esta asignación?" ariaLabel="Quitar asignación" className="text-red-400 hover:text-red-300 text-xs">✕</ConfirmSubmit>

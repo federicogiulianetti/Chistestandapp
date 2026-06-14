@@ -22,16 +22,16 @@ export default function ArgentoresLedger({
         <div className="grid grid-cols-3 gap-3">
           {totals.map(t => (
             <div key={t.currency} className="contents">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-xs text-gray-400">Argentores total ({t.currency})</p>
+              <div className="bg-surface border border-line rounded-lg p-4">
+                <p className="text-xs text-muted">Argentores total ({t.currency})</p>
                 <p className="text-xl font-bold mt-1">{fmt(t.total, t.currency)}</p>
               </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-                <p className="text-xs text-gray-400">Cobrado</p>
+              <div className="bg-surface border border-line rounded-lg p-4">
+                <p className="text-xs text-muted">Cobrado</p>
                 <p className="text-xl font-bold mt-1">{fmt(t.cobrado, t.currency)}</p>
               </div>
-              <div className={`border rounded-lg p-4 ${t.pendiente > 0 ? 'bg-amber-900/20 border-amber-800' : 'bg-zinc-900 border-zinc-800'}`}>
-                <p className="text-xs text-gray-400">Falta cobrar</p>
+              <div className={`border rounded-lg p-4 ${t.pendiente > 0 ? 'bg-amber-900/20 border-amber-800' : 'bg-surface border-line'}`}>
+                <p className="text-xs text-muted">Falta cobrar</p>
                 <p className="text-xl font-bold mt-1">{fmt(t.pendiente, t.currency)}</p>
               </div>
             </div>
@@ -40,13 +40,13 @@ export default function ArgentoresLedger({
       )}
 
       {entries.length === 0 ? (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 text-gray-400 text-sm">
+        <div className="bg-surface border border-line rounded-lg p-6 text-muted text-sm">
           No hay argentores cargado para estas fechas.
         </div>
       ) : (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+        <div className="bg-surface border border-line rounded-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-zinc-800/50 border-b border-zinc-800">
+            <thead className="bg-surface-2 border-b border-line">
               <tr>
                 <th className="text-left px-4 py-2 text-sm font-semibold whitespace-nowrap">Fecha</th>
                 <th className="text-left px-4 py-2 text-sm font-semibold">Sala</th>
@@ -57,16 +57,16 @@ export default function ArgentoresLedger({
             </thead>
             <tbody>
               {entries.map(e => (
-                <tr key={e.id} className="border-b border-zinc-800 last:border-0">
+                <tr key={e.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-2 text-sm whitespace-nowrap">{formatShowDate(e.show_date)}</td>
-                  <td className="px-4 py-2 text-sm text-gray-300">{e.theater_name ?? e.city ?? '—'}</td>
+                  <td className="px-4 py-2 text-sm text-muted">{e.theater_name ?? e.city ?? '—'}</td>
                   <td className="px-4 py-2 text-sm whitespace-nowrap">
                     {e.por_fuera ? (
                       <span className="inline-flex items-center gap-1 text-orange-300" title="El teatro lo pagó directo (8%). NO reclamar en la oficina de Argentores.">
-                        🔸 Por fuera <span className="text-gray-500">(directo, no reclamar)</span>
+                        🔸 Por fuera <span className="text-faint">(directo, no reclamar)</span>
                       </span>
                     ) : (
-                      <span className="text-gray-400" title="Se cobra en la oficina de Argentores.">Oficina de Argentores</span>
+                      <span className="text-muted" title="Se cobra en la oficina de Argentores.">Oficina de Argentores</span>
                     )}
                   </td>
                   <td className="px-4 py-2 text-sm text-right font-medium">{fmt(Number(e.amount), e.currency)}</td>
@@ -78,7 +78,7 @@ export default function ArgentoresLedger({
                           className={`px-2.5 py-1 rounded text-xs font-medium transition ${
                             e.collected
                               ? 'bg-green-900/40 text-green-300 hover:bg-green-900/60'
-                              : 'bg-zinc-800 text-gray-400 hover:bg-zinc-700'
+                              : 'bg-surface-2 text-muted hover:bg-surface-2'
                           }`}
                         >
                           {e.collected ? '✓ Cobrado' : 'Pendiente'}
@@ -86,7 +86,7 @@ export default function ArgentoresLedger({
                       </form>
                     ) : (
                       <span className={`inline-block px-2.5 py-1 rounded text-xs font-medium ${
-                        e.collected ? 'bg-green-900/40 text-green-300' : 'bg-zinc-800 text-gray-400'
+                        e.collected ? 'bg-green-900/40 text-green-300' : 'bg-surface-2 text-muted'
                       }`}>
                         {e.collected ? '✓ Cobrado' : 'Pendiente'}
                       </span>
@@ -100,7 +100,7 @@ export default function ArgentoresLedger({
       )}
 
       {entries.some(e => e.por_fuera) && (
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="text-xs text-faint leading-relaxed">
           🔸 <span className="text-orange-300">Por fuera</span>: el teatro no pasó el argentores a la oficina y se lo pagó <strong>directo al comediante</strong> (8% en vez de 10%; el 2% era el costo del trámite).
           Esa plata ya está cobrada por afuera, así que <strong>no hay que reclamarla en la oficina de Argentores</strong>.
         </p>

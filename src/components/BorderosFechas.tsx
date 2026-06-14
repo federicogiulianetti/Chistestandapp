@@ -43,7 +43,7 @@ export default function BorderosFechas({ rows }: { rows: FechaRow[] }) {
       .sort((a, b) => (b.fecha ?? '').localeCompare(a.fecha ?? ''))
   }, [rows, teatro, ciudad, fecha])
 
-  const sel = 'px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white text-sm focus:outline-none focus:border-zinc-500'
+  const sel = 'px-3 py-2 bg-surface-2 border border-line rounded-md text-body text-sm focus:outline-none focus:border-zinc-500'
 
   return (
     <div className="space-y-4">
@@ -58,15 +58,15 @@ export default function BorderosFechas({ rows }: { rows: FechaRow[] }) {
         </select>
         <input value={fecha} onChange={e => setFecha(e.target.value)} placeholder="Buscar fecha (ej. 2024-05 o 15)" className={`${sel} flex-1 min-w-[200px]`} />
         {(teatro || ciudad || fecha) && (
-          <button onClick={() => { setTeatro(''); setCiudad(''); setFecha('') }} className="px-3 py-2 text-sm text-gray-400 hover:text-white">Limpiar</button>
+          <button onClick={() => { setTeatro(''); setCiudad(''); setFecha('') }} className="px-3 py-2 text-sm text-muted hover:text-body">Limpiar</button>
         )}
       </div>
 
-      <p className="text-sm text-gray-500">{filtered.length} de {rows.length}</p>
+      <p className="text-sm text-faint">{filtered.length} de {rows.length}</p>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+      <div className="bg-surface border border-line rounded-lg overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-zinc-800/50 border-b border-zinc-800">
+          <thead className="bg-surface-2 border-b border-line">
             <tr>
               <th className="text-left px-4 py-3 text-sm font-semibold">Fecha</th>
               <th className="text-left px-4 py-3 text-sm font-semibold">Teatro / Ciudad</th>
@@ -77,18 +77,18 @@ export default function BorderosFechas({ rows }: { rows: FechaRow[] }) {
           </thead>
           <tbody>
             {filtered.map(r => (
-              <tr key={r.id} className="border-b border-zinc-800 last:border-0 hover:bg-zinc-800/30">
+              <tr key={r.id} className="border-b border-line last:border-0 hover:bg-surface-2">
                 <td className="px-4 py-3 text-sm whitespace-nowrap">{fechaCorta(r.fecha)}</td>
-                <td className="px-4 py-3 text-sm text-gray-300">
+                <td className="px-4 py-3 text-sm text-muted">
                   {r.teatro ?? '—'}
-                  {r.ciudad && <span className="block text-xs text-gray-500">{r.ciudad}</span>}
+                  {r.ciudad && <span className="block text-xs text-faint">{r.ciudad}</span>}
                 </td>
-                <td className="px-4 py-3 text-sm text-right text-gray-300">{fmt(r.recaudacion, r.currency)}</td>
+                <td className="px-4 py-3 text-sm text-right text-muted">{fmt(r.recaudacion, r.currency)}</td>
                 <td className="px-4 py-3 text-sm text-right text-green-300 font-medium">{fmt(r.artista_final, r.currency)}</td>
                 <td className="px-4 py-3 text-right whitespace-nowrap">
-                  <Link href={`/shows/${r.show_id}/bordero`} className="text-indigo-300 hover:text-indigo-200 text-sm mr-3">Ver</Link>
+                  <Link href={`/shows/${r.show_id}/bordero`} className="text-brand hover:text-indigo-200 text-sm mr-3">Ver</Link>
                   <Link href={`/shows/${r.show_id}/bordero/editar`} className="text-amber-300 hover:text-amber-200 text-sm mr-3">Editar</Link>
-                  <Link href={`/shows/${r.show_id}/bordero/print`} className="text-gray-300 hover:text-white text-sm">PDF ⬇</Link>
+                  <Link href={`/shows/${r.show_id}/bordero/print`} className="text-muted hover:text-body text-sm">PDF ⬇</Link>
                 </td>
               </tr>
             ))}

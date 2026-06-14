@@ -123,10 +123,10 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
 
   // Estilos (mismos que TheaterForm)
   const inp = (disabled: boolean) =>
-    `w-full px-3 py-2 border border-zinc-700 rounded-md focus:outline-none focus:border-zinc-500 transition ${
-      disabled ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed' : 'bg-zinc-800 text-white'
+    `w-full px-3 py-2 border border-line rounded-md focus:outline-none focus:border-zinc-500 transition ${
+      disabled ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed' : 'bg-surface-2 text-body'
     }`
-  const sec = 'bg-zinc-900 border border-zinc-800 rounded-lg p-6 space-y-4'
+  const sec = 'bg-surface border border-line rounded-lg p-6 space-y-4'
   const lbl = 'block text-sm mb-1'
   const chk = 'mt-0.5'
   const phoneHint = 'Con código de país (ej: +54 9 11 2345-6789)'
@@ -157,11 +157,11 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
 
         {/* ── DATOS GENERALES ── */}
         <section className={sec}>
-          <h2 className="text-lg font-semibold">🏨 Datos generales</h2>
+          <h2 className="text-lg font-semibold">Datos generales</h2>
 
           <div>
             <label htmlFor="name" className={lbl}>
-              🏨 Nombre del hotel <span className="text-red-400">*</span>
+              Nombre del hotel <span className="text-red-400">*</span>
             </label>
             <input
               ref={mode === 'new' ? nameInputRef : undefined}
@@ -171,27 +171,27 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
               className={inp(false)}
             />
             {mode === 'new' && (
-              <p className="text-xs text-gray-500 mt-1">Escribí el nombre y seleccioná de las sugerencias para completar dirección, ciudad y provincia automáticamente.</p>
+              <p className="text-xs text-faint mt-1">Escribí el nombre y seleccioná de las sugerencias para completar dirección, ciudad y provincia automáticamente.</p>
             )}
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label htmlFor="city" className={lbl}>🏙️ Ciudad</label>
+              <label htmlFor="city" className={lbl}>Ciudad</label>
               <input ref={mode === 'new' ? cityRef : undefined} id="city" name="city" type="text" defaultValue={h.city ?? ''} className={inp(false)} />
             </div>
             <div>
-              <label htmlFor="province" className={lbl}>🗺️ Provincia</label>
+              <label htmlFor="province" className={lbl}>Provincia</label>
               <input ref={mode === 'new' ? provinceRef : undefined} id="province" name="province" type="text" defaultValue={h.province ?? ''} className={inp(false)} />
             </div>
             <div>
-              <label htmlFor="country" className={lbl}>🌎 País</label>
+              <label htmlFor="country" className={lbl}>País</label>
               <input ref={mode === 'new' ? countryRef : undefined} id="country" name="country" type="text" defaultValue={h.country ?? 'Argentina'} className={inp(false)} />
             </div>
           </div>
 
           <div>
-            <label htmlFor="address" className={lbl}>📍 Dirección</label>
+            <label htmlFor="address" className={lbl}>Dirección</label>
             <input ref={mode === 'new' ? addressRef : undefined} id="address" name="address" type="text" defaultValue={h.address ?? ''} onBlur={e => setMapQuery(e.target.value)} className={inp(false)} />
           </div>
 
@@ -203,7 +203,7 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
           <div>
             <label className={lbl}>🗺️ Ubicación en el mapa</label>
             <MapPreview query={mapQuery} />
-            {!mapQuery && <p className="text-xs text-gray-500 mt-1">El mapa aparece cuando cargás la dirección.</p>}
+            {!mapQuery && <p className="text-xs text-faint mt-1">El mapa aparece cuando cargás la dirección.</p>}
           </div>
         </section>
 
@@ -221,7 +221,7 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
               <input id="contact_phone" name="contact_phone" type="tel" placeholder="+54 9 11 2345-6789" defaultValue={h.contact_phone ?? ''} className={inp(false)} />
             </div>
           </div>
-          <p className="text-xs text-gray-500 -mt-2">{phoneHint}</p>
+          <p className="text-xs text-faint -mt-2">{phoneHint}</p>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -281,11 +281,11 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
         {/* ── PREFERENCIAS DE COMEDIANTES ── */}
         <section className={sec}>
           <h2 className="text-lg font-semibold">🌟 Preferencias de comediantes</h2>
-          <p className="text-xs text-gray-400">Qué comediantes prefieren este hotel y sus pedidos particulares.</p>
+          <p className="text-xs text-muted">Qué comediantes prefieren este hotel y sus pedidos particulares.</p>
 
           <div className="space-y-4">
             {prefs.map((p, index) => (
-              <div key={p.id} className="border border-zinc-800 rounded-lg p-4 space-y-3">
+              <div key={p.id} className="border border-line rounded-lg p-4 space-y-3">
                 <div className="flex gap-2 items-center">
                   <select
                     name={`pref_comedian_${index}`}
@@ -316,7 +316,7 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
             ))}
           </div>
 
-          <button type="button" onClick={addPref} className="text-sm text-gray-400 hover:text-white transition">
+          <button type="button" onClick={addPref} className="text-sm text-muted hover:text-body transition">
             + Agregar preferencia de comediante
           </button>
         </section>
@@ -324,7 +324,7 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
         {/* ── NOTAS ── */}
         <section className={sec}>
           <h2 className="text-lg font-semibold">📝 Notas internas</h2>
-          <p className="text-xs text-gray-400">Solo visible para el equipo.</p>
+          <p className="text-xs text-muted">Solo visible para el equipo.</p>
           <textarea id="notes" name="notes" rows={3} defaultValue={h.notes ?? ''} className={inp(false)} />
           <div className="flex items-start gap-2">
             <input type="checkbox" id="is_active" name="is_active" className={chk} defaultChecked={h.is_active ?? true} />
@@ -334,10 +334,10 @@ export default function HotelForm({ action, deleteAction, hotel, comedians, mode
 
         {/* ── BOTONES ── */}
         <div className="flex gap-3 justify-end">
-          <Link href="/hotels" className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition">
+          <Link href="/hotels" className="px-4 py-2 border border-line text-body rounded-md hover:bg-surface-2 transition">
             Cancelar
           </Link>
-          <button type="submit" className="px-6 py-2 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition">
+          <button type="submit" className="px-6 py-2 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition">
             {mode === 'new' ? 'Guardar hotel' : 'Guardar cambios'}
           </button>
         </div>

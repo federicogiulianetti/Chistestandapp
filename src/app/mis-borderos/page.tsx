@@ -28,22 +28,22 @@ export default async function MisBorderosPage() {
   const borderos = (data ?? []) as unknown as MyBordero[]
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">Mis borderós</h1>
-          <p className="text-gray-400 mt-1">Liquidaciones cerradas de tus fechas.</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Mis borderós</h1>
+          <p className="text-muted mt-1">Liquidaciones cerradas de tus fechas.</p>
         </div>
 
         {borderos.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">
+          <div className="bg-surface border border-line rounded-lg p-12 text-center text-muted">
             Todavía no hay borderós cerrados de tus fechas.
           </div>
         ) : (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-x-auto">
+          <div className="bg-surface border border-line rounded-lg overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-zinc-800/50 border-b border-zinc-800">
+              <thead className="bg-surface-2 border-b border-line">
                 <tr>
                   <th className="text-left px-4 py-3 text-sm font-semibold">Fecha</th>
                   <th className="text-left px-4 py-3 text-sm font-semibold">Sala</th>
@@ -53,10 +53,10 @@ export default async function MisBorderosPage() {
               </thead>
               <tbody>
                 {borderos.map(b => (
-                  <tr key={b.id} className="border-b border-zinc-800 last:border-0">
+                  <tr key={b.id} className="border-b border-line last:border-0">
                     <td className="px-4 py-3 text-sm whitespace-nowrap">{formatShowDate(b.show_date)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-300">{b.theater_name ?? '—'}</td>
-                    <td className="px-4 py-3 text-sm text-right text-gray-300">{fmt(b.recaudacion, b.currency)}</td>
+                    <td className="px-4 py-3 text-sm text-muted">{b.theater_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-sm text-right text-muted">{fmt(b.recaudacion, b.currency)}</td>
                     <td className="px-4 py-3 text-sm text-right font-semibold text-green-300">{fmt(b.artista_final, b.currency)}</td>
                   </tr>
                 ))}

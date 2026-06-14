@@ -23,7 +23,7 @@ export default async function GastosPage({
 
   if (profile.role !== 'admin') {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
+      <main className="min-h-screen bg-ink text-body p-8">
         <p className="text-red-400">No tenés permisos para ver los gastos.</p>
       </main>
     )
@@ -66,36 +66,36 @@ export default async function GastosPage({
   const saveAction = saveExpenses.bind(null, id)
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <div>
-          <Link href={`/shows/${id}/ver`} className="text-gray-400 hover:text-white text-sm">← Volver al show</Link>
+          <Link href={`/shows/${id}/ver`} className="text-muted hover:text-body text-sm">← Volver al show</Link>
           <div className="flex items-center justify-between mt-2 gap-4">
-            <h1 className="text-3xl font-bold">Gastos — {performer}</h1>
-            <Link href={`/expenses/repartir?from=${id}`} className="px-4 py-2 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm flex-shrink-0">
-              ↔️ Repartir gasto entre fechas
+            <h1 className="text-2xl font-bold">Gastos — {performer}</h1>
+            <Link href={`/expenses/repartir?from=${id}`} className="px-4 py-2 border border-line text-body rounded-md hover:bg-surface-2 transition text-sm flex-shrink-0">
+              Repartir gasto entre fechas
             </Link>
           </div>
-          <p className="text-gray-400 mt-1">{sh.theater?.name ?? '—'} · {formatShowDate(sh.show_date)}</p>
+          <p className="text-muted mt-1">{sh.theater?.name ?? '—'} · {formatShowDate(sh.show_date)}</p>
         </div>
 
         {error && (
           <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md">{error}</div>
         )}
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex items-center justify-between">
-          <span className="text-gray-400">💰 Total de gastos de la fecha</span>
+        <div className="bg-surface border border-line rounded-lg p-4 flex items-center justify-between">
+          <span className="text-muted">Total de gastos de la fecha</span>
           <span className="text-2xl font-bold">{formatMoney(total)}</span>
         </div>
 
         {/* Gastos repartidos (vienen de otras cargas) */}
         {shared.length > 0 && (
-          <section className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
-            <h2 className="text-lg font-semibold p-4 pb-2">↔️ Gastos repartidos (parte de esta fecha)</h2>
+          <section className="bg-surface border border-line rounded-lg overflow-hidden">
+            <h2 className="text-lg font-semibold p-4 pb-2">Gastos repartidos (parte de esta fecha)</h2>
             <table className="w-full">
               <tbody>
                 {shared.map(e => (
-                  <tr key={e.id} className="border-t border-zinc-800">
+                  <tr key={e.id} className="border-t border-line">
                     <td className="px-4 py-2 text-sm">{e.category}{e.notes ? ` — ${e.notes}` : ''}</td>
                     <td className="px-4 py-2 text-sm text-right">{formatMoney(e.amount)}</td>
                     <td className="px-4 py-2 text-right">
@@ -112,7 +112,7 @@ export default async function GastosPage({
 
         {/* Grilla de gastos directos */}
         <div>
-          <h2 className="text-lg font-semibold mb-3">🧾 Gastos de la fecha</h2>
+          <h2 className="text-lg font-semibold mb-3">Gastos de la fecha</h2>
           <ExpensesForm action={saveAction} fixedCategories={FIXED_EXPENSE_CATEGORIES} directExpenses={direct} people={people} />
         </div>
       </div>

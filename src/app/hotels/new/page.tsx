@@ -15,7 +15,7 @@ export default async function NewHotelPage({
 
   if (profile.role !== 'admin') {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
+      <main className="min-h-screen bg-ink text-body p-8">
         <p className="text-red-400">No tenés permisos para acceder a esta página.</p>
       </main>
     )
@@ -24,12 +24,12 @@ export default async function NewHotelPage({
   const comedians = await getHotelFormComedians()
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto">
-        <Link href="/hotels" className="text-gray-400 hover:text-white text-sm">
+        <Link href="/hotels" className="text-muted hover:text-body text-sm">
           ← Volver a hoteles
         </Link>
-        <h1 className="text-3xl font-bold mt-2 mb-8">Nuevo hotel</h1>
+        <h1 className="text-2xl font-bold mt-2 mb-8">Nuevo hotel</h1>
         <HotelForm action={createHotel} comedians={comedians} mode="new" error={error} />
       </div>
     </main>

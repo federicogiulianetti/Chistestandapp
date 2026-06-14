@@ -25,9 +25,9 @@ function agg(rows: { key: string; publico: number }[]) {
 
 function Card({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-5">
-      <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-3xl font-bold mt-1">{value}</p>
+    <div className="bg-surface border border-line rounded-lg p-5">
+      <p className="text-xs text-muted">{label}</p>
+      <p className="text-2xl font-bold mt-1">{value}</p>
     </div>
   )
 }
@@ -36,9 +36,9 @@ function RankTable({ title, rows, unit }: { title: string; rows: { key: string; 
   return (
     <section>
       <h2 className="text-lg font-semibold mb-3">{title}</h2>
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+      <div className="bg-surface border border-line rounded-lg overflow-hidden">
         <table className="w-full">
-          <thead className="bg-zinc-800/50 border-b border-zinc-800">
+          <thead className="bg-surface-2 border-b border-line">
             <tr>
               <th className="text-left px-4 py-2 text-sm font-semibold">{unit}</th>
               <th className="text-right px-4 py-2 text-sm font-semibold">Fechas</th>
@@ -47,9 +47,9 @@ function RankTable({ title, rows, unit }: { title: string; rows: { key: string; 
           </thead>
           <tbody>
             {rows.map(r => (
-              <tr key={r.key} className="border-b border-zinc-800 last:border-0">
+              <tr key={r.key} className="border-b border-line last:border-0">
                 <td className="px-4 py-2 text-sm">{r.key}</td>
-                <td className="px-4 py-2 text-sm text-right text-gray-300">{r.count}</td>
+                <td className="px-4 py-2 text-sm text-right text-muted">{r.count}</td>
                 <td className="px-4 py-2 text-sm text-right font-medium">{r.publico.toLocaleString('es-AR')}</td>
               </tr>
             ))}
@@ -87,26 +87,26 @@ export default async function MiWrappedPage() {
   const byTheater = agg(perShow.map(s => ({ key: s.theater, publico: s.publico })))
 
   return (
-    <main className="min-h-screen bg-black text-white p-8">
+    <main className="min-h-screen bg-ink text-body p-8">
       <div className="max-w-3xl mx-auto space-y-8">
         <div>
-          <Link href="/dashboard" className="text-gray-400 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="text-3xl font-bold mt-2">✨ Mi Wrapped</h1>
-          <p className="text-gray-400 mt-1">Tu historial de fechas en números.</p>
+          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
+          <h1 className="text-2xl font-bold mt-2">Mi Wrapped</h1>
+          <p className="text-muted mt-1">Tu historial de fechas en números.</p>
         </div>
 
         {totalShows === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center text-gray-400">Todavía no hay fechas para mostrar.</div>
+          <div className="bg-surface border border-line rounded-lg p-12 text-center text-muted">Todavía no hay fechas para mostrar.</div>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-4">
               <Card label="Fechas totales" value={totalShows} />
               <Card label="Público total" value={totalPublico.toLocaleString('es-AR')} />
             </div>
-            <RankTable title="🎟️ Por espectáculo" rows={bySpectacle} unit="Espectáculo" />
-            <RankTable title="🏙️ Por ciudad" rows={byCity} unit="Ciudad" />
-            <RankTable title="📅 Por año" rows={byYear} unit="Año" />
-            <RankTable title="🎭 Por sala" rows={byTheater} unit="Sala" />
+            <RankTable title="Por espectáculo" rows={bySpectacle} unit="Espectáculo" />
+            <RankTable title="Por ciudad" rows={byCity} unit="Ciudad" />
+            <RankTable title="Por año" rows={byYear} unit="Año" />
+            <RankTable title="Por sala" rows={byTheater} unit="Sala" />
           </>
         )}
       </div>
