@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getUserAndProfile } from '@/lib/supabase/auth'
+import { createClient } from '@/lib/supabase/server'
+import { getModuleAccess, isAssignedToShow } from '@/lib/access'
 import { formatShowDate } from '@/lib/shows'
 import { loadBordero } from './data'
 import { cerrarBordero, reabrirBordero } from './actions'
@@ -15,14 +17,20 @@ export default async function BorderoPage({
 }) {
   const { id } = await params
   const sp = await searchParams
-  const { profile } = await getUserAndProfile()
+  const { user, profile } = await getUserAndProfile()
+  const isAdmin = profile.role === 'admin'
 
-  if (profile.role !== 'admin') {
-    return (
-      <main className="min-h-screen bg-black text-white p-8">
-        <p className="text-red-400">No tenés permisos para ver el borderó.</p>
-      </main>
-    )
+  if (!isAdmin) {
+    const supabase = await createClient()
+    const allowed = await getModuleAccess(supabase, profile.id)
+    const ok = allowed.has('borderos') && await isAssignedToShow(supabase, user.id, id)
+    if (!ok) {
+      return (
+        <main className="min-h-screen bg-ink text-body p-8">
+          <p className="text-red-400">No tenés permisos para ver este borderó.</p>
+        </main>
+      )
+    }
   }
 
   const ctx = await loadBordero(id)
@@ -36,8 +44,8 @@ export default async function BorderoPage({
         <div className="flex items-center justify-between gap-4">
           <Link href={`/shows/${id}/ver`} className="text-gray-400 hover:text-white text-sm">← Volver al show</Link>
           <div className="flex items-center gap-2">
-            <Link href={`/shows/${id}/bordero/editar`} className="px-3 py-1.5 border border-amber-700/60 text-amber-200 rounded-md hover:bg-amber-900/20 transition text-sm">✏️ Editar</Link>
-            <Link href={`/shows/${id}/bordero/print`} className="px-3 py-1.5 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">🖨️ Descargar PDF</Link>
+            {isAdmin && <Link href={`/shows/${id}/bordero/editar`} className="px-3 py-1.5 border border-amber-700/60 text-amber-200 rounded-md hover:bg-amber-900/20 transition text-sm">Editar</Link>}
+            <Link href={`/shows/${id}/bordero/print`} className="px-3 py-1.5 border border-line text-body rounded-md hover:bg-surface-2 transition text-sm">Descargar PDF</Link>
           </div>
         </div>
 
@@ -48,15 +56,15 @@ export default async function BorderoPage({
           <span className="text-sm font-medium">
             {closed ? `🔒 Cerrado el ${formatShowDate(closed.closed_at)}` : '📝 Preview (todavía no impacta en las cuentas)'}
           </span>
-          {closed ? (
+          {isAdmin && (closed ? (
             <form action={reabrirBordero.bind(null, id)}>
-              <button type="submit" className="px-3 py-1.5 border border-zinc-700 text-white rounded-md hover:bg-zinc-800 transition text-sm">Reabrir</button>
+              <button type="submit" className="px-3 py-1.5 border border-line text-body rounded-md hover:bg-surface-2 transition text-sm">Reabrir</button>
             </form>
           ) : (
             <form action={cerrarBordero.bind(null, id)}>
-              <button type="submit" className="px-4 py-1.5 bg-white text-black font-semibold rounded-md hover:bg-gray-200 transition text-sm">Cerrar borderó</button>
+              <button type="submit" className="px-4 py-1.5 bg-brand text-[#06210f] font-semibold rounded-md hover:opacity-90 transition text-sm">Cerrar borderó</button>
             </form>
-          )}
+          ))}
         </div>
 
         {/* Documento del borderó (mismo estilo que el PDF) */}

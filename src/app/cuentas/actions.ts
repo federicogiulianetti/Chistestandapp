@@ -3,10 +3,12 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getUserAndProfile } from '@/lib/supabase/auth'
 
 export async function addMovement(partyType: string, partyId: string, formData: FormData) {
+  const { user, profile } = await getUserAndProfile()
+  if (profile.role !== 'admin') redirect('/dashboard')
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
 
   const direction = (formData.get('direction') as string) === 'credit' ? 'credit' : 'debit'
   const amountRaw = formData.get('amount')

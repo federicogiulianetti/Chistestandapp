@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
+import { getModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import { arDateKey } from '@/lib/shows'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
 import { type ArgentoresEntry } from '@/lib/argentores'
@@ -18,18 +19,24 @@ export default async function CuentaPage({
 }) {
   const { type, id } = await params
   const sp = await searchParams
-  const { profile } = await getUserAndProfile()
-
-  if (profile.role !== 'admin') {
-    return (
-      <main className="min-h-screen bg-ink text-body p-8">
-        <p className="text-red-400">No tenés permisos para ver esta cuenta.</p>
-      </main>
-    )
-  }
+  const { user, profile } = await getUserAndProfile()
+  const isAdmin = profile.role === 'admin'
   if (type !== 'comedian' && type !== 'profile') notFound()
 
   const supabase = await createClient()
+
+  // Enforcement: el productor solo ve la cuenta de un comediante asignado
+  if (!isAdmin) {
+    const allowed = await getModuleAccess(supabase, profile.id)
+    const ok = allowed.has('cuentas') && type === 'comedian' && (await getAssignedComedianIds(supabase, user.id)).has(id)
+    if (!ok) {
+      return (
+        <main className="min-h-screen bg-ink text-body p-8">
+          <p className="text-red-400">No tenés permisos para ver esta cuenta.</p>
+        </main>
+      )
+    }
+  }
 
   let name = '—'
   if (type === 'comedian') {
@@ -143,7 +150,8 @@ export default async function CuentaPage({
           </div>
         )}
 
-        {/* Cargar pago / ajuste */}
+        {/* Cargar pago / ajuste (solo admin) */}
+        {isAdmin && (
         <section className="bg-surface border border-line rounded-lg p-5">
           <h2 className="text-lg font-semibold mb-3">Cargar movimiento</h2>
           <form action={addAction} className="grid grid-cols-2 sm:grid-cols-5 gap-3 items-end">
@@ -172,6 +180,7 @@ export default async function CuentaPage({
             </div>
           </form>
         </section>
+        )}
 
         {/* Movimientos */}
         <section className="bg-surface border border-line rounded-lg overflow-x-auto">

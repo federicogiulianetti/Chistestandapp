@@ -71,6 +71,14 @@ export async function getAssignedComedianIds(supabase: SB, userId: string): Prom
   return new Set((data ?? []).map(r => r.comedian_id as string))
 }
 
+/** ¿El usuario está asignado al comediante de este show? (para detalle por fecha) */
+export async function isAssignedToShow(supabase: SB, userId: string, showId: string): Promise<boolean> {
+  const { data: show } = await supabase.from('shows').select('comedian_id').eq('id', showId).single()
+  if (!show?.comedian_id) return false
+  const { data } = await supabase.from('assignments').select('id').eq('producer_id', userId).eq('comedian_id', show.comedian_id).limit(1)
+  return (data?.length ?? 0) > 0
+}
+
 /**
  * Guarda de ruta para un módulo. Admin pasa siempre. Si el usuario no tiene
  * el módulo habilitado, lo manda al dashboard. Devuelve { user, profile }.

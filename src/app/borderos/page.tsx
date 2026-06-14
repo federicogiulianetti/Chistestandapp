@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
+import { getModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import { comedianColor } from '@/lib/comedianColor'
 import BorderosFechas from '@/components/BorderosFechas'
 
@@ -16,6 +18,7 @@ type RawBordero = {
     city: string | null
     spectacle: string | null
     performer_type: string | null
+    comedian_id: string | null
     theater: { name: string | null; city: string | null } | null
     comedian: { stage_name: string | null } | null
     ensemble: { name: string | null } | null
@@ -27,33 +30,31 @@ export default async function BorderosPage({
 }: {
   searchParams: Promise<{ quien?: string; anio?: string }>
 }) {
-  const { profile } = await getUserAndProfile()
+  const { user, profile } = await getUserAndProfile()
   const sp = await searchParams
+  const supabase = await createClient()
+  const isAdmin = profile.role === 'admin'
 
-  if (profile.role !== 'admin') {
-    return (
-      <main className="min-h-screen bg-ink text-body p-8">
-        <div className="max-w-3xl mx-auto">
-          <Link href="/dashboard" className="text-muted hover:text-body text-sm">← Dashboard</Link>
-          <p className="text-muted mt-4">Cada comediante ve sus liquidaciones en <Link href="/mis-borderos" className="text-brand">Mis borderós</Link>.</p>
-        </div>
-      </main>
-    )
+  // Enforcement: módulo habilitado + (no-admin) filtra por comedianes asignados
+  let assigned: Set<string> | null = null
+  if (!isAdmin) {
+    const allowed = await getModuleAccess(supabase, profile.id)
+    if (!allowed.has('borderos')) redirect('/dashboard')
+    assigned = await getAssignedComedianIds(supabase, user.id)
   }
 
-  const supabase = await createClient()
   // Supabase limita a 1.000 filas por consulta → paginar para traer TODOS los borderós
   const raw: RawBordero[] = []
   for (let from = 0; ; from += 1000) {
     const { data } = await supabase
       .from('borderos')
-      .select('id, show_id, currency, recaudacion, artista_final, productora_share, show:show_id(show_date, city, spectacle, performer_type, theater:theater_id(name, city), comedian:comedian_id(stage_name), ensemble:ensemble_id(name))')
+      .select('id, show_id, currency, recaudacion, artista_final, productora_share, show:show_id(show_date, city, spectacle, performer_type, comedian_id, theater:theater_id(name, city), comedian:comedian_id(stage_name), ensemble:ensemble_id(name))')
       .range(from, from + 999)
     const page = (data ?? []) as unknown as RawBordero[]
     raw.push(...page)
     if (page.length < 1000) break
   }
-  const rows = raw.map(b => {
+  let rows = raw.map(b => {
     const s = b.show
     const comediante = s?.performer_type === 'elenco' ? (s?.ensemble?.name ?? '—') : (s?.comedian?.stage_name ?? '—')
     return {
@@ -61,6 +62,7 @@ export default async function BorderosPage({
       show_id: b.show_id,
       fecha: s?.show_date ?? null,
       comediante,
+      comedian_id: s?.comedian_id ?? null,
       teatro: s?.theater?.name ?? null,
       ciudad: s?.city ?? s?.theater?.city ?? null,
       espectaculo: s?.spectacle ?? null,
@@ -70,6 +72,8 @@ export default async function BorderosPage({
       productora_share: Number(b.productora_share) || 0,
     }
   })
+  // Filtro por comedianes asignados (no-admin)
+  if (assigned) rows = rows.filter(r => r.comedian_id != null && assigned!.has(r.comedian_id))
 
   const quien = sp.quien ? decodeURIComponent(sp.quien) : null
   const anio = sp.anio ?? null

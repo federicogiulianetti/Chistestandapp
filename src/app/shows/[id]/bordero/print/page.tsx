@@ -1,13 +1,19 @@
 import { notFound } from 'next/navigation'
 import { getUserAndProfile } from '@/lib/supabase/auth'
+import { createClient } from '@/lib/supabase/server'
+import { getModuleAccess, isAssignedToShow } from '@/lib/access'
 import { loadBordero } from '../data'
 import BorderoDoc from '@/components/BorderoDoc'
 import PrintButton from '@/components/PrintButton'
 
 export default async function BorderoPrintPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { profile } = await getUserAndProfile()
-  if (profile.role !== 'admin') notFound()
+  const { user, profile } = await getUserAndProfile()
+  if (profile.role !== 'admin') {
+    const supabase = await createClient()
+    const allowed = await getModuleAccess(supabase, profile.id)
+    if (!allowed.has('borderos') || !(await isAssignedToShow(supabase, user.id, id))) notFound()
+  }
 
   const ctx = await loadBordero(id)
   if (!ctx) notFound()

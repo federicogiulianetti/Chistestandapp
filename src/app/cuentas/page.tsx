@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile, roleLabels, type UserRole } from '@/lib/supabase/auth'
+import { getModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
 import { buildRateLookup, usdBalances, fmtUsd, type UsdRate } from '@/lib/usd'
 import { comedianColor } from '@/lib/comedianColor'
@@ -49,17 +51,18 @@ function CardGrid({ title, rows, basePath, rateFor }: { title: string; rows: Car
 }
 
 export default async function CuentasPage() {
-  const { profile } = await getUserAndProfile()
+  const { user, profile } = await getUserAndProfile()
+  const isAdmin = profile.role === 'admin'
+  const supabase = await createClient()
 
-  if (profile.role !== 'admin') {
-    return (
-      <main className="min-h-screen bg-ink text-body p-8">
-        <p className="text-red-400">No tenés permisos para ver las cuentas.</p>
-      </main>
-    )
+  // Enforcement: módulo habilitado + (no-admin) solo sus comedianes asignados
+  let assigned: Set<string> | null = null
+  if (!isAdmin) {
+    const allowed = await getModuleAccess(supabase, profile.id)
+    if (!allowed.has('cuentas')) redirect('/dashboard')
+    assigned = await getAssignedComedianIds(supabase, user.id)
   }
 
-  const supabase = await createClient()
   const [{ data: comedians }, { data: profiles }, { data: movements }, { data: rateData }] = await Promise.all([
     supabase.from('comedians').select('id, stage_name, photo_url').order('stage_name'),
     supabase.from('profiles').select('id, full_name, email, role').order('full_name'),
@@ -77,12 +80,16 @@ export default async function CuentasPage() {
     byParty.set(k, arr)
   }
 
-  const comedianRows: CardRow[] = (comedians ?? []).map(c => ({
+  let comedianRows: CardRow[] = (comedians ?? []).map(c => ({
     id: c.id, name: c.stage_name ?? 'Sin nombre', photo: c.photo_url, movs: byParty.get(`comedian:${c.id}`) ?? [],
   }))
-  const profileRows: CardRow[] = (profiles ?? []).map(p => ({
-    id: p.id, name: p.full_name || p.email, sub: roleLabels[p.role as UserRole], movs: byParty.get(`profile:${p.id}`) ?? [],
-  }))
+  if (assigned) comedianRows = comedianRows.filter(c => assigned!.has(c.id))
+  // El equipo (cuentas de profiles) solo lo ve el admin
+  const profileRows: CardRow[] = isAdmin
+    ? (profiles ?? []).map(p => ({
+        id: p.id, name: p.full_name || p.email, sub: roleLabels[p.role as UserRole], movs: byParty.get(`profile:${p.id}`) ?? [],
+      }))
+    : []
 
   return (
     <main className="min-h-screen bg-ink text-body p-6 sm:p-8">
@@ -94,7 +101,7 @@ export default async function CuentasPage() {
         </div>
 
         <CardGrid title="Comediantes" rows={comedianRows} basePath="/cuentas/comedian" rateFor={rateFor} />
-        <CardGrid title="Equipo" rows={profileRows} basePath="/cuentas/profile" rateFor={rateFor} />
+        {isAdmin && <CardGrid title="Equipo" rows={profileRows} basePath="/cuentas/profile" rateFor={rateFor} />}
       </div>
     </main>
   )
