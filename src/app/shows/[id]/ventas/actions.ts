@@ -3,54 +3,78 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getUserAndProfile, type Profile } from '@/lib/supabase/auth'
+import { arDateKey } from '@/lib/shows'
 
-function num(formData: FormData, key: string): number | null {
-  const v = formData.get(key)
-  return v !== null && v !== '' ? Number(v) : null
+type SB = Awaited<ReturnType<typeof createClient>>
+
+/** Puede gestionar las ventas de un show: admin, o productor asignado a su comediante. */
+async function canManageShow(supabase: SB, profile: Profile, userId: string, showId: string): Promise<boolean> {
+  if (profile.role === 'admin') return true
+  const { data: show } = await supabase.from('shows').select('comedian_id').eq('id', showId).single()
+  if (!show?.comedian_id) return false
+  const { data } = await supabase
+    .from('assignments')
+    .select('id')
+    .eq('producer_id', userId)
+    .eq('comedian_id', show.comedian_id)
+    .limit(1)
+  return (data?.length ?? 0) > 0
 }
 
-export async function addSale(showId: string, formData: FormData) {
-  const supabase = await createClient()
-  const sale_date = (formData.get('sale_date') as string) || null
-  const qty_sold = num(formData, 'qty_sold') ?? 0
-  const unit_price = num(formData, 'unit_price')
-  const notes = (formData.get('notes') as string)?.trim() || null
-
-  if (!sale_date) {
-    redirect(`/shows/${showId}/ventas?error=${encodeURIComponent('Falta la fecha de la carga')}`)
-  }
-
-  // Una fila por día por show: si ya existe ese día, lo actualiza
-  const { error } = await supabase
-    .from('ticket_sales')
-    .upsert({ show_id: showId, sale_date, qty_sold, unit_price, notes }, { onConflict: 'show_id,sale_date' })
-
-  if (error) {
-    redirect(`/shows/${showId}/ventas?error=${encodeURIComponent(error.message)}`)
-  }
-
-  // Mantener el "precio actual" del show sincronizado con la última carga
-  if (unit_price != null) {
-    await supabase
-      .from('shows')
-      .update({ ticket_price: unit_price, updated_at: new Date().toISOString() })
-      .eq('id', showId)
-  }
-
-  revalidatePath(`/shows/${showId}/ventas`)
-  revalidatePath('/sales')
-  redirect(`/shows/${showId}/ventas`)
+function intOf(formData: FormData, key: string): number {
+  return Math.max(0, Math.round(Number(formData.get(key)) || 0))
 }
 
-export async function deleteSale(showId: string, saleId: string) {
+export async function saveSnapshot(showId: string, formData: FormData) {
+  const { user, profile } = await getUserAndProfile()
   const supabase = await createClient()
-  const { error } = await supabase.from('ticket_sales').delete().eq('id', saleId)
+  const base = `/shows/${showId}/ventas`
 
-  if (error) {
-    redirect(`/shows/${showId}/ventas?error=${encodeURIComponent(error.message)}`)
+  if (!(await canManageShow(supabase, profile, user.id, showId))) {
+    redirect(`${base}?error=${encodeURIComponent('No tenés permiso para actualizar este show')}`)
   }
 
-  revalidatePath(`/shows/${showId}/ventas`)
+  const snapshot_date = (formData.get('snapshot_date') as string) || arDateKey(new Date().toISOString())
+
+  const { error } = await supabase.from('sales_snapshots').upsert(
+    {
+      show_id: showId,
+      snapshot_date,
+      ticketera: intOf(formData, 'ticketera'),
+      teatro: intOf(formData, 'teatro'),
+      mitad: intOf(formData, 'mitad'),
+      invitaciones: intOf(formData, 'invitaciones'),
+      updated_by: user.id,
+    },
+    { onConflict: 'show_id,snapshot_date' }
+  )
+  if (error) redirect(`${base}?error=${encodeURIComponent(error.message)}`)
+
+  // Objetivo (se guarda en el show)
+  const targetRaw = formData.get('sales_target')
+  if (targetRaw !== null && targetRaw !== '') {
+    await supabase.from('shows').update({ sales_target: Math.round(Number(targetRaw)) }).eq('id', showId)
+  }
+
+  revalidatePath(base)
   revalidatePath('/sales')
-  redirect(`/shows/${showId}/ventas`)
+  redirect(`${base}?success=1`)
+}
+
+export async function deleteSnapshot(showId: string, snapshotId: string) {
+  const { user, profile } = await getUserAndProfile()
+  const supabase = await createClient()
+  const base = `/shows/${showId}/ventas`
+
+  if (!(await canManageShow(supabase, profile, user.id, showId))) {
+    redirect(`${base}?error=${encodeURIComponent('Sin permiso')}`)
+  }
+
+  const { error } = await supabase.from('sales_snapshots').delete().eq('id', snapshotId).eq('show_id', showId)
+  if (error) redirect(`${base}?error=${encodeURIComponent(error.message)}`)
+
+  revalidatePath(base)
+  revalidatePath('/sales')
+  redirect(`${base}?success=1`)
 }
