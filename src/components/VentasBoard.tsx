@@ -65,13 +65,20 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
                       <Link href={`/shows/${s.id}/ventas`} className="block px-3 py-2 hover:bg-surface-2 transition-colors">
                         <div className="text-[13px] font-semibold text-body truncate">{s.city}</div>
                         <div className="text-[11px] text-faint">{s.date}</div>
-                        <div className={`mt-1 inline-block text-[10px] px-1.5 py-0.5 rounded ${s.stale ? 'bg-amber-900/30 text-amber-300' : 'bg-surface text-faint'}`}>{s.sinceLabel}</div>
                       </Link>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
+                <tr>
+                  <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted">Última actualización</td>
+                  {g.shows.map(s => (
+                    <td key={s.id} className="border-b border-line px-3 py-2 text-center">
+                      <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded ${s.stale ? 'bg-amber-900/30 text-amber-300' : 'bg-surface text-faint'}`}>{s.sinceLabel}</span>
+                    </td>
+                  ))}
+                </tr>
                 {ROWS.map(row => (
                   <tr key={row.key}>
                     <td className={`sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] ${row.strong ? 'font-semibold text-body' : 'text-muted'}`}>{row.label}</td>
