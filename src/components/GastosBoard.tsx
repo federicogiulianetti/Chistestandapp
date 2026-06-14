@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { CHECKLIST_ITEMS } from '@/lib/checklist'
+import { fmtMoney } from '@/lib/staff'
 import { setChecklist } from '@/app/gastos/actions'
 
 export type GastoCol = {
@@ -11,7 +12,8 @@ export type GastoCol = {
   date: string
   checks: Record<string, string> // item_key -> status ('' = sin estado)
 }
-export type GastoGroup = { performer: string; photo: string | null; color: string; shows: GastoCol[] }
+export type CostRow = { staffId: string; name: string; amounts: Record<string, number> }
+export type GastoGroup = { performer: string; photo: string | null; color: string; shows: GastoCol[]; costRows: CostRow[] }
 
 function Avatar({ name, photo, color }: { name: string; photo: string | null; color: string }) {
   if (photo) {
@@ -83,6 +85,37 @@ export default function GastosBoard({ groups }: { groups: GastoGroup[] }) {
                     ))}
                   </tr>
                 ))}
+
+                {/* Costos de sueldos (se levantan de Sueldos, no se editan acá) */}
+                <tr>
+                  <td className="sticky left-0 z-10 bg-surface border-r border-y border-line px-3 py-2 text-[11px] uppercase tracking-wide font-semibold text-faint text-center">Costos — sueldos</td>
+                  {g.shows.map(s => <td key={s.id} className="border-y border-line bg-surface" />)}
+                </tr>
+                {g.costRows.length === 0 ? (
+                  <tr>
+                    <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-faint text-center">—</td>
+                    {g.shows.map(s => <td key={s.id} className="border-b border-line px-3 py-2 text-center text-[12px] text-faint">sin cargos</td>)}
+                  </tr>
+                ) : (
+                  <>
+                    {g.costRows.map(cr => (
+                      <tr key={cr.staffId}>
+                        <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted text-center">{cr.name}</td>
+                        {g.shows.map(s => {
+                          const v = cr.amounts[s.id] ?? 0
+                          return <td key={s.id} className="border-b border-line px-3 py-2 text-center text-[13px] tabular-nums text-muted">{v ? fmtMoney(v) : '—'}</td>
+                        })}
+                      </tr>
+                    ))}
+                    <tr>
+                      <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] font-semibold text-body text-center">Total sueldos</td>
+                      {g.shows.map(s => {
+                        const total = g.costRows.reduce((a, cr) => a + (cr.amounts[s.id] ?? 0), 0)
+                        return <td key={s.id} className="border-b border-line px-3 py-2 text-center text-[13px] tabular-nums font-bold text-body">{total ? fmtMoney(total) : '—'}</td>
+                      })}
+                    </tr>
+                  </>
+                )}
               </tbody>
             </table>
           </div>
