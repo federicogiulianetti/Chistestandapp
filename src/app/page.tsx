@@ -7,10 +7,10 @@ export default function Home() {
       <Image
         src="/chiste-logo-round.png"
         alt="Chiste Stand App"
-        width={200}
-        height={200}
+        width={340}
+        height={340}
         priority
-        className="w-44 h-44 rounded-full mb-6"
+        className="w-72 h-72 sm:w-80 sm:h-80 rounded-full mb-8"
       />
       <p className="text-lg text-muted mb-8">Sistema de gestión de la productora</p>
       <Link
