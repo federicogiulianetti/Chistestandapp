@@ -5,12 +5,12 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-ink text-body">
       <Image
-        src="/chiste-logo-neon.png"
+        src="/chiste-logo-round.png"
         alt="Chiste Stand App"
-        width={260}
-        height={114}
+        width={200}
+        height={200}
         priority
-        className="h-20 w-auto rounded-xl mb-6"
+        className="w-44 h-44 rounded-full mb-6"
       />
       <p className="text-lg text-muted mb-8">Sistema de gestión de la productora</p>
       <Link
