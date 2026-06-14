@@ -64,8 +64,8 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
                   {g.shows.map(s => (
                     <th key={s.id} className="border-b border-line p-0 min-w-[130px] align-top" style={{ borderTop: `2px solid ${g.color}` }}>
                       <Link href={`/shows/${s.id}/ventas`} className="block px-3 py-2 text-center hover:bg-surface-2 transition-colors">
-                        <div className="text-[13px] font-semibold text-body truncate">{s.theater}</div>
-                        <div className="text-[11px] text-faint">{s.city ? `${s.city} · ` : ''}{s.date}</div>
+                        <div className="text-[13px] font-semibold text-body truncate">{s.city || s.theater}</div>
+                        <div className="text-[11px] text-faint truncate">{s.city && s.theater ? `${s.theater} · ` : ''}{s.date}</div>
                       </Link>
                     </th>
                   ))}
@@ -121,7 +121,7 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold">{open.performer}</h3>
-                <p className="text-faint text-sm">{open.col.theater}{open.col.city ? ` · ${open.col.city}` : ''} · {open.col.date}</p>
+                <p className="text-faint text-sm">{open.col.city ? `${open.col.city} · ` : ''}{open.col.theater} · {open.col.date}</p>
               </div>
               <button type="button" onClick={() => setOpen(null)} aria-label="Cerrar" className="text-muted hover:text-body text-xl leading-none px-2">×</button>
             </div>
