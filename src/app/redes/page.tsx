@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { assertModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import { comedianColor } from '@/lib/comedianColor'
 import PerformerAvatar from '@/components/PerformerAvatar'
+import RedesPoller from '@/components/RedesPoller'
 import type { PostMetric } from '@/lib/apify'
 import { refreshComedianMetrics } from './actions'
 
@@ -29,7 +30,7 @@ function daysSince(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000)
 }
 
-export default async function RedesPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {
+export default async function RedesPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string; started?: string }> }) {
   const { user, profile } = await assertModuleAccess('redes')
   const sp = await searchParams
   const supabase = await createClient()
@@ -62,11 +63,20 @@ export default async function RedesPage({ searchParams }: { searchParams: Promis
     }
   }
 
+  // Jobs corriendo (scrapes async en proceso)
+  const runningSet = new Set<string>()
+  if (list.length) {
+    const { data: jobs } = await supabase.from('social_jobs').select('comedian_id, platform').eq('status', 'running').in('comedian_id', list.map(c => c.id))
+    for (const j of jobs ?? []) runningSet.add(`${j.comedian_id}:${j.platform}`)
+  }
+  const hasRunning = runningSet.size > 0
+
   const Platform = ({ comedianId, platform, handle }: { comedianId: string; platform: 'instagram' | 'tiktok'; handle: string | null }) => {
     const arr = byKey.get(`${comedianId}:${platform}`) ?? []
     const latest = arr[0]
     const prev = arr[1]
     const label = platform === 'instagram' ? 'Instagram' : 'TikTok'
+    const running = runningSet.has(`${comedianId}:${platform}`)
     if (!handle) {
       return <div className="bg-surface border border-line rounded-xl p-4 text-faint text-sm">{label}: sin @usuario cargado en la ficha.</div>
     }
@@ -76,10 +86,10 @@ export default async function RedesPage({ searchParams }: { searchParams: Promis
       <div className="bg-surface border border-line rounded-xl p-4">
         <div className="flex items-center justify-between">
           <span className="text-[13px] font-semibold">{label} <span className="text-faint">@{handle}</span></span>
-          {latest && <span className="text-[11px] text-faint">hace {daysSince(latest.captured_at)}d</span>}
+          {running ? <span className="text-[11px] text-amber-300">actualizando…</span> : latest && <span className="text-[11px] text-faint">hace {daysSince(latest.captured_at)}d</span>}
         </div>
         {!latest ? (
-          <p className="text-faint text-sm mt-2">Sin datos. Tocá &ldquo;Actualizar&rdquo;.</p>
+          <p className="text-faint text-sm mt-2">{running ? 'Trayendo datos…' : 'Sin datos. Tocá “Actualizar”.'}</p>
         ) : (
           <>
             <div className="flex items-end gap-3 mt-2">
@@ -122,7 +132,9 @@ export default async function RedesPage({ searchParams }: { searchParams: Promis
         </div>
 
         {sp.error && <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md mb-6">{sp.error}</div>}
-        {sp.success && <div className="bg-green-900/30 border border-green-700 text-green-300 px-4 py-3 rounded-md mb-6">Datos actualizados ✓</div>}
+        {sp.started && !hasRunning && <div className="bg-green-900/30 border border-green-700 text-green-300 px-4 py-3 rounded-md mb-6">Datos actualizados ✓</div>}
+
+        <RedesPoller active={hasRunning} />
 
         {list.length === 0 ? (
           <div className="bg-surface border border-line rounded-xl p-12 text-center text-faint">No hay comedianes para mostrar.</div>
