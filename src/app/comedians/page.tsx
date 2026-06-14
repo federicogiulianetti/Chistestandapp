@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { getUserAndProfile } from '@/lib/supabase/auth'
+import { assertModuleAccess } from '@/lib/access'
 
 function SocialIcon({
   href,
@@ -30,7 +30,7 @@ export default async function ComediansPage({
 }: {
   searchParams: Promise<{ error?: string }>
 }) {
-  const { profile } = await getUserAndProfile()
+  const { profile } = await assertModuleAccess('comedians')
   const params = await searchParams
   const error = params.error
 

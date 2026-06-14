@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { getUserAndProfile } from '@/lib/supabase/auth'
+import { assertModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import { formatShowDate } from '@/lib/shows'
 import AdsGrid, { AdRow } from '@/components/AdsGrid'
 import { saveAdSpend } from './actions'
@@ -9,6 +9,7 @@ type RawShow = {
   id: string
   show_date: string | null
   performer_type: string | null
+  comedian_id: string | null
   comedian: { stage_name: string | null } | null
   ensemble: { name: string | null } | null
   theater: { name: string | null } | null
@@ -20,25 +21,24 @@ export default async function AdsPage({
 }: {
   searchParams: Promise<{ error?: string; success?: string }>
 }) {
-  const { profile } = await getUserAndProfile()
+  const { user, profile } = await assertModuleAccess('ads')
   const sp = await searchParams
-
-  if (profile.role !== 'admin') {
-    return (
-      <main className="min-h-screen bg-ink text-body p-8">
-        <p className="text-red-400">No tenés permisos para ver Ads.</p>
-      </main>
-    )
-  }
+  const isAdmin = profile.role === 'admin'
 
   const supabase = await createClient()
   const { data } = await supabase
     .from('shows')
-    .select('id, show_date, performer_type, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), ad_spend(platform, amount)')
+    .select('id, show_date, performer_type, comedian_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), ad_spend(platform, amount)')
     .is('deleted_at', null)
     .order('show_date', { ascending: false })
 
-  const rows: AdRow[] = ((data ?? []) as unknown as RawShow[]).map(s => {
+  let rawShows = (data ?? []) as unknown as RawShow[]
+  if (!isAdmin) {
+    const assigned = await getAssignedComedianIds(supabase, user.id)
+    rawShows = rawShows.filter(s => s.comedian_id != null && assigned.has(s.comedian_id))
+  }
+
+  const rows: AdRow[] = rawShows.map(s => {
     const performer = s.performer_type === 'elenco' ? (s.ensemble?.name ?? '—') : (s.comedian?.stage_name ?? '—')
     const meta = s.ad_spend?.find(a => a.platform === 'Meta')?.amount
     const google = s.ad_spend?.find(a => a.platform === 'Google')?.amount

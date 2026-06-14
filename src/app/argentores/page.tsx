@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { getUserAndProfile } from '@/lib/supabase/auth'
+import { assertModuleAccess } from '@/lib/access'
 import { type ArgentoresEntry, argentoresTotalsText } from '@/lib/argentores'
 import { comedianColor } from '@/lib/comedianColor'
 import PerformerAvatar from '@/components/PerformerAvatar'
@@ -17,7 +17,7 @@ export default async function ArgentoresPage({
 }: {
   searchParams: Promise<{ com?: string }>
 }) {
-  const { user, profile } = await getUserAndProfile()
+  const { user, profile } = await assertModuleAccess('argentores')
   const sp = await searchParams
   const supabase = await createClient()
   const isAdmin = profile.role === 'admin'

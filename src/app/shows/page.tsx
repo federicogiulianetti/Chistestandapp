@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { getUserAndProfile } from '@/lib/supabase/auth'
+import { assertModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import ShowsTable, { ShowRow } from '@/components/ShowsTable'
 
 export default async function ShowsPage({
@@ -8,18 +8,25 @@ export default async function ShowsPage({
 }: {
   searchParams: Promise<{ error?: string }>
 }) {
-  const { profile } = await getUserAndProfile()
+  const { user, profile } = await assertModuleAccess('shows')
   const params = await searchParams
   const error = params.error
+  const isAdmin = profile.role === 'admin'
 
   const supabase = await createClient()
-  const { data: shows } = await supabase
+  const { data: showsData } = await supabase
     .from('shows')
-    .select('id, show_date, status, city, performer_type, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name)')
+    .select('id, show_date, status, city, performer_type, comedian_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name)')
     .is('deleted_at', null)
     .order('show_date', { ascending: true })
 
-  const canManage = profile.role === 'admin'
+  let shows = (showsData ?? []) as ({ comedian_id: string | null } & Record<string, unknown>)[]
+  if (!isAdmin) {
+    const assigned = await getAssignedComedianIds(supabase, user.id)
+    shows = shows.filter(s => s.comedian_id != null && assigned.has(s.comedian_id))
+  }
+
+  const canManage = isAdmin
 
   return (
     <main className="min-h-screen bg-ink text-body p-8">

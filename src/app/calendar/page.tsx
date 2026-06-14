@@ -1,17 +1,18 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { getUserAndProfile } from '@/lib/supabase/auth'
+import { assertModuleAccess, getAssignedComedianIds } from '@/lib/access'
 import { arDateKey, arTime } from '@/lib/shows'
 import CalendarView, { CalShow } from '@/components/CalendarView'
 
 export default async function CalendarPage() {
-  const { profile } = await getUserAndProfile()
-  const canManage = profile.role === 'admin'
+  const { user, profile } = await assertModuleAccess('calendar')
+  const isAdmin = profile.role === 'admin'
+  const canManage = isAdmin
 
   const supabase = await createClient()
   const { data: shows } = await supabase
     .from('shows')
-    .select('id, show_date, status, performer_type, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), city')
+    .select('id, show_date, status, performer_type, comedian_id, comedian:comedian_id(stage_name), ensemble:ensemble_id(name), theater:theater_id(name), city')
     .is('deleted_at', null)
 
   type Raw = {
@@ -19,13 +20,20 @@ export default async function CalendarPage() {
     show_date: string | null
     status: string | null
     performer_type: string | null
+    comedian_id: string | null
     comedian: { stage_name: string | null } | null
     ensemble: { name: string | null } | null
     theater: { name: string | null } | null
     city: string | null
   }
 
-  const calShows: CalShow[] = ((shows ?? []) as unknown as Raw[]).map(s => ({
+  let rawShows = (shows ?? []) as unknown as Raw[]
+  if (!isAdmin) {
+    const assigned = await getAssignedComedianIds(supabase, user.id)
+    rawShows = rawShows.filter(s => s.comedian_id != null && assigned.has(s.comedian_id))
+  }
+
+  const calShows: CalShow[] = rawShows.map(s => ({
     id: s.id,
     dateKey: arDateKey(s.show_date),
     time: arTime(s.show_date),

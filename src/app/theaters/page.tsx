@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { getUserAndProfile } from '@/lib/supabase/auth'
+import { assertModuleAccess } from '@/lib/access'
 import TheatersTable from '@/components/TheatersTable'
 
 export default async function TheatersPage({
@@ -8,7 +8,7 @@ export default async function TheatersPage({
 }: {
   searchParams: Promise<{ error?: string }>
 }) {
-  const { profile } = await getUserAndProfile()
+  const { profile } = await assertModuleAccess('theaters')
   const params = await searchParams
   const error = params.error
 
