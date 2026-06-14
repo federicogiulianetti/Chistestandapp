@@ -10,6 +10,7 @@ import {
   TrendingUp,
   ClipboardList,
   ReceiptText,
+  Receipt,
   Wallet,
   Banknote,
   Lock,
@@ -60,6 +61,7 @@ const adminGroups: ModuleGroup[] = [
     modules: [
       { title: 'Ventas', description: 'Curva diaria de ventas y métricas por show.', href: '/sales', Icon: TrendingUp },
       { title: 'Gastos', description: 'Checklist operativo y costos por fecha.', href: '/gastos', Icon: ClipboardList },
+      { title: 'Pagos', description: 'Gastos a pagar con factura y comprobante.', href: '/pagos', Icon: Receipt },
       { title: 'Bordereaux', description: 'Todas las liquidaciones cerradas, con descarga.', href: '/borderos', Icon: ReceiptText },
       { title: 'Cuentas corrientes', description: 'Ganado, cobrado y saldo de cada persona.', href: '/cuentas', Icon: Wallet },
       { title: 'Sueldos', description: 'Cuenta corriente del staff de la productora.', href: '/sueldos', Icon: Banknote },

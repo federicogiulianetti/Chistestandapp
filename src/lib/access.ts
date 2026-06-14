@@ -27,6 +27,7 @@ export const MODULE_GROUPS: ModuleGroup[] = [
     modules: [
       { key: 'sales', label: 'Ventas', href: '/sales' },
       { key: 'gastos', label: 'Gastos', href: '/gastos' },
+      { key: 'pagos', label: 'Pagos', href: '/pagos' },
       { key: 'borderos', label: 'Bordereaux', href: '/borderos' },
       { key: 'cuentas', label: 'Cuentas corrientes', href: '/cuentas' },
       { key: 'sueldos', label: 'Sueldos', href: '/sueldos' },

@@ -65,7 +65,7 @@ export default async function GastosPage() {
     }
   }
 
-  // Costos de sueldos por fecha
+  // ---- Costos por fecha: sueldos (de Sueldos) + pagos terminados (de Pagos) ----
   const staffName = new Map<string, string>((staffData ?? []).map(s => [s.id as string, s.name as string]))
   const charges = (chargeData ?? []) as Charge[]
   const monthCount = new Map<string, number>()
@@ -73,18 +73,43 @@ export default async function GastosPage() {
     const ym = ymOf(r.show_date)
     if (ym) monthCount.set(ym, (monthCount.get(ym) ?? 0) + 1)
   }
-  // costMap: showId -> (staffId -> monto)
-  const costMap = new Map<string, Map<string, number>>()
+
+  // Pagos terminados + sus fechas (el monto se reparte en partes iguales entre sus fechas)
+  const { data: payData } = await supabase.from('expense_payments').select('id, concept, amount').eq('status', 'terminado')
+  const payIds = (payData ?? []).map(p => p.id as string)
+  const { data: payLinks } = await supabase.from('expense_payment_shows').select('payment_id, show_id').in('payment_id', payIds.length ? payIds : ['00000000-0000-0000-0000-000000000000'])
+  const payCount = new Map<string, number>()
+  for (const l of payLinks ?? []) payCount.set(l.payment_id as string, (payCount.get(l.payment_id as string) ?? 0) + 1)
+  const payInfo = new Map((payData ?? []).map(p => [p.id as string, { name: (p.concept as string) ?? 'Gasto', amount: Number(p.amount) }]))
+  const shownIds = new Set(shows.map(s => s.id))
+
+  // costMap: showId -> (rowKey -> { name, amount })
+  const costMap = new Map<string, Map<string, { name: string; amount: number }>>()
+  for (const s of shows) costMap.set(s.id, new Map())
   for (const s of shows) {
     const ym = ymOf(s.show_date)
-    const m = new Map<string, number>()
+    const m = costMap.get(s.id)!
     for (const ch of charges) {
       let add = 0
       if (ch.charge_type === 'por_fecha' && ch.show_id === s.id) add = Number(ch.amount)
       else if (ch.charge_type === 'mensual_repartido' && ym && ymOf(ch.movement_date) === ym) add = Number(ch.amount) / (monthCount.get(ym) ?? 1)
-      if (add) m.set(ch.staff_id, (m.get(ch.staff_id) ?? 0) + add)
+      if (add) {
+        const key = 'staff:' + ch.staff_id
+        const cur = m.get(key) ?? { name: staffName.get(ch.staff_id) ?? 'Staff', amount: 0 }
+        cur.amount += add; m.set(key, cur)
+      }
     }
-    costMap.set(s.id, m)
+  }
+  for (const l of payLinks ?? []) {
+    if (!shownIds.has(l.show_id as string)) continue
+    const info = payInfo.get(l.payment_id as string)
+    if (!info) continue
+    const share = info.amount / (payCount.get(l.payment_id as string) ?? 1)
+    if (!share) continue
+    const m = costMap.get(l.show_id as string)!
+    const key = 'pay:' + (l.payment_id as string)
+    const cur = m.get(key) ?? { name: info.name, amount: 0 }
+    cur.amount += share; m.set(key, cur)
   }
 
   const performerOf = (s: ShowRow) => s.performer_type === 'elenco' ? (s.ensemble?.name ?? '—') : (s.comedian?.stage_name ?? '—')
@@ -105,15 +130,16 @@ export default async function GastosPage() {
     groupMap.get(performer)!.shows.push(colOf(s))
   }
 
-  // Filas de costo por grupo: las personas de staff que aportan algún costo a sus shows
+  // Filas de costo por grupo (sueldos + pagos) que aportan a sus shows
   for (const g of groupMap.values()) {
-    const staffIds = new Set<string>()
-    for (const s of g.shows) for (const sid of (costMap.get(s.id)?.keys() ?? [])) staffIds.add(sid)
-    g.costRows = [...staffIds]
-      .map<CostRow>(sid => ({
-        staffId: sid,
-        name: staffName.get(sid) ?? 'Staff',
-        amounts: Object.fromEntries(g.shows.map(s => [s.id, costMap.get(s.id)?.get(sid) ?? 0])),
+    const keys = new Set<string>()
+    const names = new Map<string, string>()
+    for (const s of g.shows) for (const [k, v] of (costMap.get(s.id) ?? new Map<string, { name: string; amount: number }>())) { keys.add(k); names.set(k, v.name) }
+    g.costRows = [...keys]
+      .map<CostRow>(k => ({
+        key: k,
+        name: names.get(k) ?? '',
+        amounts: Object.fromEntries(g.shows.map(s => [s.id, costMap.get(s.id)?.get(k)?.amount ?? 0])),
       }))
       .sort((a, b) => a.name.localeCompare(b.name))
   }

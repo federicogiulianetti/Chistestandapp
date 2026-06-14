@@ -12,7 +12,7 @@ export type GastoCol = {
   date: string
   checks: Record<string, string> // item_key -> status ('' = sin estado)
 }
-export type CostRow = { staffId: string; name: string; amounts: Record<string, number> }
+export type CostRow = { key: string; name: string; amounts: Record<string, number> }
 export type GastoGroup = { performer: string; photo: string | null; color: string; shows: GastoCol[]; costRows: CostRow[] }
 
 function Avatar({ name, photo, color }: { name: string; photo: string | null; color: string }) {
@@ -99,7 +99,7 @@ export default function GastosBoard({ groups }: { groups: GastoGroup[] }) {
                 ) : (
                   <>
                     {g.costRows.map(cr => (
-                      <tr key={cr.staffId}>
+                      <tr key={cr.key}>
                         <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted text-center">{cr.name}</td>
                         {g.shows.map(s => {
                           const v = cr.amounts[s.id] ?? 0
