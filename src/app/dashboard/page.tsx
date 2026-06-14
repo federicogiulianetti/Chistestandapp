@@ -139,10 +139,10 @@ export default async function DashboardPage() {
             <Image
               src="/chiste-logo-round.png"
               alt="Chiste Stand App"
-              width={56}
-              height={56}
+              width={68}
+              height={68}
               priority
-              className="w-14 h-14 rounded-full shrink-0"
+              className="w-16 h-16 rounded-full shrink-0"
             />
             <div>
               <p className="text-[15px]">
