@@ -137,12 +137,12 @@ export default async function DashboardPage() {
         <header className="flex flex-wrap items-start justify-between gap-4 mb-10">
           <div className="flex items-center gap-4">
             <Image
-              src="/chiste-logo-neon.png"
+              src="/chiste-logo-round.png"
               alt="Chiste Stand App"
-              width={150}
-              height={66}
+              width={56}
+              height={56}
               priority
-              className="h-12 w-auto rounded-lg"
+              className="w-14 h-14 rounded-full shrink-0"
             />
             <div>
               <p className="text-[15px]">
