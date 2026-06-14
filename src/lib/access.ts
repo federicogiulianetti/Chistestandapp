@@ -1,4 +1,6 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getUserAndProfile } from '@/lib/supabase/auth'
 
 type SB = Awaited<ReturnType<typeof createClient>>
 
@@ -64,4 +66,18 @@ export async function getModuleAccess(supabase: SB, userId: string): Promise<Set
 export async function getAssignedComedianIds(supabase: SB, userId: string): Promise<Set<string>> {
   const { data } = await supabase.from('assignments').select('comedian_id').eq('producer_id', userId)
   return new Set((data ?? []).map(r => r.comedian_id as string))
+}
+
+/**
+ * Guarda de ruta para un módulo. Admin pasa siempre. Si el usuario no tiene
+ * el módulo habilitado, lo manda al dashboard. Devuelve { user, profile }.
+ * Usar al principio de cada page server-side: `const { profile } = await assertModuleAccess('ventas')`.
+ */
+export async function assertModuleAccess(moduleKey: string) {
+  const { user, profile } = await getUserAndProfile()
+  if (profile.role === 'admin') return { user, profile }
+  const supabase = await createClient()
+  const allowed = await getModuleAccess(supabase, profile.id)
+  if (!allowed.has(moduleKey)) redirect('/dashboard')
+  return { user, profile }
 }

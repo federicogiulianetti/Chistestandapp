@@ -25,6 +25,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { getUserAndProfile, roleLabels } from '@/lib/supabase/auth'
+import { createClient } from '@/lib/supabase/server'
+import { getModuleAccess } from '@/lib/access'
 import { logout } from '@/app/auth/actions'
 import AsistenteIA, { AsistenteSkeleton } from '@/components/AsistenteIA'
 
@@ -101,34 +103,24 @@ const comedianGroups: ModuleGroup[] = [
   },
 ]
 
-const otherGroups: ModuleGroup[] = [
-  {
-    label: 'Tu actividad',
-    modules: [
-      { title: 'Asistente', description: 'Tu resumen: tareas, fechas y saldo.', href: '/asistente', Icon: Sparkles },
-      { title: 'Mis tareas', description: 'Lo que tenés pendiente.', href: '/tareas', Icon: ListChecks },
-    ],
-  },
-  {
-    label: 'Tu plata',
-    modules: [
-      { title: 'Mi cuenta corriente', description: 'Lo que llevás ganado, cobrado y lo que falta cobrar.', href: '/mi-cuenta', Icon: Wallet },
-      { title: 'Argentores', description: 'Marcá lo que cobraron de Argentores tus comedianes asignados.', href: '/argentores', Icon: BadgeDollarSign },
-    ],
-  },
-]
-
 export default async function DashboardPage() {
   const { profile } = await getUserAndProfile()
   const displayName = profile.full_name || 'usuario'
   const roleLabel = roleLabels[profile.role]
 
-  const groups =
-    profile.role === 'admin'
-      ? adminGroups
-      : profile.role === 'comediante'
-      ? comedianGroups
-      : otherGroups
+  let groups: ModuleGroup[]
+  if (profile.role === 'admin') {
+    groups = adminGroups
+  } else if (profile.role === 'comediante') {
+    groups = comedianGroups
+  } else {
+    // Resto de los roles: solo los módulos que el admin le habilitó (module_access)
+    const supabase = await createClient()
+    const allowed = await getModuleAccess(supabase, profile.id)
+    groups = adminGroups
+      .map(g => ({ ...g, modules: g.modules.filter(m => allowed.has(m.href.slice(1))) }))
+      .filter(g => g.modules.length > 0)
+  }
 
   return (
     <main className="min-h-screen bg-ink text-body p-6 sm:p-8">
@@ -179,6 +171,11 @@ export default async function DashboardPage() {
 
         {/* Módulos agrupados */}
         <div className="space-y-9">
+          {groups.length === 0 && (
+            <div className="bg-surface border border-line rounded-xl p-10 text-center text-faint">
+              Todavía no tenés módulos asignados. Pedile al admin que te dé acceso desde Equipo.
+            </div>
+          )}
           {groups.map((group) => (
             <section key={group.label}>
               <h2 className="text-[11px] font-semibold tracking-[1.5px] uppercase text-faint mb-3">
