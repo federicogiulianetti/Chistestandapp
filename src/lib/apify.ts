@@ -25,15 +25,26 @@ export function normalizeHandle(h: string | null | undefined): string {
   return h.trim().replace(/^@/, '').replace(/^https?:\/\/[^/]+\//, '').replace(/\/.*$/, '').replace(/^@/, '').trim()
 }
 
-async function runActor(actorId: string, input: unknown): Promise<unknown[]> {
+async function runActor(actorId: string, input: unknown, retries = 1): Promise<unknown[]> {
   if (!TOKEN) throw new Error('Falta APIFY_API_TOKEN')
-  const res = await fetch(
-    `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${TOKEN}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }
-  )
-  if (!res.ok) throw new Error(`Apify ${actorId}: HTTP ${res.status}`)
-  const data = await res.json()
-  return Array.isArray(data) ? data : []
+  let lastErr: unknown = null
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(
+        `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${TOKEN}`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }
+      )
+      if (!res.ok) throw new Error(`Apify ${actorId}: HTTP ${res.status}`)
+      const data = await res.json()
+      const arr = Array.isArray(data) ? data : []
+      if (arr.length > 0 || attempt === retries) return arr
+      // vino vacío: reintento una vez (los scrapers a veces fallan transitorio)
+    } catch (e) {
+      lastErr = e
+    }
+  }
+  if (lastErr) throw lastErr
+  return []
 }
 
 const num = (v: unknown): number | null => (typeof v === 'number' && !isNaN(v) ? v : null)
