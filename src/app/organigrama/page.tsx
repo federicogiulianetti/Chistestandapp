@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile, roleLabels, type UserRole } from '@/lib/supabase/auth'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 import { addAssignment, removeAssignment } from './actions'
 
 type Assignment = {
@@ -89,7 +90,7 @@ export default async function OrganigramaPage({
                         {a.role && <span className="text-gray-400 text-xs">· {a.role}</span>}
                         {isAdmin && (
                           <form action={removeAssignment.bind(null, a.id)}>
-                            <button type="submit" className="text-red-400 hover:text-red-300 text-xs">✕</button>
+                            <ConfirmSubmit message="¿Quitar esta asignación?" ariaLabel="Quitar asignación" className="text-red-400 hover:text-red-300 text-xs">✕</ConfirmSubmit>
                           </form>
                         )}
                       </span>

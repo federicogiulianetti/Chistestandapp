@@ -5,6 +5,7 @@ import { getUserAndProfile } from '@/lib/supabase/auth'
 import { arDateKey, formatShowDate } from '@/lib/shows'
 import { summarizeSales, salesIndicator, cumulativeCurve, formatMoney, formatPct, type SaleRow } from '@/lib/sales'
 import SalesCurve from '@/components/SalesCurve'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 import { addSale, deleteSale } from './actions'
 
 function Card({ label, value, hint }: { label: string; value: React.ReactNode; hint?: string }) {
@@ -168,7 +169,7 @@ export default async function VentasPage({
                       {canManage && (
                         <td className="px-4 py-2 text-right">
                           <form action={deleteSale.bind(null, id, r.id)}>
-                            <button type="submit" className="text-red-400 hover:text-red-300 text-sm">✕</button>
+                            <ConfirmSubmit message="¿Borrar esta carga de ventas?" ariaLabel="Borrar venta" className="text-red-400 hover:text-red-300 text-sm">✕</ConfirmSubmit>
                           </form>
                         </td>
                       )}

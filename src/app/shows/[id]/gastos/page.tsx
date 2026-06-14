@@ -6,6 +6,7 @@ import { formatShowDate } from '@/lib/shows'
 import { FIXED_EXPENSE_CATEGORIES, sumExpenses, formatMoney, type ExpenseRow } from '@/lib/expenses'
 import { roleLabels, type UserRole } from '@/lib/supabase/auth'
 import ExpensesForm, { type PersonOption } from '@/components/ExpensesForm'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 import { saveExpenses, deleteSharedGroup } from './actions'
 
 export default async function GastosPage({
@@ -99,7 +100,7 @@ export default async function GastosPage({
                     <td className="px-4 py-2 text-sm text-right">{formatMoney(e.amount)}</td>
                     <td className="px-4 py-2 text-right">
                       <form action={deleteSharedGroup.bind(null, id, e.group_id as string)}>
-                        <button type="submit" className="text-red-400 hover:text-red-300 text-xs" title="Borra el gasto repartido completo (todas las fechas)">Quitar reparto</button>
+                        <ConfirmSubmit message="¿Borrar el gasto repartido completo? Se elimina de TODAS las fechas donde está repartido." title="Borra el gasto repartido completo (todas las fechas)" className="text-red-400 hover:text-red-300 text-xs">Quitar reparto</ConfirmSubmit>
                       </form>
                     </td>
                   </tr>

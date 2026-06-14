@@ -6,7 +6,7 @@ import { arDateKey } from '@/lib/shows'
 import { balancesByCurrency, fmt, type Movement } from '@/lib/accounts'
 import { type ArgentoresEntry } from '@/lib/argentores'
 import { buildRateLookup, usdBalances, fmtUsd, type UsdRate } from '@/lib/usd'
-import { addMovement, deleteMovement } from '@/app/cuentas/actions'
+import { addMovement } from '@/app/cuentas/actions'
 import ArgentoresLedger from '@/components/ArgentoresLedger'
 
 export default async function CuentaPage({
@@ -183,12 +183,11 @@ export default async function CuentaPage({
                 <th className="text-right px-4 py-2 text-sm font-semibold">Ganó</th>
                 <th className="text-right px-4 py-2 text-sm font-semibold">Cobró</th>
                 <th className="text-right px-4 py-2 text-sm font-semibold">Saldo</th>
-                <th className="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody>
               {withRunning.length === 0 ? (
-                <tr><td colSpan={6} className="px-4 py-3 text-sm text-gray-500">Sin movimientos.</td></tr>
+                <tr><td colSpan={5} className="px-4 py-3 text-sm text-gray-500">Sin movimientos.</td></tr>
               ) : withRunning.map(({ m, running }) => (
                 <tr key={m.id} className="border-b border-zinc-800 last:border-0">
                   <td className="px-4 py-2 text-sm whitespace-nowrap">{m.movement_date}</td>
@@ -199,13 +198,6 @@ export default async function CuentaPage({
                   <td className="px-4 py-2 text-sm text-right text-green-300">{m.direction === 'credit' ? fmt(Number(m.amount), m.currency) : ''}</td>
                   <td className="px-4 py-2 text-sm text-right text-blue-300">{m.direction === 'debit' ? fmt(Number(m.amount), m.currency) : ''}</td>
                   <td className="px-4 py-2 text-sm text-right text-gray-300">{fmt(running, m.currency)}</td>
-                  <td className="px-4 py-2 text-right">
-                    {m.source === 'manual' && (
-                      <form action={deleteMovement.bind(null, type, id, m.id)}>
-                        <button type="submit" className="text-red-400 hover:text-red-300 text-xs">✕</button>
-                      </form>
-                    )}
-                  </td>
                 </tr>
               ))}
             </tbody>

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { formatShowDate } from '@/lib/shows'
 import { formatMoney } from '@/lib/sales'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 import { createCampaign, deleteCampaign } from './actions'
 
 const STATUS: Record<string, string> = {
@@ -102,7 +103,7 @@ export default async function CampaniasPage({
                 <div className="flex items-center gap-3 shrink-0">
                   <span className={`px-2 py-1 rounded text-xs ${STATUS[c.status] ?? STATUS.borrador}`}>{c.status}</span>
                   <form action={deleteCampaign.bind(null, c.id)}>
-                    <button type="submit" aria-label="Eliminar campaña" className="text-red-400 hover:text-red-300"><X className="w-4 h-4" /></button>
+                    <ConfirmSubmit message={`¿Eliminar la campaña "${c.name}"?`} ariaLabel="Eliminar campaña" className="text-red-400 hover:text-red-300"><X className="w-4 h-4" /></ConfirmSubmit>
                   </form>
                 </div>
               </div>

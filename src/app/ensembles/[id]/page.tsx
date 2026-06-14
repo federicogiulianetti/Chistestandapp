@@ -98,13 +98,14 @@ export default async function EnsembleDetailPage({
                   >
                     {canManage && (
                       <form action={removeMember.bind(null, id, m.id)} className="absolute top-2 right-2">
-                        <button
-                          type="submit"
-                          className="bg-red-600/80 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
+                        <ConfirmSubmit
+                          message={`¿Quitar a ${c.stage_name ?? 'este integrante'} del elenco?`}
                           title="Quitar del elenco"
+                          ariaLabel="Quitar del elenco"
+                          className="bg-red-600/80 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
                         >
                           ✕
-                        </button>
+                        </ConfirmSubmit>
                       </form>
                     )}
                     <div className="flex flex-col items-center text-center">

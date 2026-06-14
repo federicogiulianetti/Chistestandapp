@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getUserAndProfile } from '@/lib/supabase/auth'
 import { formatShowDate } from '@/lib/shows'
+import ConfirmSubmit from '@/components/ConfirmSubmit'
 import { createTask, setTaskStatus, deleteTask } from './actions'
 
 const STATUS = {
@@ -134,7 +135,7 @@ export default async function TareasPage({
                       </form>
                     ))}
                     <form action={deleteTask.bind(null, t.id)} className="ml-auto">
-                      <button type="submit" className="text-red-400 hover:text-red-300 text-xs">Eliminar</button>
+                      <ConfirmSubmit message="¿Eliminar esta tarea?" className="text-red-400 hover:text-red-300 text-xs">Eliminar</ConfirmSubmit>
                     </form>
                   </div>
                 </div>
