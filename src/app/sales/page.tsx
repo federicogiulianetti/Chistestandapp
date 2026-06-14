@@ -80,7 +80,8 @@ export default async function SalesPage() {
 
     return {
       id: s.id,
-      city: s.theater?.city ?? s.theater?.name ?? '—',
+      theater: s.theater?.name ?? '—',
+      city: s.theater?.city ?? '',
       date: formatShowDate(s.show_date),
       sinceLabel: since == null ? 'Sin cargar' : since === 0 ? 'hoy' : since === 1 ? 'ayer' : `hace ${since}d`,
       stale: since == null || since > 3,

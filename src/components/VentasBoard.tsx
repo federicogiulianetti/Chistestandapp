@@ -7,6 +7,7 @@ import SalesCurve from '@/components/SalesCurve'
 type CurvePoint = { date: string; daily: number; cumulative: number }
 export type VentaCol = {
   id: string
+  theater: string
   city: string
   date: string
   sinceLabel: string
@@ -62,9 +63,9 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
                   <th className="sticky left-0 z-10 bg-surface-2 border-b border-r border-line px-3 py-2 min-w-[150px]"> </th>
                   {g.shows.map(s => (
                     <th key={s.id} className="border-b border-line p-0 min-w-[130px] align-top" style={{ borderTop: `2px solid ${g.color}` }}>
-                      <Link href={`/shows/${s.id}/ventas`} className="block px-3 py-2 hover:bg-surface-2 transition-colors">
-                        <div className="text-[13px] font-semibold text-body truncate">{s.city}</div>
-                        <div className="text-[11px] text-faint">{s.date}</div>
+                      <Link href={`/shows/${s.id}/ventas`} className="block px-3 py-2 text-center hover:bg-surface-2 transition-colors">
+                        <div className="text-[13px] font-semibold text-body truncate">{s.theater}</div>
+                        <div className="text-[11px] text-faint">{s.city ? `${s.city} · ` : ''}{s.date}</div>
                       </Link>
                     </th>
                   ))}
@@ -72,7 +73,7 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
               </thead>
               <tbody>
                 <tr>
-                  <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted">Última actualización</td>
+                  <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted text-center">Última actualización</td>
                   {g.shows.map(s => (
                     <td key={s.id} className="border-b border-line px-3 py-2 text-center">
                       <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded ${s.stale ? 'bg-amber-900/30 text-amber-300' : 'bg-surface text-faint'}`}>{s.sinceLabel}</span>
@@ -81,9 +82,9 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
                 </tr>
                 {ROWS.map(row => (
                   <tr key={row.key}>
-                    <td className={`sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] ${row.strong ? 'font-semibold text-body' : 'text-muted'}`}>{row.label}</td>
+                    <td className={`sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-center ${row.strong ? 'font-semibold text-body' : 'text-muted'}`}>{row.label}</td>
                     {g.shows.map(s => (
-                      <td key={s.id} className={`border-b border-line px-3 py-2 text-right text-[13px] tabular-nums ${row.strong ? 'font-bold text-body' : 'text-muted'}`}>{s.cells[row.key]}</td>
+                      <td key={s.id} className={`border-b border-line px-3 py-2 text-center text-[13px] tabular-nums ${row.strong ? 'font-bold text-body' : 'text-muted'}`}>{s.cells[row.key]}</td>
                     ))}
                   </tr>
                 ))}
@@ -120,7 +121,7 @@ export default function VentasBoard({ groups }: { groups: VentaGroup[] }) {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="text-lg font-semibold">{open.performer}</h3>
-                <p className="text-faint text-sm">{open.col.city} · {open.col.date}</p>
+                <p className="text-faint text-sm">{open.col.theater}{open.col.city ? ` · ${open.col.city}` : ''} · {open.col.date}</p>
               </div>
               <button type="button" onClick={() => setOpen(null)} aria-label="Cerrar" className="text-muted hover:text-body text-xl leading-none px-2">×</button>
             </div>
