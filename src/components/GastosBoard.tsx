@@ -63,7 +63,7 @@ export default function GastosBoard({ groups }: { groups: GastoGroup[] }) {
             <table className="border-collapse">
               <thead>
                 <tr>
-                  <th className="sticky left-0 z-10 bg-surface-2 border-b border-r border-line px-3 py-2 text-left text-[11px] uppercase tracking-wide text-faint min-w-[170px]">Checklist</th>
+                  <th className="sticky left-0 z-10 bg-surface-2 border-b border-r border-line px-3 py-2 text-center text-[11px] uppercase tracking-wide text-faint min-w-[170px]">Checklist</th>
                   {g.shows.map(s => (
                     <th key={s.id} className="border-b border-line px-3 py-2 text-center align-top min-w-[140px]" style={{ borderTop: `2px solid ${g.color}` }}>
                       <div className="text-[13px] font-semibold text-body truncate">{s.city || s.theater}</div>
@@ -75,7 +75,7 @@ export default function GastosBoard({ groups }: { groups: GastoGroup[] }) {
               <tbody>
                 {CHECKLIST_ITEMS.map(item => (
                   <tr key={item.key}>
-                    <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted">{item.label}</td>
+                    <td className="sticky left-0 z-10 bg-surface-2 border-r border-b border-line px-3 py-2 text-[12px] text-muted text-center">{item.label}</td>
                     {g.shows.map(s => (
                       <td key={s.id} className="border-b border-line px-2 py-1.5">
                         <ChecklistSelect showId={s.id} itemKey={item.key} value={s.checks[item.key] ?? ''} />

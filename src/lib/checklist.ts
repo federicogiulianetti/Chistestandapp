@@ -4,12 +4,11 @@ export const CHECKLIST_ITEMS: { key: string; label: string }[] = [
   { key: 'cartel_puerta', label: 'Cartel puerta' },
   { key: 'aereos', label: 'Aéreos' },
   { key: 'hotel', label: 'Hotel' },
-  { key: 'filmacion', label: 'Filmación (Cobertura Pablo)' },
+  { key: 'filmacion', label: 'Filmación' },
   { key: 'tecnica', label: 'Técnica chequeada' },
+  { key: 'rider_enviado', label: 'Rider enviado' },
   { key: 'alquiler_auto', label: 'Alquiler Auto' },
-  { key: 'gastos_extras', label: 'Gastos Extras' },
   { key: 'senas_teatro', label: 'Señas Teatro' },
-  { key: 'calendar', label: 'Calendar' },
 ]
 
 export const CHECKLIST_KEYS = new Set(CHECKLIST_ITEMS.map(i => i.key))
